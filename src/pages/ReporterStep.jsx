@@ -8,8 +8,16 @@ import {
 } from "react-icons/fa";
 import Stepper from "../components/Stepper";
 
-export default function ReporterStep() {
+export default function ReporterStep({ next, data, setData }) {
   const [isAnonymous, setIsAnonymous] = useState(false);
+
+  // handle input change
+  const handleChange = (e) => {
+    setData({
+      ...data,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -62,7 +70,10 @@ export default function ReporterStep() {
 
             {/* Named */}
             <div
-              onClick={() => setIsAnonymous(false)}
+              onClick={() => {
+                setIsAnonymous(false);
+                setData({ ...data, submission_type: "Named" });
+              }}
               className={`rounded-xl p-5 text-center cursor-pointer transition ${
                 !isAnonymous
                   ? "border-2 border-blue-500 bg-blue-50 shadow"
@@ -80,7 +91,10 @@ export default function ReporterStep() {
 
             {/* Anonymous */}
             <div
-              onClick={() => setIsAnonymous(true)}
+              onClick={() => {
+                setIsAnonymous(true);
+                setData({ ...data, submission_type: "Anonymous" });
+              }}
               className={`rounded-xl p-5 text-center cursor-pointer transition ${
                 isAnonymous
                   ? "border-2 border-blue-500 bg-blue-50 shadow"
@@ -98,7 +112,7 @@ export default function ReporterStep() {
 
           </div>
 
-          {/* 🔥 Anonymous Notice */}
+          {/* Anonymous Notice */}
           {isAnonymous && (
             <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 p-3 rounded mb-6 text-sm">
               You are submitting anonymously. No personal details will be collected.
@@ -110,14 +124,20 @@ export default function ReporterStep() {
             <label className="block text-sm font-semibold mb-1">
               Reporter Category *
             </label>
-            <select className="w-full border rounded-lg p-2 text-sm">
+            <select
+              name="reporter_category"
+              value={data.reporter_category}
+              onChange={handleChange}
+              className="w-full border rounded-lg p-2 text-sm"
+            >
+              <option value="">Select category</option>
               <option>Permanent Employee</option>
               <option>Contract Employee</option>
               <option>External Party</option>
             </select>
           </div>
 
-          {/* 🔥 HIDE THIS WHEN ANONYMOUS */}
+          {/* HIDDEN WHEN ANONYMOUS */}
           {!isAnonymous && (
             <>
               {/* Professional */}
@@ -126,10 +146,10 @@ export default function ReporterStep() {
               </h3>
 
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <input placeholder="Full Name *" className="input" />
-                <input placeholder="Employee ID" className="input" />
-                <input placeholder="Department *" className="input" />
-                <input placeholder="Designation *" className="input" />
+                <input name="full_name" placeholder="Full Name *" onChange={handleChange} className="input" />
+                <input name="employee_id" placeholder="Employee ID" onChange={handleChange} className="input" />
+                <input name="department" placeholder="Department *" onChange={handleChange} className="input" />
+                <input name="designation" placeholder="Designation *" onChange={handleChange} className="input" />
               </div>
 
               {/* Contact */}
@@ -138,15 +158,17 @@ export default function ReporterStep() {
               </h3>
 
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <input placeholder="Email Address *" className="input" />
-                <input placeholder="Phone Number *" className="input" />
+                <input name="email" placeholder="Email Address *" onChange={handleChange} className="input" />
+                <input name="phone" placeholder="Phone Number *" onChange={handleChange} className="input" />
               </div>
 
               <div className="mb-6">
-                <label className="block text-sm font-semibold mb-1">
-                  Preferred Contact Method *
-                </label>
-                <select className="w-full border rounded-lg p-2 text-sm">
+                <select
+                  name="contact_method"
+                  onChange={handleChange}
+                  className="w-full border rounded-lg p-2 text-sm"
+                >
+                  <option value="">Preferred Contact Method</option>
                   <option>Email</option>
                   <option>Phone</option>
                 </select>
@@ -160,7 +182,10 @@ export default function ReporterStep() {
               <FaLock /> Your progress is automatically saved
             </p>
 
-            <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg shadow">
+            <button
+              onClick={next}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg shadow"
+            >
               Continue to Details →
             </button>
           </div>

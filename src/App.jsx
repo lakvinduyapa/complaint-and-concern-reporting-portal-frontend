@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ReporterStep from "./pages/ReporterStep";
+import ComplaintStep from "./pages/ComplaintStep";
 
 function App() {
   const [step, setStep] = useState(1);
@@ -8,15 +9,24 @@ function App() {
     submission_type: "Named",
     reporter_category: "",
     complaint_category: "",
+    occurrence: "",
     incident_date: "",
     location: "",
     description: "",
+    awareness: "",
+    reported_before: "",
   });
 
+  // 👉 Next Step
   const next = () => setStep((prev) => prev + 1);
 
+  // 👉 Previous Step
+  const prev = () => setStep((prev) => prev - 1);
+
   return (
-    <div className="p-10">
+    <div>
+      
+      {/* STEP 1 */}
       {step === 1 && (
         <ReporterStep
           data={formData}
@@ -25,11 +35,23 @@ function App() {
         />
       )}
 
-      {step > 1 && (
+      {/* STEP 2 */}
+      {step === 2 && (
+        <ComplaintStep
+          data={formData}
+          setData={setFormData}
+          nextStep={next}
+          prevStep={prev}
+        />
+      )}
+
+      {/* FUTURE STEPS */}
+      {step > 2 && (
         <div className="text-center mt-10 text-xl">
-          Next steps not created yet
+          🚧 Next steps (Subjects, Evidence, Declaration) coming soon...
         </div>
       )}
+
     </div>
   );
 }
