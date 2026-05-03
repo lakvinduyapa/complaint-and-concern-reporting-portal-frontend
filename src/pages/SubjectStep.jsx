@@ -1,23 +1,33 @@
-import { useState } from "react";
 import { FaLock, FaUserPlus, FaExclamationTriangle } from "react-icons/fa";
 import Stepper from "../components/Stepper";
 
 export default function SubjectStep({ nextStep, prevStep, data, setData }) {
-  const [subjects, setSubjects] = useState([
+
+  // FIX: use global state instead of local state
+  const subjects = data.subjects || [
     { name: "", role: "", department: "", relationship: "" },
-  ]);
+  ];
 
   const handleChange = (index, e) => {
     const updated = [...subjects];
     updated[index][e.target.name] = e.target.value;
-    setSubjects(updated);
+
+    setData({
+      ...data,
+      subjects: updated, //  SAVE globally
+    });
   };
 
   const addSubject = () => {
-    setSubjects([
+    const updated = [
       ...subjects,
       { name: "", role: "", department: "", relationship: "" },
-    ]);
+    ];
+
+    setData({
+      ...data,
+      subjects: updated, //  SAVE globally
+    });
   };
 
   return (
@@ -39,7 +49,6 @@ export default function SubjectStep({ nextStep, prevStep, data, setData }) {
         </div>
       </div>
 
-      {/* Container */}
       <div className="max-w-5xl mx-auto py-10 px-4">
 
         <h2 className="text-2xl font-bold mb-1">
@@ -49,13 +58,10 @@ export default function SubjectStep({ nextStep, prevStep, data, setData }) {
           Please identify individuals involved in the incident.
         </p>
 
-        {/* Stepper */}
         <Stepper currentStep={3} />
 
-        {/* Card */}
         <div className="bg-white rounded-2xl shadow-md p-8">
 
-          {/* Section Header */}
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-semibold text-blue-600">
               Persons of Interest
@@ -67,10 +73,7 @@ export default function SubjectStep({ nextStep, prevStep, data, setData }) {
 
           {/* SUBJECT LOOP */}
           {subjects.map((sub, index) => (
-            <div
-              key={index}
-              className="border rounded-xl p-6 mb-6"
-            >
+            <div key={index} className="border rounded-xl p-6 mb-6">
               <h4 className="font-semibold mb-4">
                 {index + 1}. Subject Profile
               </h4>
@@ -122,7 +125,7 @@ export default function SubjectStep({ nextStep, prevStep, data, setData }) {
             Add Another Person Involved
           </button>
 
-          {/* Senior Management */}
+          {/* Senior Management FIXED */}
           <div className="mt-6 border-t pt-6">
             <div className="flex items-center gap-2 text-gray-700 mb-2">
               <FaExclamationTriangle className="text-yellow-500" />
@@ -131,34 +134,44 @@ export default function SubjectStep({ nextStep, prevStep, data, setData }) {
 
             <div className="flex gap-6 mt-2 text-sm">
               <label>
-                <input type="radio" name="senior" /> Yes
+                <input
+                  type="radio"
+                  name="involves_senior"
+                  value="Yes"
+                  checked={data.involves_senior === "Yes"}
+                  onChange={(e) =>
+                    setData({ ...data, involves_senior: e.target.value })
+                  }
+                /> Yes
               </label>
+
               <label>
-                <input type="radio" name="senior" /> No
+                <input
+                  type="radio"
+                  name="involves_senior"
+                  value="No"
+                  checked={data.involves_senior === "No"}
+                  onChange={(e) =>
+                    setData({ ...data, involves_senior: e.target.value })
+                  }
+                /> No
               </label>
             </div>
           </div>
 
           {/* Footer */}
           <div className="flex justify-between mt-8">
-            <button
-              onClick={prevStep}
-              className="border px-4 py-2 rounded-lg"
-            >
+            <button onClick={prevStep} className="border px-4 py-2 rounded-lg">
               ← Previous Step
             </button>
 
-            <button
-              onClick={nextStep}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg"
-            >
+            <button onClick={nextStep} className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg">
               Continue to Evidence →
             </button>
           </div>
 
         </div>
 
-        {/* Footer */}
         <p className="text-xs text-gray-400 text-center mt-6">
           © 2026 SLT Mobitel Internal Affairs Unit
         </p>
