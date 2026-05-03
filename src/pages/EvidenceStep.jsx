@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   FaLock,
   FaUpload,
@@ -11,17 +10,22 @@ import {
 import Stepper from "../components/Stepper";
 
 export default function EvidenceStep({ nextStep, prevStep, data, setData }) {
-  const [hasEvidence, setHasEvidence] = useState(true);
-  const [selectedTypes, setSelectedTypes] = useState([]);
-  const [files, setFiles] = useState([]);
+
+  //  FIX: use global state
+  const hasEvidence = data.hasEvidence ?? true;
+  const selectedTypes = data.selectedTypes || [];
+  const files = data.evidence || [];
 
   // toggle evidence types
   const toggleType = (type) => {
-    setSelectedTypes((prev) =>
-      prev.includes(type)
-        ? prev.filter((t) => t !== type)
-        : [...prev, type]
-    );
+    const updated = selectedTypes.includes(type)
+      ? selectedTypes.filter((t) => t !== type)
+      : [...selectedTypes, type];
+
+    setData({
+      ...data,
+      selectedTypes: updated,
+    });
   };
 
   // handle file upload
@@ -35,19 +39,17 @@ export default function EvidenceStep({ nextStep, prevStep, data, setData }) {
       return { file, error: null };
     });
 
-    setFiles((prev) => [...prev, ...validFiles]);
+    const updated = [...files, ...validFiles];
 
-    // save to global state
     setData({
       ...data,
-      evidence: [...(data.evidence || []), ...validFiles],
+      evidence: updated, //  save globally
     });
   };
 
   // delete file
   const removeFile = (index) => {
     const updated = files.filter((_, i) => i !== index);
-    setFiles(updated);
 
     setData({
       ...data,
@@ -71,7 +73,6 @@ export default function EvidenceStep({ nextStep, prevStep, data, setData }) {
         </div>
       </div>
 
-      {/* Container */}
       <div className="max-w-5xl mx-auto py-10 px-4">
 
         <h2 className="text-2xl font-bold mb-1">
@@ -89,7 +90,9 @@ export default function EvidenceStep({ nextStep, prevStep, data, setData }) {
 
           <div className="flex gap-4 mb-6">
             <button
-              onClick={() => setHasEvidence(true)}
+              onClick={() =>
+                setData({ ...data, hasEvidence: true })
+              }
               className={`px-6 py-2 border rounded ${
                 hasEvidence ? "bg-blue-50 border-blue-500" : ""
               }`}
@@ -98,7 +101,9 @@ export default function EvidenceStep({ nextStep, prevStep, data, setData }) {
             </button>
 
             <button
-              onClick={() => setHasEvidence(false)}
+              onClick={() =>
+                setData({ ...data, hasEvidence: false })
+              }
               className={`px-6 py-2 border rounded ${
                 !hasEvidence ? "bg-blue-50 border-blue-500" : ""
               }`}
@@ -180,20 +185,15 @@ export default function EvidenceStep({ nextStep, prevStep, data, setData }) {
 
           {/* Footer */}
           <div className="flex justify-between mt-6">
-            <button
-              onClick={prevStep}
-              className="border px-4 py-2 rounded"
-            >
+            <button onClick={prevStep} className="border px-4 py-2 rounded">
               ← Previous
             </button>
 
-            <button
-              onClick={nextStep}
-              className="bg-blue-500 text-white px-6 py-2 rounded"
-            >
+            <button onClick={nextStep} className="bg-blue-500 text-white px-6 py-2 rounded">
               Save and Continue →
             </button>
           </div>
+
         </div>
       </div>
     </div>
