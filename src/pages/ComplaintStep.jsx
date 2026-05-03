@@ -1,7 +1,16 @@
 import { FaLock, FaCalendarAlt, FaInfoCircle, FaClock } from "react-icons/fa";
 import Stepper from "../components/Stepper";
 
-export default function ComplaintStep({ nextStep, prevStep }) {
+export default function ComplaintStep({ nextStep, prevStep, data, setData }) {
+
+  //  handle change
+  const handleChange = (e) => {
+    setData({
+      ...data,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
 
@@ -22,28 +31,24 @@ export default function ComplaintStep({ nextStep, prevStep }) {
         </div>
       </div>
 
-      {/* Container */}
       <div className="max-w-5xl mx-auto py-10 px-4">
 
         <h2 className="text-2xl font-bold mb-1">
           Complaint Details
         </h2>
+
         <p className="text-gray-500 mb-6">
           Please provide comprehensive information regarding the incident you are reporting.
         </p>
 
-        {/* Stepper */}
         <Stepper currentStep={2} />
 
-        {/* Card */}
         <div className="bg-white rounded-2xl shadow-md p-8">
 
-          {/* Top Info */}
           <div className="bg-blue-50 border border-blue-200 text-blue-600 p-4 rounded-lg mb-6 text-sm">
             No login required. Your submission is confidential and protected by high-level encryption.
           </div>
 
-          {/* SECTION 1 */}
           <h3 className="text-lg font-semibold mb-4">
             Step 2: Nature of Incident
           </h3>
@@ -56,18 +61,33 @@ export default function ComplaintStep({ nextStep, prevStep }) {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <select className="border rounded-lg p-2">
-                <option>Select a category</option>
+
+              {/* CATEGORY */}
+              <select
+                name="complaint_category"
+                value={data.complaint_category || ""}
+                onChange={handleChange}
+                className="border rounded-lg p-2"
+              >
+                <option value="">Select a category</option>
                 <option>Fraud</option>
                 <option>Corruption</option>
                 <option>Harassment</option>
               </select>
 
-              <select className="border rounded-lg p-2">
+              {/* FREQUENCY */}
+              <select
+                name="frequency"
+                value={data.frequency || ""}
+                onChange={handleChange}
+                className="border rounded-lg p-2"
+              >
+                <option value="">Select frequency</option>
                 <option>One-time Incident</option>
                 <option>Repeated</option>
                 <option>Ongoing</option>
               </select>
+
             </div>
           </div>
 
@@ -79,11 +99,23 @@ export default function ComplaintStep({ nextStep, prevStep }) {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <input type="date" className="border rounded-lg p-2" />
+
               <input
+                type="date"
+                name="incident_date"
+                value={data.incident_date || ""}
+                onChange={handleChange}
+                className="border rounded-lg p-2"
+              />
+
+              <input
+                name="location"
+                value={data.location || ""}
+                onChange={handleChange}
                 placeholder="e.g. Head Office, 4th Floor"
                 className="border rounded-lg p-2"
               />
+
             </div>
           </div>
 
@@ -94,6 +126,9 @@ export default function ComplaintStep({ nextStep, prevStep }) {
             </h4>
 
             <textarea
+              name="description"
+              value={data.description || ""}
+              onChange={handleChange}
               rows="5"
               placeholder="Provide names, dates, amounts, or any specific details..."
               className="w-full border rounded-lg p-3"
@@ -116,10 +151,19 @@ export default function ComplaintStep({ nextStep, prevStep }) {
             </p>
 
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <label><input type="radio" name="aware" /> Direct Observation</label>
-              <label><input type="radio" name="aware" /> Informed by third-party</label>
-              <label><input type="radio" name="aware" /> Discovered via records/files</label>
-              <label><input type="radio" name="aware" /> Other means</label>
+
+              {["Direct Observation", "Third Party", "Records", "Other"].map((item) => (
+                <label key={item}>
+                  <input
+                    type="radio"
+                    name="awareness_method"
+                    value={item}
+                    checked={data.awareness_method === item}
+                    onChange={handleChange}
+                  /> {item}
+                </label>
+              ))}
+
             </div>
 
             <p className="text-sm mt-4">
@@ -127,31 +171,35 @@ export default function ComplaintStep({ nextStep, prevStep }) {
             </p>
 
             <div className="flex gap-4 mt-2 text-sm">
-              <label><input type="radio" name="reported" /> Yes</label>
-              <label><input type="radio" name="reported" /> No</label>
+
+              {["Yes", "No"].map((item) => (
+                <label key={item}>
+                  <input
+                    type="radio"
+                    name="reported_before"
+                    value={item}
+                    checked={data.reported_before === item}
+                    onChange={handleChange}
+                  /> {item}
+                </label>
+              ))}
+
             </div>
           </div>
 
           {/* Footer */}
           <div className="flex justify-between items-center mt-6">
-            <button
-              onClick={prevStep}
-              className="border px-4 py-2 rounded-lg"
-            >
+            <button onClick={prevStep} className="border px-4 py-2 rounded-lg">
               ← Previous Step
             </button>
 
-            <button
-              onClick={nextStep}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg"
-            >
+            <button onClick={nextStep} className="bg-blue-500 text-white px-6 py-2 rounded-lg">
               Continue →
             </button>
           </div>
 
         </div>
 
-        {/* Bottom */}
         <p className="text-xs text-gray-400 text-center mt-6">
           © 2026 SLT Mobitel Internal Affairs Unit. All rights reserved.
         </p>
