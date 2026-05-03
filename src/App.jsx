@@ -1,6 +1,9 @@
 import { useState } from "react";
 import ReporterStep from "./pages/ReporterStep";
 import ComplaintStep from "./pages/ComplaintStep";
+import SubjectStep from "./pages/SubjectStep";
+import EvidenceStep from "./pages/EvidenceStep";
+import DeclarationStep from "./pages/DeclarationStep";
 
 function App() {
   const [step, setStep] = useState(1);
@@ -17,10 +20,10 @@ function App() {
     reported_before: "",
   });
 
-  // 👉 Next Step
+  // Next Step
   const next = () => setStep((prev) => prev + 1);
 
-  // 👉 Previous Step
+  // Previous Step
   const prev = () => setStep((prev) => prev - 1);
 
   return (
@@ -45,11 +48,34 @@ function App() {
         />
       )}
 
-      {/* FUTURE STEPS */}
-      {step > 2 && (
-        <div className="text-center mt-10 text-xl">
-          🚧 Next steps (Subjects, Evidence, Declaration) coming soon...
-        </div>
+      {/* STEP 3 */}
+      {step === 3 && (
+        <SubjectStep
+          data={formData}
+          setData={setFormData}
+          nextStep={next}
+          prevStep={prev}
+        />
+      )}
+
+      {/* STEP 4 */}
+      {step === 4 && (
+        <EvidenceStep
+          data={formData}
+          setData={setFormData}
+          nextStep={next}
+          prevStep={prev}
+        />
+      )}
+
+      {/* STEP 5 */}
+      {step === 5 && (
+        <DeclarationStep
+          data={formData}
+          setData={setFormData}
+          nextStep={next}
+          prevStep={prev}
+        />
       )}
 
     </div>
