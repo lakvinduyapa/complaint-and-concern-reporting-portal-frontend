@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   FaUser,
   FaUserSecret,
@@ -9,9 +8,10 @@ import {
 import Stepper from "../components/Stepper";
 
 export default function ReporterStep({ next, data, setData }) {
-  const [isAnonymous, setIsAnonymous] = useState(false);
 
-  // handle input change
+  // FIX: derive state from global data
+  const isAnonymous = data.submission_type === "Anonymous";
+
   const handleChange = (e) => {
     setData({
       ...data,
@@ -39,29 +39,24 @@ export default function ReporterStep({ next, data, setData }) {
         </div>
       </div>
 
-      {/* Container */}
       <div className="max-w-5xl mx-auto py-10 px-4">
 
-        {/* Title */}
         <h2 className="text-2xl font-bold mb-1">
           Step 1: Reporter Details
         </h2>
+
         <p className="text-gray-500 mb-6">
           Start by identifying yourself or choose to remain anonymous.
         </p>
 
-        {/* Stepper */}
         <Stepper currentStep={1} />
 
-        {/* Card */}
         <div className="bg-white rounded-2xl shadow-md p-8">
 
-          {/* Info */}
           <div className="bg-blue-50 border border-blue-200 text-blue-600 p-4 rounded-lg mb-6 text-sm">
             No login required. Your submission is confidential and protected by high-level encryption.
           </div>
 
-          {/* Identity */}
           <h3 className="text-sm font-semibold text-gray-500 mb-3">
             REPORTING IDENTITY
           </h3>
@@ -70,10 +65,9 @@ export default function ReporterStep({ next, data, setData }) {
 
             {/* Named */}
             <div
-              onClick={() => {
-                setIsAnonymous(false);
-                setData({ ...data, submission_type: "Named" });
-              }}
+              onClick={() =>
+                setData({ ...data, submission_type: "Named" })
+              }
               className={`rounded-xl p-5 text-center cursor-pointer transition ${
                 !isAnonymous
                   ? "border-2 border-blue-500 bg-blue-50 shadow"
@@ -91,10 +85,9 @@ export default function ReporterStep({ next, data, setData }) {
 
             {/* Anonymous */}
             <div
-              onClick={() => {
-                setIsAnonymous(true);
-                setData({ ...data, submission_type: "Anonymous" });
-              }}
+              onClick={() =>
+                setData({ ...data, submission_type: "Anonymous" })
+              }
               className={`rounded-xl p-5 text-center cursor-pointer transition ${
                 isAnonymous
                   ? "border-2 border-blue-500 bg-blue-50 shadow"
@@ -112,7 +105,7 @@ export default function ReporterStep({ next, data, setData }) {
 
           </div>
 
-          {/* Anonymous Notice */}
+          {/* Notice */}
           {isAnonymous && (
             <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 p-3 rounded mb-6 text-sm">
               You are submitting anonymously. No personal details will be collected.
@@ -126,7 +119,7 @@ export default function ReporterStep({ next, data, setData }) {
             </label>
             <select
               name="reporter_category"
-              value={data.reporter_category}
+              value={data.reporter_category || ""}
               onChange={handleChange}
               className="w-full border rounded-lg p-2 text-sm"
             >
@@ -137,34 +130,33 @@ export default function ReporterStep({ next, data, setData }) {
             </select>
           </div>
 
-          {/* HIDDEN WHEN ANONYMOUS */}
+          {/* Named only */}
           {!isAnonymous && (
             <>
-              {/* Professional */}
               <h3 className="text-sm font-semibold text-gray-500 mb-3">
                 PROFESSIONAL IDENTITY
               </h3>
 
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <input name="full_name" placeholder="Full Name *" onChange={handleChange} className="input" />
-                <input name="employee_id" placeholder="Employee ID" onChange={handleChange} className="input" />
-                <input name="department" placeholder="Department *" onChange={handleChange} className="input" />
-                <input name="designation" placeholder="Designation *" onChange={handleChange} className="input" />
+                <input name="full_name" value={data.full_name || ""} onChange={handleChange} placeholder="Full Name *" className="input" />
+                <input name="employee_id" value={data.employee_id || ""} onChange={handleChange} placeholder="Employee ID" className="input" />
+                <input name="department" value={data.department || ""} onChange={handleChange} placeholder="Department *" className="input" />
+                <input name="designation" value={data.designation || ""} onChange={handleChange} placeholder="Designation *" className="input" />
               </div>
 
-              {/* Contact */}
               <h3 className="text-sm font-semibold text-gray-500 mb-3">
                 CONTACT INFORMATION
               </h3>
 
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <input name="email" placeholder="Email Address *" onChange={handleChange} className="input" />
-                <input name="phone" placeholder="Phone Number *" onChange={handleChange} className="input" />
+                <input name="email" value={data.email || ""} onChange={handleChange} placeholder="Email Address *" className="input" />
+                <input name="phone" value={data.phone || ""} onChange={handleChange} placeholder="Phone Number *" className="input" />
               </div>
 
               <div className="mb-6">
                 <select
                   name="contact_method"
+                  value={data.contact_method || ""}
                   onChange={handleChange}
                   className="w-full border rounded-lg p-2 text-sm"
                 >
@@ -189,9 +181,9 @@ export default function ReporterStep({ next, data, setData }) {
               Continue to Details →
             </button>
           </div>
+
         </div>
 
-        {/* Bottom */}
         <div className="grid grid-cols-3 text-center mt-10 text-gray-600 text-sm">
           <div className="flex flex-col items-center gap-1">
             <FaLock />
