@@ -1,35 +1,63 @@
 import { useState } from "react";
+
 import ReporterStep from "./pages/ReporterStep";
+import ComplaintStep from "./pages/ComplaintStep";
+import SubjectStep from "./pages/SubjectStep";
+import EvidenceStep from "./pages/EvidenceStep";
+import DeclarationStep from "./pages/DeclarationStep";
+import ConfirmationStep from "./pages/ConfirmationStep";
 
 function App() {
   const [step, setStep] = useState(1);
 
+  // FIXED STRUCTURE
   const [formData, setFormData] = useState({
-    submission_type: "Named",
-    reporter_category: "",
-    complaint_category: "",
-    incident_date: "",
-    location: "",
-    description: "",
+    userData: {
+      submissionType: "Anonymous",
+      reporterCategory: "",
+    },
+    complaintData: {},
+    subjectData: {},
+    evidenceData: {},
   });
 
-  const next = () => setStep((prev) => prev + 1);
+  const [crn, setCrn] = useState("");
+
+  const nextStep = () => setStep((prev) => prev + 1);
+  const prevStep = () => setStep((prev) => prev - 1);
 
   return (
-    <div className="p-10">
+    <div>
+
       {step === 1 && (
-        <ReporterStep
+        <ReporterStep data={formData} setData={setFormData} next={nextStep} />
+      )}
+
+      {step === 2 && (
+        <ComplaintStep data={formData} setData={setFormData} nextStep={nextStep} prevStep={prevStep} />
+      )}
+
+      {step === 3 && (
+        <SubjectStep data={formData} setData={setFormData} nextStep={nextStep} prevStep={prevStep} />
+      )}
+
+      {step === 4 && (
+        <EvidenceStep data={formData} setData={setFormData} nextStep={nextStep} prevStep={prevStep} />
+      )}
+
+      {step === 5 && (
+        <DeclarationStep
           data={formData}
-          setData={setFormData}
-          next={next}
+          nextStep={nextStep}
+          prevStep={prevStep}
+          setCrn={setCrn}
         />
       )}
 
-      {step > 1 && (
-        <div className="text-center mt-10 text-xl">
-          Next steps not created yet
-        </div>
+      {step === 6 && (
+        <ConfirmationStep crn={crn} data={formData} />
       )}
+
     </div>
   );
 }
