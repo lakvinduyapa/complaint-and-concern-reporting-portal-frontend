@@ -3,7 +3,7 @@ import { FaLock, FaExclamationTriangle } from "react-icons/fa";
 import Stepper from "../components/Stepper";
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/complaints";
+const API_URL = "http://localhost:5000/api/complaints/full-submit";
 
 export default function DeclarationStep({ nextStep, prevStep, data, setCrn }) {
 
@@ -21,29 +21,69 @@ export default function DeclarationStep({ nextStep, prevStep, data, setCrn }) {
 
       const formData = new FormData();
 
-      // FIX: avoid sending wrong fields
-      Object.keys(data).forEach((key) => {
-        if (
-          key !== "evidence" &&
-          key !== "evidence_file" &&
-          data[key] !== undefined &&
-          data[key] !== null
-        ) {
-          formData.append(key, data[key]);
-        }
-      });
+      // 🔥 SAFE DATA EXTRACTION
+      const userData = data.userData || {};
+      const complaintDataRaw = data.complaintData || {};
+      const subjectData = data.subjectData || {};
+      const evidenceRaw = data.evidenceData || {};
 
-      //  append file ONLY once correctly
-      if (data.evidence_file instanceof File) {
-        formData.append("evidence_file", data.evidence_file);
+      // ✅ FIX complaint data
+      const complaintData = {
+        ...complaintDataRaw,
+        previousReportDetails:
+          complaintDataRaw.reportedPreviously === "Yes"
+            ? complaintDataRaw.previousReportDetails || ""
+            : "",
+      };
+
+      // ✅ FINAL VALIDATION (important)
+      if (!complaintData.complaintCategory) {
+        alert("Complaint data missing");
+        setLoading(false);
+        return;
       }
 
-      const res = await axios.post(API_URL, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      if (
+        complaintData.reportedPreviously === "Yes" &&
+        !complaintData.previousReportDetails
+      ) {
+        alert("Please provide previous report details");
+        setLoading(false);
+        return;
+      }
 
+      // ✅ FIX evidence data (FULL MODEL MATCH)
+      const evidenceData = {
+        hasEvidence: evidenceRaw.hasEvidence || "No",
+        evidenceType: evidenceRaw.evidenceType || [],
+        witnessNames: evidenceRaw.witnessNames || [],
+        additionalInfo: evidenceRaw.additionalInfo || "",
+      };
+
+      // 🔥 APPEND JSON DATA
+      formData.append("userData", JSON.stringify(userData));
+      formData.append("complaintData", JSON.stringify(complaintData));
+      formData.append("subjectData", JSON.stringify(subjectData));
+      formData.append("evidenceData", JSON.stringify(evidenceData));
+
+      // 🔥 MULTIPLE FILE SUPPORT
+      if (evidenceRaw.files?.length > 0) {
+        evidenceRaw.files.forEach((file) => {
+          formData.append("files", file);
+        });
+      }
+
+      // 🔥 DEBUG (very useful)
+      const debugData = {};
+      formData.forEach((value, key) => {
+        debugData[key] = value;
+      });
+      console.log("FINAL SUBMIT DATA:", debugData);
+
+      // ✅ API CALL
+      const res = await axios.post(API_URL, formData);
+
+      // ✅ SAVE CRN
       if (setCrn) {
         setCrn(res.data.crn);
       }
@@ -51,7 +91,7 @@ export default function DeclarationStep({ nextStep, prevStep, data, setCrn }) {
       nextStep();
 
     } catch (err) {
-      console.error(err);
+      console.error("SUBMIT ERROR:", err);
       alert(err.response?.data?.error || "Submission failed");
     } finally {
       setLoading(false);
@@ -65,14 +105,6 @@ export default function DeclarationStep({ nextStep, prevStep, data, setCrn }) {
       <div className="bg-white border-b px-6 py-3 flex justify-between items-center">
         <div className="flex items-center gap-2 text-gray-700 font-medium">
           <FaLock /> Secure Portal
-        </div>
-
-        <div className="text-blue-600 font-semibold text-sm">
-          IAU Complaint Reporting Portal
-        </div>
-
-        <div className="text-xs text-blue-500 bg-blue-100 px-3 py-1 rounded-full">
-          LIVE PROTECTION
         </div>
       </div>
 
@@ -91,9 +123,8 @@ export default function DeclarationStep({ nextStep, prevStep, data, setCrn }) {
             <h4 className="font-semibold mb-2">
               Official Declaration Statement
             </h4>
-
             <p className="text-sm text-gray-600">
-              I confirm all details are correct.
+              I confirm all details are true and accurate.
             </p>
           </div>
 
@@ -116,7 +147,7 @@ export default function DeclarationStep({ nextStep, prevStep, data, setCrn }) {
             Consent processing
           </label>
 
-          {/* Notice */}
+          {/* Warning */}
           <div className="bg-orange-50 border p-3 rounded mb-6 flex gap-2">
             <FaExclamationTriangle />
             Logged securely

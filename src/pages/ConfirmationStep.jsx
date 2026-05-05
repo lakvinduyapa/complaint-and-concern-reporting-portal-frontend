@@ -5,18 +5,24 @@ import Stepper from "../components/Stepper";
 export default function ConfirmationStep({ data, crn }) {
   const [copied, setCopied] = useState(false);
 
-  const copyCRN = () => {
+  const copyCRN = async () => {
     if (!crn) return;
 
-    navigator.clipboard.writeText(crn);
-    setCopied(true);
-
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(crn);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      alert("Failed to copy CRN");
+    }
   };
 
   const handleReset = () => {
-    window.location.reload(); // simple reset
+    // 🔥 simple reset (keep for now)
+    window.location.reload();
   };
+
+  const fileCount = data?.evidenceData?.files?.length || 0;
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -30,20 +36,15 @@ export default function ConfirmationStep({ data, crn }) {
         <div className="text-blue-600 font-semibold text-sm">
           IAU Complaint Reporting Portal
         </div>
-
-        <div className="text-xs text-blue-500 bg-blue-100 px-3 py-1 rounded-full">
-          LIVE PROTECTION
-        </div>
       </div>
 
-      {/* Container */}
       <div className="max-w-4xl mx-auto py-10 px-4 text-center">
 
         <Stepper currentStep={6} />
 
         <div className="bg-white rounded-2xl shadow-md p-8">
 
-          {/* Success Icon */}
+          {/* Success */}
           <FaCheckCircle className="text-green-500 text-5xl mx-auto mb-4" />
 
           <h2 className="text-2xl font-bold mb-2">
@@ -51,7 +52,7 @@ export default function ConfirmationStep({ data, crn }) {
           </h2>
 
           <p className="text-gray-500 mb-6">
-            Your report has been securely transmitted to the Internal Affairs Unit.
+            Your report has been securely submitted.
           </p>
 
           {/* CRN */}
@@ -62,23 +63,23 @@ export default function ConfirmationStep({ data, crn }) {
 
             <div className="flex justify-center items-center gap-3">
               <h3 className="text-2xl font-bold">
-                {crn || "Generating..."}
+                {crn ? crn : "Generating..."}
               </h3>
 
               <FaCopy
-                className="cursor-pointer text-gray-500 hover:text-black"
+                className="cursor-pointer"
                 onClick={copyCRN}
               />
             </div>
 
-            <p className="text-xs text-gray-400 mt-2">
+            <p className="text-xs mt-2">
               {copied
-                ? "Copied to clipboard!"
-                : "Please save this number to track your complaint"}
+                ? "Copied!"
+                : "Save this number to track your complaint"}
             </p>
           </div>
 
-          {/* Details */}
+          {/* DETAILS */}
           <div className="grid grid-cols-2 gap-4 text-left mb-6">
 
             <div className="border p-3 rounded">
@@ -88,25 +89,29 @@ export default function ConfirmationStep({ data, crn }) {
 
             <div className="border p-3 rounded">
               <p className="text-xs text-gray-400">Report Type</p>
-              <p>{data?.submission_type || "-"}</p>
+              <p>{data?.userData?.submissionType || "-"}</p>
             </div>
 
             <div className="border p-3 rounded">
               <p className="text-xs text-gray-400">Category</p>
-              <p>{data?.complaint_category || "-"}</p>
+              <p>{data?.complaintData?.complaintCategory || "-"}</p>
             </div>
 
             <div className="border p-3 rounded">
               <p className="text-xs text-gray-400">Evidence</p>
-              <p>{data?.evidence_file ? "1 File" : "0 Files"}</p>
+              <p>
+                {fileCount > 0
+                  ? `${fileCount} File${fileCount > 1 ? "s" : ""}`
+                  : "No Files"}
+              </p>
             </div>
 
           </div>
 
-          {/* Button */}
+          {/* Reset */}
           <button
             onClick={handleReset}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg"
+            className="bg-blue-500 text-white px-6 py-2 rounded-lg"
           >
             Return to Home →
           </button>

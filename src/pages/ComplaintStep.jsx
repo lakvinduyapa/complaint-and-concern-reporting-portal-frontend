@@ -1,14 +1,50 @@
-import { FaLock, FaCalendarAlt, FaInfoCircle, FaClock } from "react-icons/fa";
+import { FaLock } from "react-icons/fa";
 import Stepper from "../components/Stepper";
 
 export default function ComplaintStep({ nextStep, prevStep, data, setData }) {
 
-  //  handle change
   const handleChange = (e) => {
-    setData({
-      ...data,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    setData((prev) => ({
+      ...prev,
+      complaintData: {
+        ...prev.complaintData,
+        [name]: value,
+      },
+    }));
+  };
+
+  const handleNext = () => {
+    const c = data.complaintData || {};
+
+    // ✅ Required validation
+    if (
+      !c.complaintCategory ||
+      !c.description ||
+      !c.incidentDate ||
+      !c.location ||
+      !c.frequency ||
+      !c.awarenessMethod ||
+      !c.reportedPreviously
+    ) {
+      alert("Please fill all required fields");
+      return;
+    }
+
+    // ✅ Description length
+    if (c.description.length < 50) {
+      alert("Description must be at least 50 characters");
+      return;
+    }
+
+    // ✅ Conditional validation
+    if (c.reportedPreviously === "Yes" && !c.previousReportDetails) {
+      alert("Please provide previous report details");
+      return;
+    }
+
+    nextStep();
   };
 
   return (
@@ -17,17 +53,7 @@ export default function ComplaintStep({ nextStep, prevStep, data, setData }) {
       {/* Header */}
       <div className="bg-white border-b px-6 py-3 flex justify-between items-center">
         <div className="flex items-center gap-2 text-gray-700 font-medium">
-          <FaLock />
-          Secure Portal
-        </div>
-
-        <div className="flex gap-3 text-xs">
-          <span className="text-blue-600 font-semibold">
-            IAU Complaint Reporting Portal
-          </span>
-          <span className="text-green-600 bg-green-100 px-3 py-1 rounded-full">
-            LIVE PROTECTION
-          </span>
+          <FaLock /> Secure Portal
         </div>
       </div>
 
@@ -37,173 +63,139 @@ export default function ComplaintStep({ nextStep, prevStep, data, setData }) {
           Complaint Details
         </h2>
 
-        <p className="text-gray-500 mb-6">
-          Please provide comprehensive information regarding the incident you are reporting.
-        </p>
-
         <Stepper currentStep={2} />
 
         <div className="bg-white rounded-2xl shadow-md p-8">
 
-          <div className="bg-blue-50 border border-blue-200 text-blue-600 p-4 rounded-lg mb-6 text-sm">
-            No login required. Your submission is confidential and protected by high-level encryption.
+          {/* CATEGORY */}
+          <select
+            name="complaintCategory"
+            value={data.complaintData?.complaintCategory || ""}
+            onChange={handleChange}
+            className="border rounded-lg p-2 mb-4"
+          >
+            <option value="">Select a category</option>
+
+            <option value="Bribery">Bribery</option>
+            <option value="Corruption">Corruption</option>
+            <option value="Fraud">Fraud</option>
+            <option value="Financial Misconduct">Financial Misconduct</option>
+            <option value="Abuse of Authority">Abuse of Authority</option>
+            <option value="Misappropriation">Misappropriation</option>
+            <option value="Conflict of Interest">Conflict of Interest</option>
+            <option value="Procurement Irregularity">Procurement Irregularity</option>
+            <option value="Falsification of Records">Falsification of Records</option>
+            <option value="Harassment">Harassment</option>
+            <option value="Workplace Misconduct">Workplace Misconduct</option>
+            <option value="Breach of Confidentiality">Breach of Confidentiality</option>
+            <option value="Non-compliance">Non-compliance</option>
+            <option value="Other Malpractice">Other Malpractice</option>
+          </select>
+
+          {/* INCIDENT DATE */}
+          <input
+            type="date"
+            name="incidentDate"
+            value={data.complaintData?.incidentDate || ""}
+            onChange={handleChange}
+            className="border rounded-lg p-2 mb-4 w-full"
+          />
+
+          {/* LOCATION */}
+          <input
+            type="text"
+            name="location"
+            placeholder="Enter location"
+            value={data.complaintData?.location || ""}
+            onChange={handleChange}
+            className="border rounded-lg p-2 mb-4 w-full"
+          />
+
+          {/* FREQUENCY */}
+          <select
+            name="frequency"
+            value={data.complaintData?.frequency || ""}
+            onChange={handleChange}
+            className="border rounded-lg p-2 mb-4"
+          >
+            <option value="">Select frequency</option>
+            <option value="One-time incident">One-time incident</option>
+            <option value="Repeated - periodic">Repeated - periodic</option>
+            <option value="Ongoing / continuous">Ongoing / continuous</option>
+            <option value="Unknown">Unknown</option>
+          </select>
+
+          {/* AWARENESS METHOD */}
+          <select
+            name="awarenessMethod"
+            value={data.complaintData?.awarenessMethod || ""}
+            onChange={handleChange}
+            className="border rounded-lg p-2 mb-4"
+          >
+            <option value="">How did you know?</option>
+            <option value="Direct witness">Direct witness</option>
+            <option value="Informed by another party">Informed by another party</option>
+            <option value="Discovered through documents or records">
+              Discovered through documents or records
+            </option>
+            <option value="Other">Other</option>
+          </select>
+
+          {/* DESCRIPTION */}
+          <textarea
+            name="description"
+            value={data.complaintData?.description || ""}
+            onChange={handleChange}
+            rows="5"
+            placeholder="Provide details (min 50 characters)..."
+            className="w-full border rounded-lg p-3 mb-4"
+          />
+
+          {/* REPORTED BEFORE */}
+          <p className="text-sm mt-4">
+            Has this matter been reported previously?
+          </p>
+
+          <div className="flex gap-4 mt-2 text-sm">
+            {["Yes", "No"].map((item) => (
+              <label key={item}>
+                <input
+                  type="radio"
+                  name="reportedPreviously"
+                  value={item}
+                  checked={data.complaintData?.reportedPreviously === item}
+                  onChange={handleChange}
+                /> {item}
+              </label>
+            ))}
           </div>
 
-          <h3 className="text-lg font-semibold mb-4">
-            Step 2: Nature of Incident
-          </h3>
-
-          {/* Classification */}
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-2 text-gray-700 font-semibold">
-              <FaInfoCircle className="text-blue-500" />
-              Classification
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-
-              {/* CATEGORY */}
-              <select
-                name="complaint_category"
-                value={data.complaint_category || ""}
-                onChange={handleChange}
-                className="border rounded-lg p-2"
-              >
-                <option value="">Select a category</option>
-                <option>Fraud</option>
-                <option>Corruption</option>
-                <option>Harassment</option>
-              </select>
-
-              {/* FREQUENCY */}
-              <select
-                name="frequency"
-                value={data.frequency || ""}
-                onChange={handleChange}
-                className="border rounded-lg p-2"
-              >
-                <option value="">Select frequency</option>
-                <option>One-time Incident</option>
-                <option>Repeated</option>
-                <option>Ongoing</option>
-              </select>
-
-            </div>
-          </div>
-
-          {/* Time & Location */}
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-2 text-gray-700 font-semibold">
-              <FaCalendarAlt className="text-blue-500" />
-              Time & Location
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-
-              <input
-                type="date"
-                name="incident_date"
-                value={data.incident_date || ""}
-                onChange={handleChange}
-                className="border rounded-lg p-2"
-              />
-
-              <input
-                name="location"
-                value={data.location || ""}
-                onChange={handleChange}
-                placeholder="e.g. Head Office, 4th Floor"
-                className="border rounded-lg p-2"
-              />
-
-            </div>
-          </div>
-
-          {/* Narrative */}
-          <div className="mb-6">
-            <h4 className="font-semibold mb-2">
-              Detailed Narrative
-            </h4>
-
+          {/* CONDITIONAL */}
+          {data.complaintData?.reportedPreviously === "Yes" && (
             <textarea
-              name="description"
-              value={data.description || ""}
+              name="previousReportDetails"
+              value={data.complaintData?.previousReportDetails || ""}
               onChange={handleChange}
-              rows="5"
-              placeholder="Provide names, dates, amounts, or any specific details..."
-              className="w-full border rounded-lg p-3"
+              placeholder="Provide details of previous report..."
+              className="w-full border rounded-lg p-3 mt-4"
             />
+          )}
 
-            <p className="text-xs text-gray-400 mt-1">
-              Focus on facts: who, what, when, and how.
-            </p>
-          </div>
-
-          {/* Awareness */}
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-2 text-gray-700 font-semibold">
-              <FaClock className="text-blue-500" />
-              Awareness & History
-            </div>
-
-            <p className="text-sm mb-3">
-              How did you become aware of this incident?
-            </p>
-
-            <div className="grid grid-cols-2 gap-4 text-sm">
-
-              {["Direct Observation", "Third Party", "Records", "Other"].map((item) => (
-                <label key={item}>
-                  <input
-                    type="radio"
-                    name="awareness_method"
-                    value={item}
-                    checked={data.awareness_method === item}
-                    onChange={handleChange}
-                  /> {item}
-                </label>
-              ))}
-
-            </div>
-
-            <p className="text-sm mt-4">
-              Has this matter been reported before?
-            </p>
-
-            <div className="flex gap-4 mt-2 text-sm">
-
-              {["Yes", "No"].map((item) => (
-                <label key={item}>
-                  <input
-                    type="radio"
-                    name="reported_before"
-                    value={item}
-                    checked={data.reported_before === item}
-                    onChange={handleChange}
-                  /> {item}
-                </label>
-              ))}
-
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="flex justify-between items-center mt-6">
+          {/* BUTTONS */}
+          <div className="flex justify-between mt-6">
             <button onClick={prevStep} className="border px-4 py-2 rounded-lg">
-              ← Previous Step
+              ← Previous
             </button>
 
-            <button onClick={nextStep} className="bg-blue-500 text-white px-6 py-2 rounded-lg">
+            <button
+              onClick={handleNext}
+              className="bg-blue-500 text-white px-6 py-2 rounded-lg"
+            >
               Continue →
             </button>
           </div>
 
         </div>
-
-        <p className="text-xs text-gray-400 text-center mt-6">
-          © 2026 SLT Mobitel Internal Affairs Unit. All rights reserved.
-        </p>
-
       </div>
     </div>
   );

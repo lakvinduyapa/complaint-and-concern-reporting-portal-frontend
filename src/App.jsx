@@ -10,23 +10,15 @@ import ConfirmationStep from "./pages/ConfirmationStep";
 function App() {
   const [step, setStep] = useState(1);
 
+  // FIXED STRUCTURE
   const [formData, setFormData] = useState({
-    submission_type: "Anonymous",
-    reporter_category: "",
-
-    complaint_category: "",
-    incident_date: "",
-    location: "",
-    frequency: "",
-    description: "",
-    awareness_method: "",
-    reported_before: "",
-    previous_outcome: "",
-
-    involves_senior: "",
-    senior_names: "",
-
-    evidence_file: "",
+    userData: {
+      submissionType: "Anonymous",
+      reporterCategory: "",
+    },
+    complaintData: {},
+    subjectData: {},
+    evidenceData: {},
   });
 
   const [crn, setCrn] = useState("");

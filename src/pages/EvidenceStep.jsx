@@ -1,63 +1,95 @@
 import {
   FaLock,
   FaUpload,
-  FaFileAlt,
-  FaImage,
-  FaEnvelope,
-  FaLink,
   FaTrash,
 } from "react-icons/fa";
 import Stepper from "../components/Stepper";
 
 export default function EvidenceStep({ nextStep, prevStep, data, setData }) {
 
-  const hasEvidence = data.hasEvidence ?? true;
-  const selectedTypes = data.selectedTypes || [];
-  const files = data.evidence || [];
+  const eData = data.evidenceData || {};
 
+  const hasEvidence = eData.hasEvidence === "Yes";
+  const selectedTypes = eData.evidenceType || [];
+  const files = eData.files || [];
+
+  // ✅ Toggle evidence type
   const toggleType = (type) => {
     const updated = selectedTypes.includes(type)
       ? selectedTypes.filter((t) => t !== type)
       : [...selectedTypes, type];
 
-    setData({
-      ...data,
-      selectedTypes: updated,
-    });
+    setData((prev) => ({
+      ...prev,
+      evidenceData: {
+        ...prev.evidenceData,
+        evidenceType: updated,
+      },
+    }));
   };
 
-  //  FIXED FILE HANDLER
+  // ✅ Handle Yes / No
+  const setHasEvidence = (value) => {
+    setData((prev) => ({
+      ...prev,
+      evidenceData: {
+        ...prev.evidenceData,
+        hasEvidence: value,
+        // 🔥 reset when No
+        ...(value === "No" && {
+          evidenceType: [],
+          files: [],
+        }),
+      },
+    }));
+  };
+
+  // ✅ Handle file upload
   const handleFiles = (e) => {
-    const uploaded = Array.from(e.target.files);
+    const file = e.target.files[0];
+    if (!file) return;
 
-    if (!uploaded.length) return;
-
-    const file = uploaded[0]; //  only take ONE file
-
-    // size validation
     if (file.size > 10 * 1024 * 1024) {
-      setData({
-        ...data,
-        evidence: [{ file, error: "File too large (Max 10MB)" }],
-        evidence_file: null,
-      });
+      alert("File too large (Max 10MB)");
       return;
     }
 
-    //  correct structure
-    setData({
-      ...data,
-      evidence: [{ file, error: null }],
-      evidence_file: file, //  important for backend
-    });
+    setData((prev) => ({
+      ...prev,
+      evidenceData: {
+        ...prev.evidenceData,
+        files: [...(prev.evidenceData?.files || []), file],
+      },
+    }));
   };
 
-  const removeFile = () => {
-    setData({
-      ...data,
-      evidence: [],
-      evidence_file: null,
-    });
+  const removeFile = (index) => {
+    const updated = files.filter((_, i) => i !== index);
+
+    setData((prev) => ({
+      ...prev,
+      evidenceData: {
+        ...prev.evidenceData,
+        files: updated,
+      },
+    }));
+  };
+
+  // ✅ NEXT VALIDATION
+  const handleNext = () => {
+    const e = data.evidenceData || {};
+
+    if (!e.hasEvidence) {
+      alert("Please select Yes or No");
+      return;
+    }
+
+    if (e.hasEvidence === "Yes" && (!e.evidenceType || e.evidenceType.length === 0)) {
+      alert("Please select at least one evidence type");
+      return;
+    }
+
+    nextStep();
   };
 
   return (
@@ -67,12 +99,6 @@ export default function EvidenceStep({ nextStep, prevStep, data, setData }) {
       <div className="bg-white border-b px-6 py-3 flex justify-between items-center">
         <div className="flex items-center gap-2 text-gray-700 font-medium">
           <FaLock /> Secure Portal
-        </div>
-        <div className="text-blue-600 font-semibold text-sm">
-          IAU Complaint Reporting Portal
-        </div>
-        <div className="text-xs text-blue-500 bg-blue-100 px-3 py-1 rounded-full">
-          LIVE PROTECTION
         </div>
       </div>
 
@@ -87,18 +113,18 @@ export default function EvidenceStep({ nextStep, prevStep, data, setData }) {
         <div className="bg-white rounded-2xl shadow-md p-8">
 
           {/* YES / NO */}
-          <p className="mb-3">Do you have evidence?</p>
+          <p className="mb-3">Do you have supporting evidence?</p>
 
           <div className="flex gap-4 mb-6">
             <button
-              onClick={() => setData({ ...data, hasEvidence: true })}
+              onClick={() => setHasEvidence("Yes")}
               className={`px-6 py-2 border rounded ${hasEvidence ? "bg-blue-50 border-blue-500" : ""}`}
             >
               Yes
             </button>
 
             <button
-              onClick={() => setData({ ...data, hasEvidence: false })}
+              onClick={() => setHasEvidence("No")}
               className={`px-6 py-2 border rounded ${!hasEvidence ? "bg-blue-50 border-blue-500" : ""}`}
             >
               No
@@ -110,22 +136,25 @@ export default function EvidenceStep({ nextStep, prevStep, data, setData }) {
               {/* TYPES */}
               <div className="grid grid-cols-4 gap-4 mb-6">
                 {[
-                  { name: "Documents", icon: <FaFileAlt /> },
-                  { name: "Photos", icon: <FaImage /> },
-                  { name: "Emails", icon: <FaEnvelope /> },
-                  { name: "Web Links", icon: <FaLink /> },
-                ].map((item) => (
+                  "Documents",
+                  "Records",
+                  "Email or Communication",
+                  "Photographs",
+                  "Videos",
+                  "Witness testimony",
+                  "Financial records",
+                  "Other"
+                ].map((type) => (
                   <div
-                    key={item.name}
-                    onClick={() => toggleType(item.name)}
+                    key={type}
+                    onClick={() => toggleType(type)}
                     className={`p-4 border rounded cursor-pointer text-center ${
-                      selectedTypes.includes(item.name)
+                      selectedTypes.includes(type)
                         ? "bg-blue-50 border-blue-500"
                         : ""
                     }`}
                   >
-                    {item.icon}
-                    <p className="text-sm mt-2">{item.name}</p>
+                    <p>{type}</p>
                   </div>
                 ))}
               </div>
@@ -141,27 +170,13 @@ export default function EvidenceStep({ nextStep, prevStep, data, setData }) {
                     onChange={handleFiles}
                   />
                 </label>
-                <p className="text-xs text-gray-400">
-                  Max 1 file (backend supports single file)
-                </p>
               </div>
 
               {/* FILE LIST */}
-              {files.map((item, index) => (
-                <div key={index} className="border p-3 rounded mb-2 flex justify-between items-center">
-                  <div>
-                    <p className="text-sm">{item.file.name}</p>
-                    {item.error ? (
-                      <p className="text-red-500 text-xs">{item.error}</p>
-                    ) : (
-                      <p className="text-green-500 text-xs">Ready</p>
-                    )}
-                  </div>
-
-                  <FaTrash
-                    className="cursor-pointer text-gray-400"
-                    onClick={removeFile}
-                  />
+              {files.map((file, index) => (
+                <div key={index} className="border p-3 rounded mb-2 flex justify-between">
+                  <span>{file.name}</span>
+                  <FaTrash onClick={() => removeFile(index)} className="cursor-pointer" />
                 </div>
               ))}
             </>
@@ -169,16 +184,8 @@ export default function EvidenceStep({ nextStep, prevStep, data, setData }) {
 
           {/* Footer */}
           <div className="flex justify-between mt-6">
-            <button onClick={prevStep} className="border px-4 py-2 rounded">
-              ← Previous
-            </button>
-
-            <button
-              onClick={nextStep}
-              className="bg-blue-500 text-white px-6 py-2 rounded"
-            >
-              Save and Continue →
-            </button>
+            <button onClick={prevStep}>← Back</button>
+            <button onClick={handleNext}>Next →</button>
           </div>
 
         </div>

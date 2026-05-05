@@ -2,21 +2,66 @@ import {
   FaUser,
   FaUserSecret,
   FaLock,
-  FaShieldAlt,
-  FaClock,
 } from "react-icons/fa";
 import Stepper from "../components/Stepper";
 
 export default function ReporterStep({ next, data, setData }) {
 
-  // FIX: derive state from global data
-  const isAnonymous = data.submission_type === "Anonymous";
+  const isAnonymous = data.userData?.submissionType === "Anonymous";
 
+  // Handle change
   const handleChange = (e) => {
-    setData({
-      ...data,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    setData((prev) => ({
+      ...prev,
+      userData: {
+        ...prev.userData,
+        [name]: value,
+      },
+    }));
+  };
+
+  // Identity selection
+  const handleIdentity = (type) => {
+    setData((prev) => ({
+      ...prev,
+      userData: {
+        submissionType: type,
+
+        // 🔥 CLEAR DATA IF ANONYMOUS
+        ...(type === "Anonymous" && {
+          fullName: "",
+          email: "",
+          telephone: "",
+          preferredContactMethod: "",
+        }),
+      },
+    }));
+  };
+
+  // NEXT STEP VALIDATION
+  const handleNext = () => {
+    const u = data.userData || {};
+
+    if (!u.submissionType) {
+      alert("Please select reporting type");
+      return;
+    }
+
+    if (!u.reporterCategory) {
+      alert("Please select reporter category");
+      return;
+    }
+
+    if (u.submissionType === "Named") {
+      if (!u.fullName || !u.email) {
+        alert("Name and Email are required");
+        return;
+      }
+    }
+
+    next();
   };
 
   return (
@@ -53,154 +98,101 @@ export default function ReporterStep({ next, data, setData }) {
 
         <div className="bg-white rounded-2xl shadow-md p-8">
 
-          <div className="bg-blue-50 border border-blue-200 text-blue-600 p-4 rounded-lg mb-6 text-sm">
-            No login required. Your submission is confidential and protected by high-level encryption.
-          </div>
-
-          <h3 className="text-sm font-semibold text-gray-500 mb-3">
-            REPORTING IDENTITY
-          </h3>
-
+          {/* Identity */}
           <div className="grid grid-cols-2 gap-4 mb-6">
 
-            {/* Named */}
             <div
-              onClick={() =>
-                setData({ ...data, submission_type: "Named" })
-              }
-              className={`rounded-xl p-5 text-center cursor-pointer transition ${
-                !isAnonymous
-                  ? "border-2 border-blue-500 bg-blue-50 shadow"
-                  : "border hover:shadow"
+              onClick={() => handleIdentity("Named")}
+              className={`rounded-xl p-5 text-center cursor-pointer ${
+                !isAnonymous ? "border-2 border-blue-500 bg-blue-50" : "border"
               }`}
             >
-              <FaUser className={`mx-auto text-lg mb-2 ${
-                !isAnonymous ? "text-blue-500" : "text-gray-400"
-              }`} />
-              <p className="font-semibold">Named Reporting</p>
-              <p className="text-xs text-gray-500">
-                Provide your details for follow-up and protection.
-              </p>
+              <FaUser className="mx-auto mb-2" />
+              <p>Named Reporting</p>
             </div>
 
-            {/* Anonymous */}
             <div
-              onClick={() =>
-                setData({ ...data, submission_type: "Anonymous" })
-              }
-              className={`rounded-xl p-5 text-center cursor-pointer transition ${
-                isAnonymous
-                  ? "border-2 border-blue-500 bg-blue-50 shadow"
-                  : "border hover:shadow"
+              onClick={() => handleIdentity("Anonymous")}
+              className={`rounded-xl p-5 text-center cursor-pointer ${
+                isAnonymous ? "border-2 border-blue-500 bg-blue-50" : "border"
               }`}
             >
-              <FaUserSecret className={`mx-auto text-lg mb-2 ${
-                isAnonymous ? "text-blue-500" : "text-gray-400"
-              }`} />
-              <p className="font-semibold">Anonymous Reporting</p>
-              <p className="text-xs text-gray-500">
-                No personal identification required.
-              </p>
+              <FaUserSecret className="mx-auto mb-2" />
+              <p>Anonymous Reporting</p>
             </div>
 
           </div>
-
-          {/* Notice */}
-          {isAnonymous && (
-            <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 p-3 rounded mb-6 text-sm">
-              You are submitting anonymously. No personal details will be collected.
-            </div>
-          )}
 
           {/* Category */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold mb-1">
-              Reporter Category *
-            </label>
-            <select
-              name="reporter_category"
-              value={data.reporter_category || ""}
-              onChange={handleChange}
-              className="w-full border rounded-lg p-2 text-sm"
-            >
-              <option value="">Select category</option>
-              <option>Permanent Employee</option>
-              <option>Contract Employee</option>
-              <option>External Party</option>
-            </select>
-          </div>
+          <select
+            name="reporterCategory"
+            value={data.userData?.reporterCategory || ""}
+            onChange={handleChange}
+            className="w-full border p-2 mb-4"
+          >
+            <option value="">Select category</option>
+            <option>Employee</option>
+            <option>Vendor</option>
+            <option>Supplier</option>
+            <option>Contractor</option>
+            <option>Customer</option>
+            <option>Shareholder</option>
+            <option>General Public</option>
+            <option>Other</option>
+          </select>
 
           {/* Named only */}
           {!isAnonymous && (
             <>
-              <h3 className="text-sm font-semibold text-gray-500 mb-3">
-                PROFESSIONAL IDENTITY
-              </h3>
+              <input
+                name="fullName"
+                value={data.userData?.fullName || ""}
+                onChange={handleChange}
+                placeholder="Full Name"
+                className="input"
+              />
 
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <input name="full_name" value={data.full_name || ""} onChange={handleChange} placeholder="Full Name *" className="input" />
-                <input name="employee_id" value={data.employee_id || ""} onChange={handleChange} placeholder="Employee ID" className="input" />
-                <input name="department" value={data.department || ""} onChange={handleChange} placeholder="Department *" className="input" />
-                <input name="designation" value={data.designation || ""} onChange={handleChange} placeholder="Designation *" className="input" />
-              </div>
+              <input
+                name="email"
+                value={data.userData?.email || ""}
+                onChange={handleChange}
+                placeholder="Email"
+                className="input"
+              />
 
-              <h3 className="text-sm font-semibold text-gray-500 mb-3">
-                CONTACT INFORMATION
-              </h3>
+              <input
+                name="telephone"
+                value={data.userData?.telephone || ""}
+                onChange={handleChange}
+                placeholder="Phone"
+                className="input"
+              />
 
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <input name="email" value={data.email || ""} onChange={handleChange} placeholder="Email Address *" className="input" />
-                <input name="phone" value={data.phone || ""} onChange={handleChange} placeholder="Phone Number *" className="input" />
-              </div>
-
-              <div className="mb-6">
-                <select
-                  name="contact_method"
-                  value={data.contact_method || ""}
-                  onChange={handleChange}
-                  className="w-full border rounded-lg p-2 text-sm"
-                >
-                  <option value="">Preferred Contact Method</option>
-                  <option>Email</option>
-                  <option>Phone</option>
-                </select>
-              </div>
+              <select
+                name="preferredContactMethod"
+                value={data.userData?.preferredContactMethod || ""}
+                onChange={handleChange}
+                className="input"
+              >
+                <option value="">Contact Method</option>
+                <option>Email</option>
+                <option>Phone</option>
+                <option>None</option>
+              </select>
             </>
           )}
 
           {/* Footer */}
-          <div className="flex justify-between items-center mt-6">
-            <p className="text-xs text-gray-400 flex items-center gap-1">
-              <FaLock /> Your progress is automatically saved
-            </p>
-
+          <div className="flex justify-end mt-6">
             <button
-              onClick={next}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg shadow"
+              onClick={handleNext}
+              className="bg-blue-500 text-white px-6 py-2 rounded"
             >
-              Continue to Details →
+              Continue →
             </button>
           </div>
 
         </div>
-
-        <div className="grid grid-cols-3 text-center mt-10 text-gray-600 text-sm">
-          <div className="flex flex-col items-center gap-1">
-            <FaLock />
-            <p>Data Privacy</p>
-          </div>
-
-          <div className="flex flex-col items-center gap-1">
-            <FaShieldAlt />
-            <p>Anti-Retaliation</p>
-          </div>
-
-          <div className="flex flex-col items-center gap-1">
-            <FaClock />
-            <p>24/7 Monitoring</p>
-          </div>
-        </div>
-
       </div>
     </div>
   );

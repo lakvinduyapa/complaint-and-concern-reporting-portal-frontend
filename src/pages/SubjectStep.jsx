@@ -1,33 +1,101 @@
-import { FaLock, FaUserPlus, FaExclamationTriangle } from "react-icons/fa";
+import { FaLock, FaUserPlus } from "react-icons/fa";
 import Stepper from "../components/Stepper";
 
 export default function SubjectStep({ nextStep, prevStep, data, setData }) {
 
-  // FIX: use global state instead of local state
-  const subjects = data.subjects || [
-    { name: "", role: "", department: "", relationship: "" },
+  const subjects = data.subjectData?.subjects || [
+    { name: "", designation: "", organisation: "", relationshipToReporter: "" },
   ];
 
+  // Handle input change
   const handleChange = (index, e) => {
     const updated = [...subjects];
     updated[index][e.target.name] = e.target.value;
 
-    setData({
-      ...data,
-      subjects: updated, //  SAVE globally
-    });
+    setData((prev) => ({
+      ...prev,
+      subjectData: {
+        ...prev.subjectData,
+        subjects: updated,
+      },
+    }));
   };
 
+  // Add subject
   const addSubject = () => {
     const updated = [
       ...subjects,
-      { name: "", role: "", department: "", relationship: "" },
+      { name: "", designation: "", organisation: "", relationshipToReporter: "" },
     ];
 
-    setData({
+    setData((prev) => ({
+      ...prev,
+      subjectData: {
+        ...prev.subjectData,
+        subjects: updated,
+      },
+    }));
+  };
+
+  // Senior management selection
+  const handleSenior = (value) => {
+    setData((prev) => ({
+      ...prev,
+      subjectData: {
+        ...prev.subjectData,
+        involvesSeniorManagement: value,
+      },
+    }));
+  };
+
+  // Senior names input
+  const handleSeniorNames = (value) => {
+    const namesArray = value.split(",").map((n) => n.trim());
+
+    setData((prev) => ({
+      ...prev,
+      subjectData: {
+        ...prev.subjectData,
+        seniorPersonNames: namesArray,
+      },
+    }));
+  };
+
+  // NEXT STEP
+  const handleNext = () => {
+    const s = data.subjectData || {};
+
+    // ✅ validation
+    if (!s.involvesSeniorManagement) {
+      alert("Please select senior management involvement");
+      return;
+    }
+
+    if (
+      s.involvesSeniorManagement === "Yes" &&
+      (!s.seniorPersonNames || s.seniorPersonNames.length === 0)
+    ) {
+      alert("Please enter senior person names");
+      return;
+    }
+
+    // ✅ transform correctly for backend
+    const names = subjects.map((sub) => sub.name || "Unknown");
+
+    const updatedData = {
       ...data,
-      subjects: updated, //  SAVE globally
-    });
+      subjectData: {
+        ...s,
+        names,
+        designation: subjects[0]?.designation || "",
+        organisation: subjects[0]?.organisation || "Unknown",
+        relationshipToReporter:
+          subjects[0]?.relationshipToReporter || "Unknown",
+      },
+    };
+
+    setData(updatedData);
+    nextStep(updatedData);
   };
 
   return (
@@ -36,16 +104,7 @@ export default function SubjectStep({ nextStep, prevStep, data, setData }) {
       {/* Header */}
       <div className="bg-white border-b px-6 py-3 flex justify-between items-center">
         <div className="flex items-center gap-2 text-gray-700 font-medium">
-          <FaLock />
-          Secure Portal
-        </div>
-
-        <div className="text-blue-600 font-semibold text-sm">
-          IAU Complaint Reporting Portal
-        </div>
-
-        <div className="text-xs text-blue-500 bg-blue-100 px-3 py-1 rounded-full">
-          LIVE PROTECTION
+          <FaLock /> Secure Portal
         </div>
       </div>
 
@@ -54,26 +113,15 @@ export default function SubjectStep({ nextStep, prevStep, data, setData }) {
         <h2 className="text-2xl font-bold mb-1">
           Subject Information
         </h2>
-        <p className="text-gray-500 mb-6">
-          Please identify individuals involved in the incident.
-        </p>
 
         <Stepper currentStep={3} />
 
         <div className="bg-white rounded-2xl shadow-md p-8">
 
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="font-semibold text-blue-600">
-              Persons of Interest
-            </h3>
-            <span className="text-green-600 bg-green-100 px-3 py-1 rounded-full text-xs">
-              CONFIDENTIAL
-            </span>
-          </div>
-
-          {/* SUBJECT LOOP */}
+          {/* Subjects */}
           {subjects.map((sub, index) => (
             <div key={index} className="border rounded-xl p-6 mb-6">
+
               <h4 className="font-semibold mb-4">
                 {index + 1}. Subject Profile
               </h4>
@@ -83,99 +131,78 @@ export default function SubjectStep({ nextStep, prevStep, data, setData }) {
                   name="name"
                   value={sub.name}
                   onChange={(e) => handleChange(index, e)}
-                  placeholder="Full Name / Identity"
+                  placeholder="Full Name"
                   className="border p-2 rounded"
                 />
 
                 <input
-                  name="role"
-                  value={sub.role}
+                  name="designation"
+                  value={sub.designation}
                   onChange={(e) => handleChange(index, e)}
-                  placeholder="Role or Designation"
+                  placeholder="Designation / Role"
                   className="border p-2 rounded"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <input
-                  name="department"
-                  value={sub.department}
+                  name="organisation"
+                  value={sub.organisation}
                   onChange={(e) => handleChange(index, e)}
-                  placeholder="Department / Organization"
+                  placeholder="Organization (SLT / Mobitel / etc)"
                   className="border p-2 rounded"
                 />
 
                 <input
-                  name="relationship"
-                  value={sub.relationship}
+                  name="relationshipToReporter"
+                  value={sub.relationshipToReporter}
                   onChange={(e) => handleChange(index, e)}
-                  placeholder="Relationship to You"
+                  placeholder="Relationship"
                   className="border p-2 rounded"
                 />
               </div>
+
             </div>
           ))}
 
-          {/* Add Button */}
-          <button
-            onClick={addSubject}
-            className="w-full border-dashed border-2 p-3 rounded-lg text-gray-600 flex items-center justify-center gap-2 hover:bg-gray-50"
-          >
-            <FaUserPlus />
-            Add Another Person Involved
+          {/* Add */}
+          <button onClick={addSubject} className="w-full border-dashed border p-3 mt-2">
+            <FaUserPlus /> Add Another
           </button>
 
-          {/* Senior Management FIXED */}
-          <div className="mt-6 border-t pt-6">
-            <div className="flex items-center gap-2 text-gray-700 mb-2">
-              <FaExclamationTriangle className="text-yellow-500" />
-              Does this case involve Senior Management?
-            </div>
+          {/* Senior */}
+          <div className="mt-6">
+            <p>Senior Management involved?</p>
 
-            <div className="flex gap-6 mt-2 text-sm">
-              <label>
+            {["Yes", "No", "Unsure"].map((item) => (
+              <label key={item} className="mr-4">
                 <input
                   type="radio"
-                  name="involves_senior"
-                  value="Yes"
-                  checked={data.involves_senior === "Yes"}
-                  onChange={(e) =>
-                    setData({ ...data, involves_senior: e.target.value })
-                  }
-                /> Yes
+                  value={item}
+                  checked={data.subjectData?.involvesSeniorManagement === item}
+                  onChange={() => handleSenior(item)}
+                /> {item}
               </label>
-
-              <label>
-                <input
-                  type="radio"
-                  name="involves_senior"
-                  value="No"
-                  checked={data.involves_senior === "No"}
-                  onChange={(e) =>
-                    setData({ ...data, involves_senior: e.target.value })
-                  }
-                /> No
-              </label>
-            </div>
+            ))}
           </div>
+
+          {/* Senior Names */}
+          {data.subjectData?.involvesSeniorManagement === "Yes" && (
+            <input
+              type="text"
+              placeholder="Enter senior person names (comma separated)"
+              className="border p-2 mt-4 w-full"
+              onChange={(e) => handleSeniorNames(e.target.value)}
+            />
+          )}
 
           {/* Footer */}
           <div className="flex justify-between mt-8">
-            <button onClick={prevStep} className="border px-4 py-2 rounded-lg">
-              ← Previous Step
-            </button>
-
-            <button onClick={nextStep} className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg">
-              Continue to Evidence →
-            </button>
+            <button onClick={prevStep}>← Back</button>
+            <button onClick={handleNext}>Next →</button>
           </div>
 
         </div>
-
-        <p className="text-xs text-gray-400 text-center mt-6">
-          © 2026 SLT Mobitel Internal Affairs Unit
-        </p>
-
       </div>
     </div>
   );
