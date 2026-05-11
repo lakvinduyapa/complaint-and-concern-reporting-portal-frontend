@@ -6,17 +6,22 @@ import App from "./App.jsx";
 import "./index.css";
 
 import { ComplaintProvider } from "./context/ComplaintContext";
+import { AdminAuthProvider } from "./context/AdminAuthProvider";
 
 
 createRoot(document.getElementById("root")).render(
 
   <StrictMode>
 
-    <ComplaintProvider>
+    <AdminAuthProvider>
 
-      <App />
+      <ComplaintProvider>
 
-    </ComplaintProvider>
+        <App />
+
+      </ComplaintProvider>
+
+    </AdminAuthProvider>
 
   </StrictMode>
 

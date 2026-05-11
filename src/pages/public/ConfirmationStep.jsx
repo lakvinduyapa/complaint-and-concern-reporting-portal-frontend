@@ -24,7 +24,7 @@ const ConfirmationStep = () => {
   const submittedAt = submissionResult?.data?.submittedAt
     ? new Date(submissionResult.data.submittedAt).toLocaleDateString()
     : new Date().toLocaleDateString();
-  const category = complaintData?.complaint?.category || "N/A";
+  const category = submissionResult?.data?.category || complaintData?.complaint?.category || "N/A";
   const uploadSummary = submissionResult?.uploadSummary;
 
   const handleCopy = async () => {

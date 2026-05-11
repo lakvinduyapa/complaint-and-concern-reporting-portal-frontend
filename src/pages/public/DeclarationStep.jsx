@@ -10,7 +10,7 @@ import { uploadEvidence } from "../../services/uploadService";
 const DeclarationStep = () => {
 
   const navigate = useNavigate();
-  const { complaintData, setComplaintData, setSubmissionResult } = useComplaint();
+  const { complaintData, setComplaintData, setSubmissionResult, resetComplaintDraft } = useComplaint();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [uploadWarning, setUploadWarning] = useState("");
@@ -130,8 +130,14 @@ const DeclarationStep = () => {
 
       setSubmissionResult({
         ...response,
+        data: {
+          ...response?.data,
+          category: complaintData.complaint.category
+        },
         uploadSummary
       });
+
+      resetComplaintDraft();
       navigate("/confirmation");
 
     } catch (err) {

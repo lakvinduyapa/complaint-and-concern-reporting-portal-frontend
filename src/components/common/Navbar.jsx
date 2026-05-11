@@ -1,4 +1,5 @@
 import { FaShieldAlt } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 
 
 const Navbar = () => {
@@ -7,7 +8,7 @@ const Navbar = () => {
 
     <header className="bg-white shadow-sm border-b border-gray-200">
 
-      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center gap-4">
 
         {/* Left Side */}
         <div className="flex items-center gap-3">
@@ -38,20 +39,53 @@ const Navbar = () => {
 
 
 
+        {/* Middle Navigation */}
+        <div className="hidden md:flex items-center gap-3 ml-auto">
+
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) =>
+              `px-4 py-2 text-sm font-semibold rounded-lg transition-colors border ${
+                isActive
+                  ? 'text-blue-600 border-blue-200 bg-blue-50'
+                  : 'text-gray-600 border-gray-200 hover:bg-gray-100'
+              }`
+            }
+          >
+            Home
+          </NavLink>
+
+          <NavLink
+            to="/track-complaint"
+            className={({ isActive }) =>
+              `px-4 py-2 text-sm font-semibold rounded-lg transition-colors border ${
+                isActive
+                  ? 'text-blue-600 border-blue-200 bg-blue-50'
+                  : 'text-gray-600 border-gray-200 hover:bg-gray-100'
+              }`
+            }
+          >
+            Track Status
+          </NavLink>
+
+        </div>
+
         {/* Right Side */}
         <div className="flex items-center gap-3">
 
-          <span className="hidden md:flex bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">
-
-            CONFIDENTIAL
-
-          </span>
-
-          <span className="hidden md:flex bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">
-
-            SECURE CONNECTION
-
-          </span>
+          <NavLink
+            to="/admin/login"
+            className={({ isActive }) =>
+              `ml-2 px-4 py-2 text-sm font-semibold rounded-lg transition-colors border ${
+                isActive
+                  ? 'text-blue-600 border-blue-200 bg-blue-50'
+                  : 'text-gray-600 border-gray-200 hover:bg-gray-100'
+              }`
+            }
+          >
+            Admin Portal
+          </NavLink>
 
         </div>
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ComplaintContext } from "./complaintContextObject";
 
@@ -7,113 +7,186 @@ import { ComplaintContext } from "./complaintContextObject";
 // Complaint Provider
 // ========================================
 
-export const ComplaintProvider = ({ children }) => {
+const DRAFT_STORAGE_KEY = "complaintPortalDraft";
 
-  const [complaintData, setComplaintData] = useState({
+const defaultComplaintData = {
 
-    // ====================================
-    // Reporter Information
-    // ====================================
+  // ====================================
+  // Reporter Information
+  // ====================================
 
-    reporter: {
+  reporter: {
 
-      submissionType: "named",
+    submissionType: "named",
 
-      reporterCategory: "",
+    reporterCategory: "",
+
+    fullName: "",
+
+    organization: "",
+
+    email: "",
+
+    phone: "",
+
+    preferredContact: ""
+
+  },
+
+
+  // ====================================
+  // Complaint Information
+  // ====================================
+
+  complaint: {
+
+    category: "",
+
+    incidentDate: "",
+
+    incidentLocation: "",
+
+    frequency: "",
+
+    awarenessMethod: "",
+
+    description: "",
+
+    previouslyReported: false,
+
+    previousReportDetails: ""
+
+  },
+
+
+  // ====================================
+  // Subject Information
+  // ====================================
+
+  subjects: [
+
+    {
 
       fullName: "",
 
+      designation: "",
+
       organization: "",
 
-      email: "",
-
-      phone: "",
-
-      preferredContact: ""
-
-    },
-
-
-    // ====================================
-    // Complaint Information
-    // ====================================
-
-    complaint: {
-
-      category: "",
-
-      incidentDate: "",
-
-      incidentLocation: "",
-
-      frequency: "",
-
-      awarenessMethod: "",
-
-      description: "",
-
-      previouslyReported: false,
-
-      previousReportDetails: ""
-
-    },
-
-
-    // ====================================
-    // Subject Information
-    // ====================================
-
-    subjects: [
-
-      {
-
-        fullName: "",
-
-        designation: "",
-
-        organization: "",
-
-        relationship: ""
-
-      }
-
-    ],
-
-
-    // ====================================
-    // Evidence Information
-    // ====================================
-
-    evidence: {
-
-      evidenceTypes: [],
-
-      witnessInfo: "",
-
-      additionalNotes: "",
-
-      files: []
-
-    },
-
-
-    // ====================================
-    // Declaration
-    // ====================================
-
-    declaration: {
-
-      truthful: false,
-
-      consent: false,
-
-      auditAcknowledgement: false
+      relationship: ""
 
     }
 
-  });
+  ],
+
+
+  // ====================================
+  // Evidence Information
+  // ====================================
+
+  evidence: {
+
+    evidenceTypes: [],
+
+    witnessInfo: "",
+
+    additionalNotes: "",
+
+    files: []
+
+  },
+
+
+  // ====================================
+  // Declaration
+  // ====================================
+
+  declaration: {
+
+    truthful: false,
+
+    consent: false,
+
+    auditAcknowledgement: false
+
+  }
+
+};
+
+const hydrateComplaintData = (storedData) => {
+  if (!storedData || typeof storedData !== "object") {
+    return defaultComplaintData;
+  }
+
+  return {
+    ...defaultComplaintData,
+    ...storedData,
+    reporter: {
+      ...defaultComplaintData.reporter,
+      ...(storedData.reporter || {})
+    },
+    complaint: {
+      ...defaultComplaintData.complaint,
+      ...(storedData.complaint || {})
+    },
+    subjects: Array.isArray(storedData.subjects) && storedData.subjects.length > 0
+      ? storedData.subjects
+      : defaultComplaintData.subjects,
+    evidence: {
+      ...defaultComplaintData.evidence,
+      ...(storedData.evidence || {}),
+      files: []
+    },
+    declaration: {
+      ...defaultComplaintData.declaration,
+      ...(storedData.declaration || {})
+    }
+  };
+};
+
+const loadDraft = () => {
+  if (typeof window === "undefined") {
+    return defaultComplaintData;
+  }
+
+  try {
+    const savedDraft = window.localStorage.getItem(DRAFT_STORAGE_KEY);
+
+    if (!savedDraft) {
+      return defaultComplaintData;
+    }
+
+    return hydrateComplaintData(JSON.parse(savedDraft));
+  } catch {
+    return defaultComplaintData;
+  }
+};
+
+export const ComplaintProvider = ({ children }) => {
+
+  const [complaintData, setComplaintData] = useState(loadDraft);
 
   const [submissionResult, setSubmissionResult] = useState(null);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(complaintData));
+    } catch {
+      // Ignore storage failures and continue with in-memory state.
+    }
+  }, [complaintData]);
+
+  const clearComplaintDraft = () => {
+    try {
+      window.localStorage.removeItem(DRAFT_STORAGE_KEY);
+    } catch {
+      // Ignore storage failures.
+    }
+  };
+
+  const resetComplaintDraft = () => {
+    setComplaintData(defaultComplaintData);
+  };
 
 
   return (
@@ -123,7 +196,9 @@ export const ComplaintProvider = ({ children }) => {
         complaintData,
         setComplaintData,
         submissionResult,
-        setSubmissionResult
+        setSubmissionResult,
+        clearComplaintDraft,
+        resetComplaintDraft
       }}
     >
 

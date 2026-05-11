@@ -47,6 +47,32 @@ const TrackComplaint = () => {
 
   };
 
+  const getStatusColor = (status) => {
+    const colors = {
+      "Submitted": "text-blue-600",
+      "Preliminary Review": "text-yellow-600",
+      "Under Investigation": "text-orange-600",
+      "Awaiting Evidence": "text-purple-600",
+      "Escalated to CIABOC": "text-red-600",
+      "Resolved": "text-green-600",
+      "Closed": "text-gray-600"
+    };
+    return colors[status] || "text-gray-600";
+  };
+
+  const getStatusDotColor = (status) => {
+    const colors = {
+      "Submitted": "bg-blue-600",
+      "Preliminary Review": "bg-yellow-600",
+      "Under Investigation": "bg-orange-600",
+      "Awaiting Evidence": "bg-purple-600",
+      "Escalated to CIABOC": "bg-red-600",
+      "Resolved": "bg-green-600",
+      "Closed": "bg-gray-600"
+    };
+    return colors[status] || "bg-gray-600";
+  };
+
 
   return (
 
@@ -170,7 +196,7 @@ const TrackComplaint = () => {
 
               </p>
 
-              <h4 className="font-bold text-blue-600">
+              <h4 className={`font-bold ${getStatusColor(complaint.currentStatus)}`}>
 
                 {complaint.currentStatus}
 
@@ -200,7 +226,7 @@ const TrackComplaint = () => {
                   className="flex items-start gap-4"
                 >
 
-                  <div className="w-5 h-5 rounded-full bg-blue-600 mt-1" />
+                  <div className={`w-5 h-5 rounded-full ${getStatusDotColor(item.status)} mt-1`} />
 
 
 
