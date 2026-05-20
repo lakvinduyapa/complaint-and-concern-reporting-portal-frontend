@@ -154,7 +154,7 @@ const DeclarationStep = () => {
 
   return (
 
-    <div className="bg-white rounded-2xl shadow-lg p-6 md:p-10">
+    <div className="ui-card-strong p-6 md:p-10">
 
       {/* Stepper */}
       <Stepper currentStep={5} />
@@ -163,13 +163,13 @@ const DeclarationStep = () => {
       {/* Header */}
       <div className="mb-8">
 
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+        <h2 className="ui-section-title">
 
           Declaration & Consent
 
         </h2>
 
-        <p className="text-gray-500 mt-2">
+        <p className="ui-subtitle mt-2">
 
           Please review and confirm the following declarations before
           submitting your complaint.
@@ -181,15 +181,15 @@ const DeclarationStep = () => {
 
 
       {/* Official Declaration */}
-      <div className="border border-gray-200 rounded-2xl p-6 bg-gray-50">
+      <div className="border border-cyan-200 rounded-2xl p-6 bg-cyan-50">
 
-        <h3 className="text-lg font-bold text-gray-800 mb-4">
+        <h3 className="text-lg font-bold text-slate-900 mb-4">
 
           Official Declaration Statement
 
         </h3>
 
-        <p className="text-gray-700 leading-relaxed">
+        <p className="text-slate-700 leading-relaxed">
 
           I confirm that the information provided in this submission is true,
           accurate, and provided in good faith to the best of my knowledge.
@@ -214,7 +214,7 @@ const DeclarationStep = () => {
             className="mt-1 w-5 h-5"
           />
 
-          <span className="text-gray-700">
+          <span className="text-slate-700">
 
             I confirm that the information provided is accurate and truthful.
 
@@ -233,7 +233,7 @@ const DeclarationStep = () => {
             className="mt-1 w-5 h-5"
           />
 
-          <span className="text-gray-700">
+          <span className="text-slate-700">
 
             I consent to the Internal Affairs Unit processing this complaint
             for investigation purposes.
@@ -253,7 +253,7 @@ const DeclarationStep = () => {
             className="mt-1 w-5 h-5"
           />
 
-          <span className="text-gray-700">
+          <span className="text-slate-700">
 
             I acknowledge that complaint activity may be securely logged for
             compliance and audit purposes.
@@ -295,15 +295,15 @@ const DeclarationStep = () => {
 
 
       {/* Compliance Warning */}
-      <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-xl p-5">
+      <div className="mt-8 bg-amber-50 border border-amber-200 rounded-xl p-5">
 
-        <h4 className="font-semibold text-yellow-800 mb-2">
+        <h4 className="font-semibold text-amber-900 mb-2">
 
           Compliance Notice
 
         </h4>
 
-        <p className="text-sm text-yellow-700 leading-relaxed">
+        <p className="text-sm text-amber-800 leading-relaxed">
 
           The Internal Affairs Unit maintains strict confidentiality throughout
           the investigation process. Information will only be accessed by
@@ -317,15 +317,15 @@ const DeclarationStep = () => {
 
 
       {/* Security Notice */}
-      <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-5">
+      <div className="mt-6 bg-[#eef4ff] border border-[#cfe0ff] rounded-xl p-5">
 
-        <h4 className="font-semibold text-blue-800 mb-2">
+        <h4 className="font-semibold text-cyan-600 mb-2">
 
           Secure Submission
 
         </h4>
 
-        <p className="text-sm text-blue-700">
+        <p className="text-sm text-[#1d4f91]">
 
           Your submission will be encrypted and assigned a unique Complaint
           Reference Number (CRN) for future tracking.
@@ -343,7 +343,7 @@ const DeclarationStep = () => {
         <button
           onClick={() => navigate("/evidence-upload")}
           disabled={submitting}
-          className="border border-gray-300 px-6 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-all disabled:opacity-60"
+          className="ui-button-secondary px-6 py-3 disabled:opacity-60"
         >
 
           Back
@@ -356,7 +356,7 @@ const DeclarationStep = () => {
         <button
           onClick={handleFinalize}
           disabled={submitting}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all disabled:opacity-60"
+          className="ui-button-primary px-8 py-3 disabled:opacity-60"
         >
 
           {submitting ? "Submitting..." : "Finalize Submission"}

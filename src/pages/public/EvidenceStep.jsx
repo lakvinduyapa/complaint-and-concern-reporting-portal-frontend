@@ -80,7 +80,7 @@ const EvidenceStep = () => {
 
   return (
 
-    <div className="bg-white rounded-2xl shadow-lg p-6 md:p-10">
+    <div className="ui-card-strong p-6 md:p-10">
 
       {/* Stepper */}
       <Stepper currentStep={4} />
@@ -89,13 +89,13 @@ const EvidenceStep = () => {
       {/* Header */}
       <div className="mb-8">
 
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+        <h2 className="ui-section-title">
 
           Supporting Evidence
 
         </h2>
 
-        <p className="text-gray-500 mt-2">
+        <p className="ui-subtitle mt-2">
 
           Upload any supporting evidence related to the complaint.
 
@@ -108,7 +108,7 @@ const EvidenceStep = () => {
       {/* Evidence Type */}
       <div className="mb-8">
 
-        <label className="block text-sm font-semibold text-gray-700 mb-4">
+          <label className="block text-sm font-semibold text-slate-700 mb-4">
 
           Evidence Type
 
@@ -124,8 +124,8 @@ const EvidenceStep = () => {
               onClick={() => toggleEvidenceType(item.value)}
               className={`border rounded-xl py-4 px-3 text-sm font-medium transition-all ${
                 evidence.evidenceTypes.includes(item.value)
-                  ? "border-blue-500 bg-blue-50 text-blue-700"
-                  : "border-gray-300 text-gray-700 hover:border-blue-500 hover:bg-blue-50"
+                  ? "border-cyan-500 bg-cyan-50 text-cyan-600"
+                  : "border-slate-300 text-slate-700 hover:border-cyan-500 hover:bg-cyan-50"
               }`}
             >
 
@@ -142,13 +142,13 @@ const EvidenceStep = () => {
 
 
       {/* Upload Area */}
-      <label className="border-2 border-dashed border-gray-300 rounded-2xl p-10 text-center hover:border-blue-500 transition-all cursor-pointer block">
+      <label className="border-2 border-dashed border-slate-300 rounded-2xl p-10 text-center hover:border-cyan-500 transition-all cursor-pointer block bg-transparent">
 
         <div className="flex flex-col items-center">
 
-          <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+          <div className="w-16 h-16 rounded-full bg-cyan-50 flex items-center justify-center mb-4">
 
-            <span className="text-2xl text-blue-600">
+            <span className="text-2xl text-cyan-500">
 
               ↑
 
@@ -156,19 +156,19 @@ const EvidenceStep = () => {
 
           </div>
 
-          <h3 className="text-lg font-bold text-gray-800">
+          <h3 className="text-lg font-bold text-slate-900">
 
             Drag & Drop Files Here
 
           </h3>
 
-          <p className="text-gray-500 mt-2">
+          <p className="text-slate-500 mt-2">
 
             or click to browse evidence files
 
           </p>
 
-          <span className="mt-5 inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all">
+          <span className="mt-5 inline-block ui-button-primary px-6 py-3">
 
             Browse Files
 
@@ -187,15 +187,15 @@ const EvidenceStep = () => {
 
       {evidence.files.length > 0 && (
 
-        <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl p-4">
+        <div className="mt-4 bg-cyan-50 border border-cyan-200 rounded-xl p-4">
 
-          <p className="text-sm font-semibold text-blue-700 mb-2">
+          <p className="text-sm font-semibold text-cyan-600 mb-2">
 
             Selected Files ({evidence.files.length})
 
           </p>
 
-          <ul className="text-sm text-blue-800 space-y-1">
+          <ul className="text-sm text-slate-700 space-y-1">
 
             {evidence.files.map((file) => (
 
@@ -216,9 +216,9 @@ const EvidenceStep = () => {
 
 
       {/* Upload Rules */}
-      <div className="mt-6 bg-gray-50 border border-gray-200 rounded-xl p-5">
+      <div className="mt-6 bg-slate-50 border border-slate-200 rounded-xl p-5">
 
-        <h4 className="font-semibold text-gray-800 mb-3">
+          <h4 className="font-semibold text-slate-900 mb-3">
 
           Accepted File Types
 
@@ -226,7 +226,7 @@ const EvidenceStep = () => {
 
         <div className="flex flex-wrap gap-3">
 
-          <span className="bg-white border px-3 py-1 rounded-full text-sm text-gray-700">
+          <span className="bg-white border border-slate-200 px-3 py-1 rounded-full text-sm text-slate-700">
 
             PDF
 
@@ -271,7 +271,7 @@ const EvidenceStep = () => {
       {/* Witness Information */}
       <div className="mt-8">
 
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
 
           Witness Information (Optional)
 
@@ -282,7 +282,7 @@ const EvidenceStep = () => {
           value={evidence.witnessInfo}
           onChange={(e) => updateEvidence("witnessInfo", e.target.value)}
           placeholder="Provide names or details of witnesses if available..."
-          className="w-full border border-gray-300 rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="ui-textarea resize-none"
         />
 
       </div>
@@ -292,7 +292,7 @@ const EvidenceStep = () => {
       {/* Additional Notes */}
       <div className="mt-6">
 
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
 
           Additional Notes
 
@@ -303,7 +303,7 @@ const EvidenceStep = () => {
           value={evidence.additionalNotes}
           onChange={(e) => updateEvidence("additionalNotes", e.target.value)}
           placeholder="Add any additional evidence-related information..."
-          className="w-full border border-gray-300 rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="ui-textarea resize-none"
         />
 
       </div>
@@ -344,7 +344,7 @@ const EvidenceStep = () => {
         {/* Back */}
         <button
           onClick={() => navigate("/subject-information")}
-          className="border border-gray-300 px-6 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-all"
+          className="ui-button-secondary px-6 py-3"
         >
 
           Back
@@ -356,7 +356,7 @@ const EvidenceStep = () => {
         {/* Continue */}
         <button
           onClick={handleContinue}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all"
+          className="ui-button-primary px-8 py-3"
         >
 
           Continue

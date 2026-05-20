@@ -37,16 +37,16 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center px-4">
+    <div className="app-shell min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        {/* Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        {/* Card - translucent to match background */}
+        <div className="rounded-2xl p-8 bg-white/6 backdrop-blur-sm border border-white/10">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            <h1 className="text-3xl font-bold text-white tracking-tight mb-2">
               Admin Portal
             </h1>
-            <p className="text-gray-500 text-sm">
+            <p className="text-white/80 text-sm">
               Internal Affairs Unit — Complaint Investigation System
             </p>
           </div>
@@ -62,7 +62,7 @@ const AdminLogin = () => {
           <form onSubmit={handleSubmit} noValidate className="space-y-5">
             {/* Email */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-white/90 mb-2">
                 Email Address
               </label>
               <input
@@ -71,13 +71,13 @@ const AdminLogin = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@iau.com"
                 disabled={loading}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400"
+                className="ui-input bg-transparent border-white/20 text-white placeholder-white/60 disabled:bg-white/5 disabled:text-white/40"
               />
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-white/90 mb-2">
                 Password
               </label>
               <input
@@ -86,7 +86,7 @@ const AdminLogin = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 disabled={loading}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400"
+                className="ui-input bg-transparent border-white/20 text-white placeholder-white/60 disabled:bg-white/5 disabled:text-white/40"
               />
             </div>
 
@@ -94,14 +94,14 @@ const AdminLogin = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed mt-6"
+              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-3 disabled:bg-white/20 disabled:cursor-not-allowed mt-6 rounded-xl font-semibold transition-all"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
           {/* Footer */}
-          <p className="text-center text-gray-500 text-xs mt-6">
+          <p className="text-center text-white/70 text-xs mt-6">
             Authorized personnel only. All activity is logged.
           </p>
         </div>
@@ -110,7 +110,7 @@ const AdminLogin = () => {
         <div className="text-center mt-6">
           <Link
             to="/"
-            className="text-gray-600 hover:text-gray-800 text-sm font-medium transition-colors"
+            className="link-on-dark text-sm"
           >
             ← Back to Public Portal
           </Link>

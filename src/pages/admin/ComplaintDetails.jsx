@@ -133,37 +133,13 @@ const ComplaintDetails = () => {
   };
 
 
-  const getStatusStyle = (status) => {
-
-    switch (status) {
-
-      case "Resolved":
-        return "bg-green-100 text-green-700 border border-green-200";
-
-      case "Escalated":
-        return "bg-red-100 text-red-700 border border-red-200";
-
-      case "Under Investigation":
-        return "bg-amber-100 text-amber-700 border border-amber-200";
-
-      default:
-        return "bg-slate-100 text-slate-700 border border-slate-200";
-
-    }
-
+  const getStatusStyle = () => {
+    return "bg-white text-gray-700 border border-gray-200";
   };
 
 
   const getPriorityStyle = () => {
-
-    if (complaint?.escalationRequired) {
-
-      return "bg-red-100 text-red-700 border border-red-200";
-
-    }
-
-    return "bg-amber-100 text-amber-700 border border-amber-200";
-
+    return "bg-white text-gray-700 border border-gray-200";
   };
 
 
@@ -186,7 +162,7 @@ const ComplaintDetails = () => {
 
     return (
 
-      <div className="bg-red-50 border border-red-200 p-4 rounded-md text-red-700">
+      <div className="bg-white border border-gray-200 p-4 rounded-md text-red-700">
 
         Complaint not found.
 
@@ -199,47 +175,31 @@ const ComplaintDetails = () => {
 
   return (
 
-    <div className="space-y-6 overflow-x-hidden">
+    <div className="space-y-6 overflow-x-hidden bg-white">
 
 
       {/* Investigation Header */}
-      <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-white shadow-lg rounded-3xl overflow-hidden">
 
         {/* Top */}
-        <div className="border-b border-gray-100 px-6 py-5">
+        <div className="border-b border-white/10 px-6 py-5 bg-transparent">
 
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
 
-            <div className="flex items-start gap-4">
+            <div>
 
-              <div className="w-14 h-14 bg-slate-900 text-white rounded-xl flex items-center justify-center shrink-0">
+              <h1 className="text-2xl font-bold text-white tracking-tight">
 
-                <FiShield size={24} />
+                Internal Affairs Investigation Record
 
-              </div>
-
-              <div>
-
-                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
-
-                  Internal Affairs Investigation Record
-
-                </h1>
-
-                <p className="text-sm text-gray-500 mt-1">
-
-                  Governance & Ethics Review Management System
-
-                </p>
-
-              </div>
+              </h1>
 
             </div>
 
 
             <button
               onClick={() => navigate("/admin/complaints")}
-              className="flex items-center gap-2 border border-gray-200 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
+              className="ui-button-secondary flex items-center gap-2 px-4 py-2.5 text-sm"
             >
 
               <FiArrowLeft />
@@ -254,17 +214,17 @@ const ComplaintDetails = () => {
 
 
         {/* Metadata Strip */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 divide-x divide-y lg:divide-y-0 divide-gray-100">
+        <div className="grid grid-cols-2 lg:grid-cols-5 divide-x divide-y lg:divide-y-0 divide-white/30">
 
           <div className="p-4 min-w-0">
 
-            <p className="text-xs uppercase text-gray-500 font-medium">
+            <p className="text-xs uppercase text-slate-500 font-medium">
 
               CRN
 
             </p>
 
-            <p className="font-bold text-gray-900 mt-2 break-words">
+            <p className="font-bold text-slate-900 mt-2 break-words">
 
               {complaint.crn}
 
@@ -275,7 +235,7 @@ const ComplaintDetails = () => {
 
           <div className="p-4 min-w-0">
 
-            <p className="text-xs uppercase text-gray-500 font-medium">
+            <p className="text-xs uppercase text-slate-500 font-medium">
 
               Status
 
@@ -296,7 +256,7 @@ const ComplaintDetails = () => {
 
           <div className="p-4 min-w-0">
 
-            <p className="text-xs uppercase text-gray-500 font-medium">
+            <p className="text-xs uppercase text-slate-500 font-medium">
 
               Priority
 
@@ -319,13 +279,13 @@ const ComplaintDetails = () => {
 
           <div className="p-4 min-w-0">
 
-            <p className="text-xs uppercase text-gray-500 font-medium">
+            <p className="text-xs uppercase text-slate-500 font-medium">
 
               Category
 
             </p>
 
-            <p className="font-semibold text-gray-900 mt-2 break-words">
+            <p className="font-semibold text-slate-900 mt-2 break-words">
 
               {complaint.category}
 
@@ -336,13 +296,13 @@ const ComplaintDetails = () => {
 
           <div className="p-4 min-w-0">
 
-            <p className="text-xs uppercase text-gray-500 font-medium">
+            <p className="text-xs uppercase text-slate-500 font-medium">
 
               Submitted
 
             </p>
 
-            <p className="font-semibold text-gray-900 mt-2 text-sm break-words">
+            <p className="font-semibold text-slate-900 mt-2 text-sm break-words">
 
               {new Date(
                 complaint.createdAt
@@ -385,17 +345,17 @@ const ComplaintDetails = () => {
 
 
         {/* LEFT */}
-        <div className="xl:col-span-2 bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+        <div className="xl:col-span-2 panel-surface overflow-hidden">
 
 
           {/* Case Summary */}
-          <section className="border-b border-gray-100 p-6">
+          <section className="border-b border-slate-200 p-6">
 
             <div className="flex items-center gap-2 mb-5">
 
-              <FiFileText className="text-gray-700" />
+              <FiFileText className="text-slate-700" />
 
-              <h2 className="font-semibold text-gray-900">
+              <h2 className="font-semibold text-slate-900">
 
                 Case Summary
 
@@ -410,13 +370,13 @@ const ComplaintDetails = () => {
 
                 <div>
 
-                  <p className="text-gray-500 mb-1">
+                  <p className="text-slate-500 mb-1">
 
                     Incident Date
 
                   </p>
 
-                  <p className="font-medium text-gray-800 flex items-center gap-2 break-words">
+                  <p className="font-medium text-slate-800 flex items-center gap-2 break-words">
 
                     <FiCalendar size={14} />
 
@@ -433,13 +393,13 @@ const ComplaintDetails = () => {
 
                 <div>
 
-                  <p className="text-gray-500 mb-1">
+                  <p className="text-slate-500 mb-1">
 
                     Incident Location
 
                   </p>
 
-                  <p className="font-medium text-gray-800 flex items-center gap-2 break-words">
+                  <p className="font-medium text-slate-800 flex items-center gap-2 break-words">
 
                     <FiMapPin size={14} />
 
@@ -456,13 +416,13 @@ const ComplaintDetails = () => {
 
                 <div>
 
-                  <p className="text-gray-500 mb-1">
+                  <p className="text-slate-500 mb-1">
 
                     Frequency
 
                   </p>
 
-                  <p className="font-medium text-gray-800 break-words">
+                  <p className="font-medium text-slate-800 break-words">
 
                     {complaint.frequency || "N/A"}
 
@@ -473,13 +433,13 @@ const ComplaintDetails = () => {
 
                 <div>
 
-                  <p className="text-gray-500 mb-1">
+                  <p className="text-slate-500 mb-1">
 
                     Awareness Method
 
                   </p>
 
-                  <p className="font-medium text-gray-800 break-words">
+                  <p className="font-medium text-slate-800 break-words">
 
                     {complaint.awarenessMethod || "N/A"}
 
@@ -495,13 +455,13 @@ const ComplaintDetails = () => {
 
 
           {/* Incident Narrative */}
-          <section className="border-b border-gray-100 p-6">
+          <section className="border-b border-slate-200 p-6">
 
             <div className="flex items-center gap-2 mb-5">
 
-              <FiClipboard className="text-gray-700" />
+              <FiClipboard className="text-slate-700" />
 
-              <h2 className="font-semibold text-gray-900">
+              <h2 className="font-semibold text-slate-900">
 
                 Incident Narrative
 
@@ -510,9 +470,9 @@ const ComplaintDetails = () => {
             </div>
 
 
-            <div className="bg-gray-50 border border-gray-100 rounded-xl p-5">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
 
-              <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap break-words">
+              <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap break-words">
 
                 {complaint.description || "No narrative available."}
 
@@ -524,13 +484,13 @@ const ComplaintDetails = () => {
 
 
           {/* Subject Registry */}
-          <section className="border-b border-gray-100 p-6">
+          <section className="border-b border-slate-200 p-6">
 
             <div className="flex items-center gap-2 mb-5">
 
-              <FiUser className="text-gray-700" />
+              <FiUser className="text-slate-700" />
 
-              <h2 className="font-semibold text-gray-900">
+              <h2 className="font-semibold text-slate-900">
 
                 Subject Registry
 
@@ -547,20 +507,20 @@ const ComplaintDetails = () => {
 
                   <div
                     key={index}
-                    className="border border-gray-100 rounded-xl p-5 shadow-sm"
+                    className="border border-slate-200 rounded-xl p-5 bg-slate-50/40"
                   >
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm">
 
                       <div>
 
-                        <p className="text-gray-500 mb-1">
+                        <p className="text-slate-500 mb-1">
 
                           Full Name
 
                         </p>
 
-                        <p className="font-medium text-gray-800 break-words">
+                        <p className="font-medium text-slate-800 break-words">
 
                           {subject.fullName || "N/A"}
 
@@ -571,13 +531,13 @@ const ComplaintDetails = () => {
 
                       <div>
 
-                        <p className="text-gray-500 mb-1">
+                        <p className="text-slate-500 mb-1">
 
                           Designation
 
                         </p>
 
-                        <p className="font-medium text-gray-800 break-words">
+                        <p className="font-medium text-slate-800 break-words">
 
                           {subject.designation || "N/A"}
 
@@ -588,13 +548,13 @@ const ComplaintDetails = () => {
 
                       <div>
 
-                        <p className="text-gray-500 mb-1">
+                        <p className="text-slate-500 mb-1">
 
                           Organization
 
                         </p>
 
-                        <p className="font-medium text-gray-800 break-words">
+                        <p className="font-medium text-slate-800 break-words">
 
                           {subject.organisation || "N/A"}
 
@@ -605,13 +565,13 @@ const ComplaintDetails = () => {
 
                       <div>
 
-                        <p className="text-gray-500 mb-1">
+                        <p className="text-slate-500 mb-1">
 
                           Relationship
 
                         </p>
 
-                        <p className="font-medium text-gray-800 break-words">
+                        <p className="font-medium text-slate-800 break-words">
 
                           {subject.relationship || "N/A"}
 
@@ -629,7 +589,7 @@ const ComplaintDetails = () => {
 
             ) : (
 
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-slate-500">
 
                 No subject records available.
 
@@ -645,9 +605,9 @@ const ComplaintDetails = () => {
 
             <div className="flex items-center gap-2 mb-6">
 
-              <FiActivity className="text-gray-700" />
+              <FiActivity className="text-slate-700" />
 
-              <h2 className="font-semibold text-gray-900">
+              <h2 className="font-semibold text-slate-900">
 
                 Investigation Activity
 
@@ -679,7 +639,7 @@ const ComplaintDetails = () => {
                     {index !==
                       complaint.statusHistory.length - 1 && (
 
-                      <div className="w-px flex-1 bg-gray-300 mt-2"></div>
+                      <div className="w-px flex-1 bg-slate-300 mt-2"></div>
 
                     )}
 
@@ -690,13 +650,13 @@ const ComplaintDetails = () => {
 
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">
 
-                      <h3 className="font-semibold text-gray-900 break-words">
+                      <h3 className="font-semibold text-slate-900 break-words">
 
                         {entry.status}
 
                       </h3>
 
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-slate-500">
 
                         {entry.updatedAt
                           ? new Date(
@@ -709,14 +669,14 @@ const ComplaintDetails = () => {
                     </div>
 
 
-                    <p className="text-sm text-gray-600 mt-2 leading-relaxed break-words whitespace-pre-wrap">
+                    <p className="text-sm text-slate-600 mt-2 leading-relaxed break-words whitespace-pre-wrap">
 
                       {entry.note || "No investigation note added."}
 
                     </p>
 
 
-                    <p className="text-xs text-gray-500 mt-3">
+                    <p className="text-xs text-slate-500 mt-3">
 
                       Updated By:
                       {" "}
@@ -742,15 +702,15 @@ const ComplaintDetails = () => {
 
 
           {/* Investigation Control */}
-          <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+          <div className="panel-surface overflow-hidden">
 
-            <div className="bg-slate-900 px-5 py-4 border-b border-slate-800">
+            <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-5 py-4 border-b border-cyan-500/20">
 
               <div className="flex items-center gap-2 text-white">
 
                 <FiShield />
 
-                <h2 className="font-semibold">
+                <h2 className="font-semibold text-white">
 
                   Investigation Control Center
 
@@ -768,7 +728,7 @@ const ComplaintDetails = () => {
 
               <div>
 
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
 
                   Update Investigation Status
 
@@ -779,7 +739,7 @@ const ComplaintDetails = () => {
                   onChange={(e) =>
                     setSelectedStatus(e.target.value)
                   }
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-700"
+                  className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
                 >
 
                   {statusOptions.map((status) => (
@@ -802,7 +762,7 @@ const ComplaintDetails = () => {
 
               <div>
 
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
 
                   Investigation Note
 
@@ -813,7 +773,7 @@ const ComplaintDetails = () => {
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="Enter internal investigation note"
-                  className="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-700"
+                  className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
                 />
 
               </div>
@@ -842,7 +802,7 @@ const ComplaintDetails = () => {
 
                 <div>
 
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
 
                     Escalation Reason
 
@@ -855,7 +815,7 @@ const ComplaintDetails = () => {
                       setEscalationReason(e.target.value)
                     }
                     placeholder="Enter escalation details"
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
 
                 </div>
@@ -866,7 +826,7 @@ const ComplaintDetails = () => {
               <button
                 type="submit"
                 disabled={updating}
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-xl text-sm font-medium transition-all shadow-sm"
+                className="ui-button-primary w-full py-3 rounded-xl text-sm font-medium transition-all shadow-sm"
               >
 
                 {updating
@@ -881,13 +841,13 @@ const ComplaintDetails = () => {
 
 
           {/* Reporter Information */}
-          <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5">
+          <div className="panel-surface p-5">
 
             <div className="flex items-center gap-2 mb-5">
 
-              <FiUser className="text-gray-700" />
+              <FiUser className="text-slate-700" />
 
-              <h2 className="font-semibold text-gray-900">
+              <h2 className="font-semibold text-slate-900">
 
                 Reporter Information
 
@@ -900,13 +860,13 @@ const ComplaintDetails = () => {
 
               <div>
 
-                <p className="text-gray-500 mb-1">
+                <p className="text-slate-500 mb-1">
 
                   Submission Type
 
                 </p>
 
-                <p className="font-medium text-gray-800">
+                <p className="font-medium text-slate-800">
 
                   {complaint?.reporter?.submissionType || "N/A"}
 
@@ -917,13 +877,13 @@ const ComplaintDetails = () => {
 
               <div>
 
-                <p className="text-gray-500 mb-1">
+                <p className="text-slate-500 mb-1">
 
                   Full Name
 
                 </p>
 
-                <p className="font-medium text-gray-800">
+                <p className="font-medium text-slate-800">
 
                   {complaint.isAnonymous
                     ? "Anonymous"
@@ -936,13 +896,13 @@ const ComplaintDetails = () => {
 
               <div>
 
-                <p className="text-gray-500 mb-1">
+                <p className="text-slate-500 mb-1">
 
                   Email
 
                 </p>
 
-                <p className="font-medium text-gray-800 break-all">
+                <p className="font-medium text-slate-800 break-all">
 
                   {complaint.isAnonymous
                     ? "Hidden"
@@ -955,13 +915,13 @@ const ComplaintDetails = () => {
 
               <div>
 
-                <p className="text-gray-500 mb-1">
+                <p className="text-slate-500 mb-1">
 
                   Phone
 
                 </p>
 
-                <p className="font-medium text-gray-800">
+                <p className="font-medium text-slate-800">
 
                   {complaint.isAnonymous
                     ? "Hidden"
@@ -977,13 +937,13 @@ const ComplaintDetails = () => {
 
 
           {/* Restricted Record */}
-          <div className="bg-slate-900 rounded-2xl p-5 text-white shadow-sm">
+          <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-5 text-white shadow-sm">
 
             <div className="flex items-center gap-2 mb-4">
 
               <FiLock />
 
-              <h2 className="font-semibold">
+              <h2 className="font-semibold text-white">
 
                 Restricted Governance Record
 
@@ -992,7 +952,7 @@ const ComplaintDetails = () => {
             </div>
 
 
-            <p className="text-sm text-slate-300 leading-relaxed">
+            <p className="text-sm text-cyan-100 leading-relaxed">
 
               Access to this investigation file is restricted to
               authorized Internal Affairs Unit officers and
@@ -1004,13 +964,13 @@ const ComplaintDetails = () => {
 
 
           {/* Internal Notes */}
-          <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5">
+          <div className="panel-surface p-5">
 
             <div className="flex items-center gap-2 mb-5">
 
-              <FiMessageSquare className="text-gray-700" />
+              <FiMessageSquare className="text-slate-700" />
 
-              <h2 className="font-semibold text-gray-900">
+              <h2 className="font-semibold text-slate-900">
 
                 Internal Investigation Notes
 
@@ -1028,20 +988,20 @@ const ComplaintDetails = () => {
 
                     <div
                       key={index}
-                      className="border border-gray-100 bg-gray-50 rounded-xl p-4"
+                      className="border border-slate-200 bg-slate-50 rounded-xl p-4"
                     >
 
                       <div className="flex items-center justify-between mb-3">
 
                         <div>
 
-                          <p className="font-medium text-sm text-gray-800 break-words">
+                          <p className="font-medium text-sm text-slate-800 break-words">
 
                             {noteEntry.addedBy}
 
                           </p>
 
-                          <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-xs text-slate-500 mt-1">
 
                             {noteEntry.addedAt
                               ? new Date(
@@ -1069,7 +1029,7 @@ const ComplaintDetails = () => {
                       </div>
 
 
-                      <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed break-words">
+                      <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed break-words">
 
                         {noteEntry.note}
 
@@ -1084,7 +1044,7 @@ const ComplaintDetails = () => {
 
             ) : (
 
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-slate-500">
 
                 No internal notes available.
 

@@ -43,7 +43,7 @@ const ComplaintStep = () => {
 
   return (
 
-    <div className="bg-white rounded-2xl shadow-lg p-6 md:p-10">
+    <div className="ui-card-strong p-6 md:p-10">
 
       {/* Stepper */}
       <Stepper currentStep={2} />
@@ -52,13 +52,13 @@ const ComplaintStep = () => {
       {/* Header */}
       <div className="mb-8">
 
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+        <h2 className="ui-section-title">
 
           Complaint Details
 
         </h2>
 
-        <p className="text-gray-500 mt-2">
+        <p className="ui-subtitle mt-2">
 
           Provide detailed information regarding the incident or concern.
 
@@ -74,7 +74,7 @@ const ComplaintStep = () => {
         {/* Complaint Category */}
         <div>
 
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
 
             Complaint Category
 
@@ -83,7 +83,7 @@ const ComplaintStep = () => {
           <select
             value={complaint.category}
             onChange={(e) => updateComplaint("category", e.target.value)}
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="ui-select"
           >
 
             <option value="">Select Category</option>
@@ -106,7 +106,7 @@ const ComplaintStep = () => {
         {/* Incident Date */}
         <div>
 
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
 
             Incident Date
 
@@ -116,7 +116,7 @@ const ComplaintStep = () => {
             type="date"
             value={complaint.incidentDate}
             onChange={(e) => updateComplaint("incidentDate", e.target.value)}
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="ui-input"
           />
 
         </div>
@@ -126,7 +126,7 @@ const ComplaintStep = () => {
         {/* Incident Location */}
         <div className="md:col-span-2">
 
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
 
             Incident Location
 
@@ -137,7 +137,7 @@ const ComplaintStep = () => {
             value={complaint.incidentLocation}
             onChange={(e) => updateComplaint("incidentLocation", e.target.value)}
             placeholder="Enter incident location"
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="ui-input"
           />
 
         </div>
@@ -147,7 +147,7 @@ const ComplaintStep = () => {
         {/* Frequency */}
         <div>
 
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
 
             Frequency
 
@@ -156,7 +156,7 @@ const ComplaintStep = () => {
           <select
             value={complaint.frequency}
             onChange={(e) => updateComplaint("frequency", e.target.value)}
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="ui-select"
           >
 
             <option value="">Select Frequency</option>
@@ -173,7 +173,7 @@ const ComplaintStep = () => {
         {/* Awareness Method */}
         <div>
 
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
 
             How did you become aware?
 
@@ -182,7 +182,7 @@ const ComplaintStep = () => {
           <select
             value={complaint.awarenessMethod}
             onChange={(e) => updateComplaint("awarenessMethod", e.target.value)}
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="ui-select"
           >
 
             <option value="">Select Method</option>
@@ -200,7 +200,7 @@ const ComplaintStep = () => {
         {/* Description */}
         <div className="md:col-span-2">
 
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
 
             Incident Description
 
@@ -211,10 +211,10 @@ const ComplaintStep = () => {
             value={complaint.description}
             onChange={(e) => updateComplaint("description", e.target.value)}
             placeholder="Provide a detailed description of the incident..."
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="ui-textarea resize-none"
           />
 
-          <p className="text-sm text-gray-400 mt-2">
+          <p className="text-sm text-slate-400 mt-2">
 
             Include relevant names, actions, dates, and circumstances.
 
@@ -227,7 +227,7 @@ const ComplaintStep = () => {
         {/* Previously Reported */}
         <div className="md:col-span-2">
 
-          <label className="block text-sm font-semibold text-gray-700 mb-4">
+          <label className="block text-sm font-semibold text-slate-700 mb-4">
 
             Has this matter been reported previously?
 
@@ -235,7 +235,7 @@ const ComplaintStep = () => {
 
           <div className="flex items-center gap-6">
 
-            <label className="flex items-center gap-2 text-gray-700">
+            <label className="flex items-center gap-2 text-slate-700">
 
               <input
                 type="radio"
@@ -248,7 +248,7 @@ const ComplaintStep = () => {
 
             </label>
 
-            <label className="flex items-center gap-2 text-gray-700">
+            <label className="flex items-center gap-2 text-slate-700">
 
               <input
                 type="radio"
@@ -282,7 +282,7 @@ const ComplaintStep = () => {
             value={complaint.previousReportDetails}
             onChange={(e) => updateComplaint("previousReportDetails", e.target.value)}
             placeholder="Where and when was this reported before?"
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-cyan-500"
           />
 
         </div>
@@ -324,7 +324,7 @@ const ComplaintStep = () => {
 
         <button 
           onClick={() => navigate("/")}
-          className="border border-gray-300 px-6 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-all">
+          className="ui-button-secondary px-6 py-3">
 
           Back
 
@@ -332,7 +332,7 @@ const ComplaintStep = () => {
 
         <button 
           onClick={handleContinue}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all">
+          className="ui-button-primary px-8 py-3">
 
           Continue
 

@@ -49,7 +49,7 @@ const TrackComplaint = () => {
 
   const getStatusColor = (status) => {
     const colors = {
-      "Submitted": "text-blue-600",
+      "Submitted": "text-cyan-600",
       "Preliminary Review": "text-yellow-600",
       "Under Investigation": "text-orange-600",
       "Awaiting Evidence": "text-purple-600",
@@ -62,7 +62,7 @@ const TrackComplaint = () => {
 
   const getStatusDotColor = (status) => {
     const colors = {
-      "Submitted": "bg-blue-600",
+      "Submitted": "bg-cyan-600",
       "Preliminary Review": "bg-yellow-600",
       "Under Investigation": "bg-orange-600",
       "Awaiting Evidence": "bg-purple-600",
@@ -76,18 +76,18 @@ const TrackComplaint = () => {
 
   return (
 
-    <div className="bg-white rounded-2xl shadow-lg p-6 md:p-10">
+    <div className="ui-card-strong p-6 md:p-10">
 
       {/* Header */}
       <div className="text-center mb-10">
 
-        <h2 className="text-3xl font-bold text-gray-800">
+        <h2 className="text-3xl font-bold text-slate-900">
 
           Track Complaint Status
 
         </h2>
 
-        <p className="text-gray-500 mt-3">
+        <p className="ui-subtitle mt-3">
 
           Enter your Complaint Reference Number (CRN) to track complaint
           progress.
@@ -108,13 +108,13 @@ const TrackComplaint = () => {
             placeholder="Enter CRN"
             value={crn}
             onChange={(e) => setCrn(e.target.value)}
-            className="flex-1 border border-gray-300 rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="ui-input flex-1 px-5 py-4"
           />
 
           <button
             onClick={handleTrack}
             disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold transition-all"
+            className="ui-button-primary px-8 py-4 disabled:opacity-60"
           >
 
             {loading ? "Searching..." : "Track"}
@@ -152,15 +152,15 @@ const TrackComplaint = () => {
           {/* Top Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 
-            <div className="border border-gray-200 rounded-2xl p-5">
+            <div className="panel-surface p-5">
 
-              <p className="text-sm text-gray-500 mb-2">
+              <p className="text-sm text-slate-500 mb-2">
 
                 Complaint Reference
 
               </p>
 
-              <h4 className="font-bold text-gray-800">
+              <h4 className="font-bold text-slate-900">
 
                 {complaint.crn}
 
@@ -170,15 +170,15 @@ const TrackComplaint = () => {
 
 
 
-            <div className="border border-gray-200 rounded-2xl p-5">
+            <div className="panel-surface p-5">
 
-              <p className="text-sm text-gray-500 mb-2">
+              <p className="text-sm text-slate-500 mb-2">
 
                 Category
 
               </p>
 
-              <h4 className="font-bold text-gray-800">
+              <h4 className="font-bold text-slate-900">
 
                 {complaint.category}
 
@@ -188,9 +188,9 @@ const TrackComplaint = () => {
 
 
 
-            <div className="border border-gray-200 rounded-2xl p-5">
+            <div className="panel-surface p-5">
 
-              <p className="text-sm text-gray-500 mb-2">
+              <p className="text-sm text-slate-500 mb-2">
 
                 Current Status
 
@@ -211,7 +211,7 @@ const TrackComplaint = () => {
           {/* Timeline */}
           <div className="mt-10">
 
-            <h3 className="text-xl font-bold text-gray-800 mb-6">
+            <h3 className="text-xl font-bold text-slate-900 mb-6">
 
               Status Timeline
 
@@ -232,15 +232,21 @@ const TrackComplaint = () => {
 
                   <div>
 
-                    <h4 className="font-semibold text-gray-800">
+                    <h4 className="font-semibold text-slate-900">
 
                       {item.status}
 
                     </h4>
 
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-slate-500 mt-1">
 
                       {item.note}
+
+                    </p>
+
+                    <p className="text-xs text-slate-400 mt-1">
+
+                      Updated: {item.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : "N/A"}
 
                     </p>
 
@@ -263,7 +269,7 @@ const TrackComplaint = () => {
 
         <button
           onClick={() => navigate("/")}
-          className="border border-gray-300 hover:bg-gray-100 text-gray-700 px-8 py-3 rounded-xl font-semibold transition-all"
+          className="ui-button-secondary px-8 py-3"
         >
 
           Return Home

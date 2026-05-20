@@ -45,7 +45,7 @@ const ConfirmationStep = () => {
 
   return (
 
-    <div className="bg-white rounded-2xl shadow-lg p-6 md:p-10">
+    <div className="ui-card-strong p-6 md:p-10">
 
       {/* Stepper */}
       <Stepper currentStep={6} />
@@ -68,13 +68,13 @@ const ConfirmationStep = () => {
 
 
         {/* Title */}
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
+        <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
 
           Report Submitted Successfully
 
         </h2>
 
-        <p className="text-gray-500 mt-3 max-w-2xl">
+        <p className="ui-subtitle mt-3 max-w-2xl">
 
           Your complaint has been securely submitted to the Internal Affairs
           Unit (IAU). Please save your Complaint Reference Number (CRN)
@@ -121,15 +121,15 @@ const ConfirmationStep = () => {
 
 
       {/* CRN Card */}
-      <div className="mt-10 border-2 border-dashed border-blue-300 rounded-2xl p-8 text-center bg-blue-50">
+      <div className="mt-10 border-2 border-dashed border-cyan-300 rounded-2xl p-8 text-center bg-cyan-50">
 
-        <p className="text-sm font-semibold text-blue-700 mb-3">
+        <p className="text-sm font-semibold text-cyan-600 mb-3">
 
           COMPLAINT REFERENCE NUMBER (CRN)
 
         </p>
 
-        <h3 className="text-3xl md:text-4xl font-bold text-gray-800 tracking-wide">
+        <h3 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-wide">
 
           {crn}
 
@@ -137,7 +137,7 @@ const ConfirmationStep = () => {
 
         <button
           onClick={handleCopy}
-          className="mt-5 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all"
+          className="mt-5 ui-button-primary px-6 py-3"
         >
 
           {copied ? "Copied" : "Copy CRN"}
@@ -152,15 +152,15 @@ const ConfirmationStep = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-10">
 
         {/* Submission Date */}
-        <div className="border border-gray-200 rounded-2xl p-5">
+        <div className="panel-surface p-5">
 
-          <p className="text-sm text-gray-500 mb-2">
+          <p className="text-sm text-slate-500 mb-2">
 
             Submission Date
 
           </p>
 
-          <h4 className="font-bold text-gray-800">
+          <h4 className="font-bold text-slate-900">
 
             {submittedAt}
 
@@ -171,15 +171,15 @@ const ConfirmationStep = () => {
 
 
         {/* Category */}
-        <div className="border border-gray-200 rounded-2xl p-5">
+        <div className="panel-surface p-5">
 
-          <p className="text-sm text-gray-500 mb-2">
+          <p className="text-sm text-slate-500 mb-2">
 
             Complaint Category
 
           </p>
 
-          <h4 className="font-bold text-gray-800">
+          <h4 className="font-bold text-slate-900">
 
             {category}
 
@@ -190,15 +190,15 @@ const ConfirmationStep = () => {
 
 
         {/* Status */}
-        <div className="border border-gray-200 rounded-2xl p-5">
+        <div className="panel-surface p-5">
 
-          <p className="text-sm text-gray-500 mb-2">
+          <p className="text-sm text-slate-500 mb-2">
 
             Current Status
 
           </p>
 
-          <h4 className="font-bold text-blue-600">
+          <h4 className="font-bold text-cyan-700">
 
             {status}
 
@@ -211,15 +211,15 @@ const ConfirmationStep = () => {
 
 
       {/* Tracking Instructions */}
-      <div className="mt-10 bg-gray-50 border border-gray-200 rounded-2xl p-6">
+      <div className="mt-10 bg-slate-50 border border-slate-200 rounded-2xl p-6">
 
-        <h3 className="text-lg font-bold text-gray-800 mb-3">
+        <h3 className="text-lg font-bold text-slate-900 mb-3">
 
           Complaint Tracking
 
         </h3>
 
-        <p className="text-gray-600 leading-relaxed">
+        <p className="text-slate-600 leading-relaxed">
 
           You may track the progress of your complaint using the Complaint
           Reference Number (CRN) through the complaint tracking portal.
@@ -233,15 +233,15 @@ const ConfirmationStep = () => {
 
 
       {/* Confidentiality Notice */}
-      <div className="mt-6 bg-green-50 border border-green-200 rounded-xl p-5">
+      <div className="mt-6 bg-emerald-50 border border-emerald-200 rounded-xl p-5">
 
-        <h4 className="font-semibold text-green-800 mb-2">
+        <h4 className="font-semibold text-emerald-900 mb-2">
 
           Confidentiality Assurance
 
         </h4>
 
-        <p className="text-sm text-green-700">
+        <p className="text-sm text-emerald-800">
 
           Your submission is securely stored and only accessible to authorized
           Internal Affairs Unit personnel involved in the investigation process.
@@ -258,7 +258,7 @@ const ConfirmationStep = () => {
         {/* Track Complaint */}
         <button
           onClick={() => navigate("/track-complaint")}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all"
+          className="ui-button-primary px-8 py-3"
         >
 
           Track Complaint
@@ -270,7 +270,7 @@ const ConfirmationStep = () => {
         {/* Return Home */}
         <button
           onClick={() => navigate("/")}
-          className="border border-gray-300 hover:bg-gray-100 text-gray-700 px-8 py-3 rounded-xl font-semibold transition-all"
+          className="ui-button-secondary px-8 py-3"
         >
 
           Return Home

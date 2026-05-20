@@ -7,7 +7,7 @@ const PublicLayout = () => {
 
   return (
 
-    <div className="min-h-screen bg-gray-100">
+    <div className="app-shell min-h-screen">
 
       {/* Navbar */}
       <Navbar />
@@ -15,7 +15,7 @@ const PublicLayout = () => {
 
 
       {/* Main Content */}
-      <main className="flex items-center justify-center px-4 py-10">
+      <main className="flex items-center justify-center px-4 py-10 md:py-12">
 
         <div className="w-full max-w-5xl">
 

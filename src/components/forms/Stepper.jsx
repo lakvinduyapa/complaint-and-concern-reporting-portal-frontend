@@ -42,7 +42,7 @@ const Stepper = ({ currentStep }) => {
                   <div
                     className={`h-1 transition-all duration-300 ${
                       isCompleted
-                        ? "bg-blue-600 w-full"
+                        ? "bg-green-500 w-full"
                         : "bg-gray-300 w-0"
                     }`}
                   />
@@ -59,9 +59,9 @@ const Stepper = ({ currentStep }) => {
 
                 ${
                   isCompleted
-                    ? "bg-blue-600 border-blue-600 text-white"
+                    ? "bg-gray-300 border-gray-400 text-gray-600"
                     : isActive
-                    ? "bg-white border-blue-600 text-blue-600"
+                    ? "bg-white border-gray-500 text-gray-700"
                     : "bg-white border-gray-300 text-gray-400"
                 }
                 `}
@@ -79,9 +79,9 @@ const Stepper = ({ currentStep }) => {
 
                 ${
                   isActive
-                    ? "text-blue-600"
-                    : isCompleted
                     ? "text-gray-700"
+                    : isCompleted
+                    ? "text-gray-600"
                     : "text-gray-400"
                 }
                 `}

@@ -30,10 +30,10 @@ const SessionWarningModal = () => {
   const seconds = timeLeft % 60;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+      <div className="bg-white/95 rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
         <div className="flex items-center justify-center mb-4">
-          <div className="bg-yellow-100 rounded-full p-3">
+          <div className="bg-gray-200 rounded-full p-3">
             <svg
               className="w-6 h-6 text-yellow-600"
               fill="none"
@@ -50,35 +50,35 @@ const SessionWarningModal = () => {
           </div>
         </div>
 
-        <h3 className="text-lg font-bold text-gray-900 text-center mb-2">
+        <h3 className="text-lg font-bold text-center mb-2">
           Session Timeout Warning
         </h3>
 
-        <p className="text-gray-600 text-center text-sm mb-4">
+        <p className="text-gray-700 text-center text-sm mb-4">
           Your session will expire due to inactivity in:
         </p>
 
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-center">
-          <p className="text-3xl font-bold text-red-600">
+        <div className="bg-gray-100 border border-gray-300 rounded-lg p-4 mb-6 text-center">
+          <p className="text-3xl font-bold text-gray-800">
             {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
           </p>
-          <p className="text-sm text-red-600 mt-1">minutes remaining</p>
+          <p className="text-sm text-gray-600 mt-1">minutes remaining</p>
         </div>
 
-        <p className="text-gray-600 text-center text-sm mb-6">
+        <p className="text-gray-700 text-center text-sm mb-6">
           Click "Continue Session" to stay logged in, or you'll be automatically logged out.
         </p>
 
         <div className="flex gap-3">
           <button
             onClick={logout}
-            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium text-sm"
+            className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-800 text-white rounded-lg font-medium text-sm transition-colors"
           >
             Logout Now
           </button>
           <button
             onClick={extendSession}
-            className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm"
+            className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium text-sm transition-colors"
           >
             Continue Session
           </button>

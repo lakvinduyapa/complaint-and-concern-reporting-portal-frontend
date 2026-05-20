@@ -38,7 +38,7 @@ const ReporterStep = () => {
 
   return (
 
-    <div className="bg-white rounded-2xl shadow-lg p-6 md:p-10">
+    <div className="ui-card-strong p-6 md:p-10">
 
       {/* Stepper */}
       <Stepper currentStep={1} />
@@ -47,13 +47,13 @@ const ReporterStep = () => {
       {/* Header */}
       <div className="mb-8">
 
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+        <h2 className="ui-section-title">
 
           Reporter Information
 
         </h2>
 
-        <p className="text-gray-500 mt-2">
+        <p className="ui-subtitle mt-2">
 
           Your information will be handled securely and confidentially.
 
@@ -78,23 +78,23 @@ const ReporterStep = () => {
           <button
             type="button"
             onClick={() => setType("named")}
-            className={`border-2 rounded-xl p-5 text-left transition-all
+            className={`border-2 rounded-xl p-5 text-left transition-all bg-transparent
 
             ${
               submissionType === "named"
-                ? "border-blue-600 bg-blue-50"
-                : "border-gray-200 hover:border-blue-300"
+                ? "border-cyan-500 ring-1 ring-cyan-500/10"
+                : "border-slate-200 hover:border-cyan-500"
             }
             `}
           >
 
-            <h3 className="font-bold text-gray-800 mb-2">
+            <h3 className="font-bold text-slate-900 mb-2">
 
               Named Reporting
 
             </h3>
 
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-slate-500">
 
               Provide your contact details for possible follow-up.
 
@@ -108,23 +108,23 @@ const ReporterStep = () => {
           <button
             type="button"
             onClick={() => setType("anonymous")}
-            className={`border-2 rounded-xl p-5 text-left transition-all
+            className={`border-2 rounded-xl p-5 text-left transition-all bg-transparent
 
             ${
               submissionType === "anonymous"
-                ? "border-blue-600 bg-blue-50"
-                : "border-gray-200 hover:border-blue-300"
+                ? "border-cyan-500 ring-1 ring-cyan-500/10"
+                : "border-slate-200 hover:border-cyan-500"
             }
             `}
           >
 
-            <h3 className="font-bold text-gray-800 mb-2">
+            <h3 className="font-bold text-slate-900 mb-2">
 
               Anonymous Reporting
 
             </h3>
 
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-slate-500">
 
               Submit without revealing your identity.
 
@@ -144,7 +144,7 @@ const ReporterStep = () => {
         {/* Reporter Category */}
         <div>
 
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
 
             Reporter Category
 
@@ -153,7 +153,7 @@ const ReporterStep = () => {
           <select
             value={reporter.reporterCategory}
             onChange={(e) => updateReporter("reporterCategory", e.target.value)}
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="ui-select"
           >
 
             <option value="">Select Category</option>
@@ -175,7 +175,7 @@ const ReporterStep = () => {
 
           <div>
 
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
 
               Full Name
 
@@ -186,7 +186,7 @@ const ReporterStep = () => {
               value={reporter.fullName}
               onChange={(e) => updateReporter("fullName", e.target.value)}
               placeholder="Enter your full name"
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="ui-input"
             />
 
           </div>
@@ -200,7 +200,7 @@ const ReporterStep = () => {
 
           <div>
 
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
 
               Organization / Department
 
@@ -211,7 +211,7 @@ const ReporterStep = () => {
               value={reporter.organization}
               onChange={(e) => updateReporter("organization", e.target.value)}
               placeholder="Enter organization or department"
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="ui-input"
             />
 
           </div>
@@ -225,7 +225,7 @@ const ReporterStep = () => {
 
           <div>
 
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
 
               Email Address
 
@@ -236,7 +236,7 @@ const ReporterStep = () => {
               value={reporter.email}
               onChange={(e) => updateReporter("email", e.target.value)}
               placeholder="Enter your email"
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="ui-input"
             />
 
           </div>
@@ -250,7 +250,7 @@ const ReporterStep = () => {
 
           <div>
 
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
 
               Phone Number
 
@@ -261,7 +261,7 @@ const ReporterStep = () => {
               value={reporter.phone}
               onChange={(e) => updateReporter("phone", e.target.value)}
               placeholder="Enter your phone number"
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="ui-input"
             />
 
           </div>
@@ -275,7 +275,7 @@ const ReporterStep = () => {
 
           <div>
 
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
 
               Preferred Contact Method
 
@@ -284,7 +284,7 @@ const ReporterStep = () => {
             <select
               value={reporter.preferredContact}
               onChange={(e) => updateReporter("preferredContact", e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="ui-select"
             >
 
               <option value="">Select Contact Method</option>
@@ -321,7 +321,7 @@ const ReporterStep = () => {
 
         <button
           onClick={() => navigate("/complaint-details")}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all"
+          className="ui-button-primary px-8 py-3"
         >
 
           Continue
