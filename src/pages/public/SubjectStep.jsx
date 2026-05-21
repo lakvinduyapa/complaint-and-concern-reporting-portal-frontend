@@ -82,7 +82,6 @@ const SubjectStep = () => {
     }
 
     setError("");
-
     navigate("/evidence-upload");
   };
 
@@ -138,7 +137,7 @@ const SubjectStep = () => {
                   updateSubject(index, "fullName", e.target.value)
                 }
                 placeholder="Enter subject name"
-                className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
 
@@ -155,7 +154,7 @@ const SubjectStep = () => {
                   updateSubject(index, "designation", e.target.value)
                 }
                 placeholder="Enter designation"
-                className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
 
@@ -172,7 +171,7 @@ const SubjectStep = () => {
                   updateSubject(index, "organization", e.target.value)
                 }
                 placeholder="Enter organization"
-                className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
 
@@ -190,7 +189,7 @@ const SubjectStep = () => {
                     updateSubject(index, "relationship", e.target.value)
                   }
                   placeholder="Example: Supervisor"
-                  className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
             )}
@@ -202,7 +201,7 @@ const SubjectStep = () => {
       <button
         type="button"
         onClick={addSubject}
-        className="w-full border-2 border-dashed border-gray-300 rounded-2xl py-5 text-gray-500 hover:border-cyan-500 hover:text-cyan-600 transition-all"
+        className="w-full border-2 border-dashed border-gray-300 rounded-2xl py-5 text-gray-500 hover:border-green-500 hover:text-green-600 transition-all"
       >
         + Add Another Subject
       </button>
@@ -251,7 +250,7 @@ const SubjectStep = () => {
         {/* Back */}
         <button
           onClick={() => navigate("/complaint-details")}
-          className="ui-button-secondary px-6 py-3"
+          className="px-6 py-3 rounded-xl font-semibold border border-green-600 text-green-600 hover:bg-green-50 transition-all"
         >
           Back
         </button>
@@ -259,7 +258,7 @@ const SubjectStep = () => {
         {/* Continue */}
         <button
           onClick={handleContinue}
-          className="ui-button-primary px-8 py-3 rounded-xl font-semibold transition-all"
+          className="px-8 py-3 rounded-xl font-semibold bg-green-600 text-white hover:bg-green-700 transition-all shadow-md hover:shadow-lg"
         >
           Continue
         </button>

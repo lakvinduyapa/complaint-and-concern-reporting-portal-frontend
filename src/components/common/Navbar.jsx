@@ -1,8 +1,6 @@
 import { NavLink } from "react-router-dom";
 
-
 const Navbar = () => {
-
   const navItemClass = ({ isActive }) =>
     `px-4 py-2 text-sm font-semibold rounded-lg transition-colors border ${
       isActive
@@ -11,54 +9,38 @@ const Navbar = () => {
     }`;
 
   return (
-
     <header
       className="sticky top-0 z-30 text-white border-b border-cyan-500/20 shadow-[0_12px_30px_rgba(0,229,255,0.15)]"
       style={{
-        background:
-          'linear-gradient(90deg, #1761a0 0%, #2697b7 50%, #2ecc71 100%)',
+        background: "#0156A6",
       }}
     >
-
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center gap-4">
-
         {/* Left Side */}
         <div className="flex items-center">
           <div className="h-14 md:h-20 w-auto max-w-[220px]">
             <img
-              src="/2.webp"
+              src="/logoSlt.jpg"
               alt="SLTMobitel"
               className="h-full w-auto object-contain drop-shadow-lg"
-              style={{ display: 'block' }}
+              style={{ display: "block" }}
             />
           </div>
         </div>
 
-
-
         {/* Middle Navigation */}
         <div className="hidden md:flex items-center gap-2 ml-auto">
-
-          <NavLink
-            to="/"
-            end
-            className={navItemClass}
-          >
+          <NavLink to="/" end className={navItemClass}>
             Home
           </NavLink>
 
-          <NavLink
-            to="/track-complaint"
-            className={navItemClass}
-          >
+          <NavLink to="/track-complaint" className={navItemClass}>
             Track Status
           </NavLink>
-
         </div>
 
         {/* Right Side */}
         <div className="flex items-center gap-3">
-
           <NavLink
             to="/admin/login"
             className={({ isActive }) =>
@@ -71,15 +53,10 @@ const Navbar = () => {
           >
             Admin Portal
           </NavLink>
-
         </div>
-
       </div>
-
     </header>
-
   );
-
 };
 
 export default Navbar;

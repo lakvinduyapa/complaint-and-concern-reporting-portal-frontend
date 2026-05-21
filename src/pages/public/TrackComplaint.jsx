@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 import { trackComplaintByCRN } from "../../services/trackingService";
 
-
 const TrackComplaint = () => {
 
   const navigate = useNavigate();
@@ -15,6 +14,7 @@ const TrackComplaint = () => {
   const [complaint, setComplaint] = useState(null);
 
   const [error, setError] = useState("");
+
 
 
   // ========================================
@@ -47,8 +47,16 @@ const TrackComplaint = () => {
 
   };
 
+
+
+  // ========================================
+  // Status Text Colors
+  // ========================================
+
   const getStatusColor = (status) => {
+
     const colors = {
+
       "Submitted": "text-cyan-600",
       "Preliminary Review": "text-yellow-600",
       "Under Investigation": "text-orange-600",
@@ -56,12 +64,23 @@ const TrackComplaint = () => {
       "Escalated to CIABOC": "text-red-600",
       "Resolved": "text-green-600",
       "Closed": "text-gray-600"
+
     };
+
     return colors[status] || "text-gray-600";
+
   };
 
+
+
+  // ========================================
+  // Status Dot Colors
+  // ========================================
+
   const getStatusDotColor = (status) => {
+
     const colors = {
+
       "Submitted": "bg-cyan-600",
       "Preliminary Review": "bg-yellow-600",
       "Under Investigation": "bg-orange-600",
@@ -69,25 +88,29 @@ const TrackComplaint = () => {
       "Escalated to CIABOC": "bg-red-600",
       "Resolved": "bg-green-600",
       "Closed": "bg-gray-600"
+
     };
+
     return colors[status] || "bg-gray-600";
+
   };
+
 
 
   return (
 
-    <div className="ui-card-strong p-6 md:p-10">
+    <div className="ui-card-strong p-4 sm:p-6 md:p-10">
 
       {/* Header */}
       <div className="text-center mb-10">
 
-        <h2 className="text-3xl font-bold text-slate-900">
+        <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
 
           Track Complaint Status
 
         </h2>
 
-        <p className="ui-subtitle mt-3">
+        <p className="text-sm md:text-base text-slate-500 mt-3 leading-relaxed">
 
           Enter your Complaint Reference Number (CRN) to track complaint
           progress.
@@ -98,7 +121,7 @@ const TrackComplaint = () => {
 
 
 
-      {/* Search */}
+      {/* Search Section */}
       <div className="max-w-2xl mx-auto">
 
         <div className="flex flex-col md:flex-row gap-4">
@@ -111,10 +134,12 @@ const TrackComplaint = () => {
             className="ui-input flex-1 px-5 py-4"
           />
 
+
+
           <button
             onClick={handleTrack}
             disabled={loading}
-            className="ui-button-primary px-8 py-4 disabled:opacity-60"
+            className="w-full md:w-auto bg-[#3e9638] hover:bg-[#31802c] text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-60"
           >
 
             {loading ? "Searching..." : "Track"}
@@ -127,12 +152,12 @@ const TrackComplaint = () => {
 
 
 
-      {/* Error */}
+      {/* Error Message */}
       {error && (
 
-        <div className="mt-8 bg-red-50 border border-red-200 rounded-xl p-4">
+        <div className="mt-8 bg-red-50 border border-red-200 rounded-2xl p-4">
 
-          <p className="text-red-700 text-sm">
+          <p className="text-red-700 text-sm leading-relaxed">
 
             {error}
 
@@ -152,7 +177,8 @@ const TrackComplaint = () => {
           {/* Top Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 
-            <div className="panel-surface p-5">
+            {/* CRN */}
+            <div className="panel-surface p-5 rounded-2xl border border-slate-200">
 
               <p className="text-sm text-slate-500 mb-2">
 
@@ -160,7 +186,7 @@ const TrackComplaint = () => {
 
               </p>
 
-              <h4 className="font-bold text-slate-900">
+              <h4 className="font-bold text-slate-900 break-all">
 
                 {complaint.crn}
 
@@ -170,7 +196,8 @@ const TrackComplaint = () => {
 
 
 
-            <div className="panel-surface p-5">
+            {/* Category */}
+            <div className="panel-surface p-5 rounded-2xl border border-slate-200">
 
               <p className="text-sm text-slate-500 mb-2">
 
@@ -188,7 +215,8 @@ const TrackComplaint = () => {
 
 
 
-            <div className="panel-surface p-5">
+            {/* Current Status */}
+            <div className="panel-surface p-5 rounded-2xl border border-slate-200">
 
               <p className="text-sm text-slate-500 mb-2">
 
@@ -211,7 +239,7 @@ const TrackComplaint = () => {
           {/* Timeline */}
           <div className="mt-10">
 
-            <h3 className="text-xl font-bold text-slate-900 mb-6">
+            <h3 className="text-xl md:text-2xl font-bold text-slate-900 mb-6">
 
               Status Timeline
 
@@ -226,11 +254,13 @@ const TrackComplaint = () => {
                   className="flex items-start gap-4"
                 >
 
-                  <div className={`w-5 h-5 rounded-full ${getStatusDotColor(item.status)} mt-1`} />
+                  <div
+                    className={`w-5 h-5 rounded-full ${getStatusDotColor(item.status)} mt-1 flex-shrink-0`}
+                  />
 
 
 
-                  <div>
+                  <div className="flex-1">
 
                     <h4 className="font-semibold text-slate-900">
 
@@ -238,15 +268,18 @@ const TrackComplaint = () => {
 
                     </h4>
 
-                    <p className="text-sm text-slate-500 mt-1">
+                    <p className="text-sm text-slate-500 mt-1 leading-relaxed">
 
                       {item.note}
 
                     </p>
 
-                    <p className="text-xs text-slate-400 mt-1">
+                    <p className="text-xs text-slate-400 mt-2">
 
-                      Updated: {item.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : "N/A"}
+                      Updated:{" "}
+                      {item.updatedAt
+                        ? new Date(item.updatedAt).toLocaleDateString()
+                        : "N/A"}
 
                     </p>
 
@@ -264,12 +297,14 @@ const TrackComplaint = () => {
 
       )}
 
+
+
       {/* Actions */}
       <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
 
         <button
           onClick={() => navigate("/")}
-          className="ui-button-secondary px-8 py-3"
+          className="w-full sm:w-auto bg-[#3e9638] hover:bg-[#31802c] text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg"
         >
 
           Return Home

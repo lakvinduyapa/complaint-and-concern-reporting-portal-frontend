@@ -13,20 +13,14 @@ const AdminSidebar = () => {
     navigate("/admin/login");
   };
 
-  const getNavItemClass = (route, isActive) => {
-    const baseClass = `flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-all border ${isCollapsed ? "justify-center px-2" : ""}`;
-    
-    const dashboardActive = route === "dashboard" && isActive 
-      ? "bg-gradient-to-r from-blue-700 via-blue-500 to-green-400 text-white border-none" 
-      : "text-white border-transparent";
-    
-    const complaintsActive = route === "complaints" && isActive 
-      ? "bg-gradient-to-r from-blue-700 via-blue-500 to-green-400 text-white border-none" 
-      : "text-white border-transparent";
-    
-    if (route === "dashboard") return `${baseClass} ${dashboardActive}`;
-    if (route === "complaints") return `${baseClass} ${complaintsActive}`;
-    return baseClass;
+  const getNavItemClass = (isActive) => {
+    const baseClass = `flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-all border ${
+      isCollapsed ? "justify-center px-2" : ""
+    }`;
+
+    return isActive
+      ? `${baseClass} bg-green-600 text-white border-green-500`
+      : `${baseClass} text-white border-transparent hover:bg-green-500/20`;
   };
 
   return (
@@ -34,17 +28,16 @@ const AdminSidebar = () => {
       {/* Mobile Header */}
       <div
         className="fixed top-0 left-0 right-0 h-16 border-b border-cyan-400/30 shadow-lg z-40 md:hidden flex items-center justify-between px-4"
-        style={{
-          background: "linear-gradient(90deg, #1761a0 0%, #2697b7 50%, #2ecc71 100%)"
-        }}
+        style={{ background: "#0B5EAE" }}
       >
         <div className="flex items-center gap-2">
           <img
-            src="/2.webp"
+            src="/logoSlt.jpg"
             alt="SLTMobitel"
             className="h-10 w-auto object-contain"
           />
         </div>
+
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="p-2 hover:bg-white/10 rounded-lg transition-colors"
@@ -65,7 +58,7 @@ const AdminSidebar = () => {
         </button>
       </div>
 
-      {/* Sidebar Overlay (Mobile) */}
+      {/* Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-30 md:hidden"
@@ -75,29 +68,35 @@ const AdminSidebar = () => {
 
       {/* Sidebar */}
       <aside
-         className={`fixed left-0 top-0 h-screen border-r border-cyan-400/30 shadow-xl transition-all duration-300 ease-in-out z-40 md:z-30 md:translate-x-0 overflow-y-auto flex flex-col ${
+        className={`fixed left-0 top-0 h-screen border-r border-cyan-400/30 shadow-xl transition-all duration-300 ease-in-out z-40 md:z-30 md:translate-x-0 overflow-y-auto flex flex-col ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } md:sticky md:top-0 ${isCollapsed ? "w-20" : "w-64"}`}
-        style={{
-          background: "linear-gradient(180deg, #1761a0 0%, #2697b7 55%, #2ecc71 100%)"
-        }}
+        } md:sticky md:top-0 ${
+          isCollapsed ? "w-20" : "w-64"
+        }`}
+        style={{ background: "#0B5EAE" }}
       >
-        {/* Logo Section */}
+        {/* Logo */}
         <div className="hidden md:flex items-center justify-between pt-8 pb-6 px-4">
-          <div className={`h-16 w-auto max-w-[200px] transition-all duration-300 ${isCollapsed ? "opacity-0 w-0" : ""}`}>
+          <div
+            className={`h-16 w-auto max-w-[200px] transition-all duration-300 ${
+              isCollapsed ? "opacity-0 w-0" : ""
+            }`}
+          >
             <img
-              src="/2.webp"
+              src="/logoSlt.jpg"
               alt="SLTMobitel"
-              className="h-full w-auto object-contain drop-shadow-lg"
+              className="h-full w-auto object-contain"
             />
           </div>
+
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors text-white hover:text-white"
-            title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className="p-2 hover:bg-white/10 rounded-lg text-white"
           >
             <svg
-              className={`w-5 h-5 transition-transform duration-300 ${isCollapsed ? "rotate-180" : ""}`}
+              className={`w-5 h-5 transition-transform ${
+                isCollapsed ? "rotate-180" : ""
+              }`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -112,105 +111,50 @@ const AdminSidebar = () => {
           </button>
         </div>
 
-        {/* Mobile Logo (smaller) */}
-        <div className="md:hidden flex items-center justify-center pt-20 pb-4 px-4">
-          <div className="h-12 w-auto max-w-[160px]">
-            <img
-              src="/2.webp"
-              alt="SLTMobitel"
-              className="h-full w-auto object-contain drop-shadow-lg"
-            />
-          </div>
-        </div>
-
-        {/* Navigation Links */}
+        {/* NAV LINKS (GREEN ACTIVE ONLY) */}
         <nav className="px-4 py-6 space-y-2">
           <NavLink
             to="/admin/dashboard"
-            className={({ isActive }) => getNavItemClass("dashboard", isActive)}
+            className={({ isActive }) => getNavItemClass(isActive)}
             onClick={() => setIsOpen(false)}
-            title={isCollapsed ? "Dashboard" : ""}
           >
-            <svg
-              className="w-5 h-5 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 4l4 2m-8-2l4-2"
-              />
-            </svg>
-            <span className={`transition-all duration-300 ${isCollapsed ? "hidden" : ""}`}>Dashboard</span>
+            Dashboard
           </NavLink>
 
           <NavLink
             to="/admin/complaints"
-            className={({ isActive }) => getNavItemClass("complaints", isActive)}
+            className={({ isActive }) => getNavItemClass(isActive)}
             onClick={() => setIsOpen(false)}
-            title={isCollapsed ? "Complaints" : ""}
           >
-            <svg
-              className="w-5 h-5 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            <span className={`transition-all duration-300 ${isCollapsed ? "hidden" : ""}`}>Complaints</span>
+            Complaints
           </NavLink>
         </nav>
 
-        {/* Divider */}
         <div className="mx-4 border-t border-cyan-300/35" />
 
-        {/* User Info & Logout */}
+        {/* USER INFO (GREEN UPDATED) */}
         <div className="p-4 space-y-4">
-           <div className="flex-1" />
-
-           {adminUser?.email && (
-            <div className={`px-4 py-3 bg-gradient-to-r from-blue-700 via-blue-500 to-green-400 text-white rounded-lg border-none transition-all duration-300 ${isCollapsed ? "px-2" : ""}`}>
-              <p className={`text-xs text-cyan-700 mb-1 transition-all duration-300 ${isCollapsed ? "hidden" : ""}`}>Logged in as</p>
-              <p className={`text-sm font-semibold text-cyan-700 truncate transition-all duration-300 ${isCollapsed ? "hidden" : ""}`}>
+          {adminUser?.email && (
+            <div className="px-4 py-3 bg-gradient-to-r from-green-600 via-green-500 to-green-400 text-white rounded-lg border-none">
+              <p className="text-xs text-white mb-1">Logged in as</p>
+              <p className="text-sm font-semibold text-white truncate">
                 {adminUser.email}
               </p>
-              {isCollapsed && (
-                <svg
-                  className="w-5 h-5 text-cyan-700 mx-auto"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-              )}
             </div>
           )}
 
+          {/* LOGOUT BUTTON (GREEN ONLY) */}
           <button
             onClick={() => {
               handleLogout();
               setIsOpen(false);
             }}
-            className={`w-full px-4 py-3 bg-gradient-to-r from-blue-700 via-blue-500 to-green-400 text-white text-sm font-semibold rounded-lg transition-all shadow-md flex items-center gap-2 border-none hover:bg-blue-600/80 ${isCollapsed ? "justify-center px-2" : ""}`}
-            title={isCollapsed ? "Logout" : ""}
+            className={`w-full px-4 py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-all shadow-md flex items-center gap-2 ${
+              isCollapsed ? "justify-center px-2" : ""
+            }`}
           >
             <svg
-              className="w-4 h-4 flex-shrink-0"
+              className="w-4 h-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -222,12 +166,11 @@ const AdminSidebar = () => {
                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
               />
             </svg>
-            <span className={`transition-all duration-300 ${isCollapsed ? "hidden" : ""}`}>Logout</span>
+            Logout
           </button>
         </div>
       </aside>
 
-      {/* Spacer for mobile to account for fixed header */}
       <div className="h-16 md:hidden" />
     </>
   );

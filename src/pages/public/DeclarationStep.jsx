@@ -6,18 +6,18 @@ import { useComplaint } from "../../hooks/useComplaint";
 import { submitComplaint } from "../../services/complaintService";
 import { uploadEvidence } from "../../services/uploadService";
 
-
 const DeclarationStep = () => {
-
   const navigate = useNavigate();
-  const { complaintData, setComplaintData, setSubmissionResult, resetComplaintDraft } = useComplaint();
+  const { complaintData, setComplaintData, setSubmissionResult, resetComplaintDraft } =
+    useComplaint();
+
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [uploadWarning, setUploadWarning] = useState("");
+
   const { declaration } = complaintData;
 
   const updateDeclaration = (field, value) => {
-
     setComplaintData((prev) => ({
       ...prev,
       declaration: {
@@ -25,11 +25,9 @@ const DeclarationStep = () => {
         [field]: value
       }
     }));
-
   };
 
   const handleFinalize = async () => {
-
     setError("");
     setUploadWarning("");
 
@@ -87,7 +85,6 @@ const DeclarationStep = () => {
     };
 
     try {
-
       setSubmitting(true);
 
       const response = await submitComplaint(payload);
@@ -101,7 +98,6 @@ const DeclarationStep = () => {
       };
 
       if (complaintId && evidenceFiles.length > 0) {
-
         const evidenceType = complaintData.evidence.evidenceTypes[0] || "Other";
         const notes = [
           complaintData.evidence.witnessInfo,
@@ -115,6 +111,7 @@ const DeclarationStep = () => {
             formData.append("evidenceType", evidenceType);
             formData.append("notes", notes);
             formData.append("file", file);
+
             await uploadEvidence(formData);
             uploadSummary.uploaded += 1;
           } catch (uploadError) {
@@ -122,10 +119,11 @@ const DeclarationStep = () => {
               fileName: file.name,
               message: uploadError?.message || "Upload failed"
             });
-            setUploadWarning("Complaint submitted, but one or more evidence files could not be uploaded.");
+            setUploadWarning(
+              "Complaint submitted, but some evidence files failed to upload."
+            );
           }
         }
-
       }
 
       setSubmissionResult({
@@ -139,202 +137,107 @@ const DeclarationStep = () => {
 
       resetComplaintDraft();
       navigate("/confirmation");
-
     } catch (err) {
-
       setError(err?.message || "Failed to submit complaint");
-
     } finally {
-
       setSubmitting(false);
-
     }
-
   };
 
   return (
-
     <div className="ui-card-strong p-6 md:p-10">
 
       {/* Stepper */}
       <Stepper currentStep={5} />
 
-
       {/* Header */}
       <div className="mb-8">
-
         <h2 className="ui-section-title">
-
           Declaration & Consent
-
         </h2>
 
         <p className="ui-subtitle mt-2">
-
-          Please review and confirm the following declarations before
-          submitting your complaint.
-
+          Please review and confirm the following declarations before submitting your complaint.
         </p>
-
       </div>
 
-
-
-      {/* Official Declaration */}
-      <div className="border border-cyan-200 rounded-2xl p-6 bg-cyan-50">
-
+      {/* Declaration Box */}
+      <div className="border border-green-200 rounded-2xl p-6 bg-green-50">
         <h3 className="text-lg font-bold text-slate-900 mb-4">
-
           Official Declaration Statement
-
         </h3>
 
         <p className="text-slate-700 leading-relaxed">
-
-          I confirm that the information provided in this submission is true,
-          accurate, and provided in good faith to the best of my knowledge.
-          I understand that intentionally false or misleading submissions may
-          result in disciplinary or legal action.
-
+          I confirm that the information provided is true, accurate, and submitted in good faith.
+          I understand that false or misleading submissions may lead to disciplinary or legal action.
         </p>
-
       </div>
 
-
-
-      {/* Consent Checkboxes */}
+      {/* Checkboxes */}
       <div className="mt-8 space-y-5">
 
-        <label className="flex items-start gap-3">
-
-          <input
-            type="checkbox"
-            checked={declaration.truthful}
-            onChange={(e) => updateDeclaration("truthful", e.target.checked)}
-            className="mt-1 w-5 h-5"
-          />
-
-          <span className="text-slate-700">
-
-            I confirm that the information provided is accurate and truthful.
-
-          </span>
-
-        </label>
-
-
-
-        <label className="flex items-start gap-3">
-
-          <input
-            type="checkbox"
-            checked={declaration.consent}
-            onChange={(e) => updateDeclaration("consent", e.target.checked)}
-            className="mt-1 w-5 h-5"
-          />
-
-          <span className="text-slate-700">
-
-            I consent to the Internal Affairs Unit processing this complaint
-            for investigation purposes.
-
-          </span>
-
-        </label>
-
-
-
-        <label className="flex items-start gap-3">
-
-          <input
-            type="checkbox"
-            checked={declaration.auditAcknowledgement}
-            onChange={(e) => updateDeclaration("auditAcknowledgement", e.target.checked)}
-            className="mt-1 w-5 h-5"
-          />
-
-          <span className="text-slate-700">
-
-            I acknowledge that complaint activity may be securely logged for
-            compliance and audit purposes.
-
-          </span>
-
-        </label>
+        {[
+          {
+            key: "truthful",
+            text: "I confirm the information provided is accurate and truthful."
+          },
+          {
+            key: "consent",
+            text: "I consent to processing of this complaint for investigation purposes."
+          },
+          {
+            key: "auditAcknowledgement",
+            text: "I acknowledge that complaint activity may be securely logged for audit purposes."
+          }
+        ].map((item) => (
+          <label key={item.key} className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              checked={declaration[item.key]}
+              onChange={(e) => updateDeclaration(item.key, e.target.checked)}
+              className="mt-1 w-5 h-5 accent-green-600"
+            />
+            <span className="text-slate-700">{item.text}</span>
+          </label>
+        ))}
 
       </div>
 
+      {/* Error */}
       {error && (
-
         <div className="mt-6 bg-red-50 border border-red-200 rounded-xl p-4">
-
-          <p className="text-sm text-red-700">
-
-            {error}
-
-          </p>
-
+          <p className="text-sm text-red-700">{error}</p>
         </div>
-
       )}
 
+      {/* Upload Warning */}
       {uploadWarning && (
-
         <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-
-          <p className="text-sm text-yellow-700">
-
-            {uploadWarning}
-
-          </p>
-
+          <p className="text-sm text-yellow-700">{uploadWarning}</p>
         </div>
-
       )}
 
-
-
-      {/* Compliance Warning */}
-      <div className="mt-8 bg-amber-50 border border-amber-200 rounded-xl p-5">
-
-        <h4 className="font-semibold text-amber-900 mb-2">
-
+      {/* Compliance Notice */}
+      <div className="mt-8 bg-green-50 border border-green-200 rounded-xl p-5">
+        <h4 className="font-semibold text-green-700 mb-2">
           Compliance Notice
-
         </h4>
 
-        <p className="text-sm text-amber-800 leading-relaxed">
-
-          The Internal Affairs Unit maintains strict confidentiality throughout
-          the investigation process. Information will only be accessed by
-          authorized personnel involved in complaint handling and governance
-          review.
-
+        <p className="text-sm text-slate-700">
+          All complaints are handled confidentially by authorized personnel only.
         </p>
-
       </div>
-
-
 
       {/* Security Notice */}
-      <div className="mt-6 bg-[#eef4ff] border border-[#cfe0ff] rounded-xl p-5">
-
-        <h4 className="font-semibold text-cyan-600 mb-2">
-
+      <div className="mt-6 bg-green-50 border border-green-200 rounded-xl p-5">
+        <h4 className="font-semibold text-green-700 mb-2">
           Secure Submission
-
         </h4>
 
-        <p className="text-sm text-[#1d4f91]">
-
-          Your submission will be encrypted and assigned a unique Complaint
-          Reference Number (CRN) for future tracking.
-
+        <p className="text-sm text-slate-700">
+          Your complaint will be encrypted and assigned a unique reference number for tracking.
         </p>
-
       </div>
-
-
 
       {/* Buttons */}
       <div className="mt-10 flex items-center justify-between">
@@ -343,32 +246,23 @@ const DeclarationStep = () => {
         <button
           onClick={() => navigate("/evidence-upload")}
           disabled={submitting}
-          className="ui-button-secondary px-6 py-3 disabled:opacity-60"
+          className="px-6 py-3 rounded-xl font-semibold border border-green-600 text-green-600 hover:bg-green-50 transition-all disabled:opacity-60"
         >
-
           Back
-
         </button>
 
-
-
-        {/* Finalize */}
+        {/* Submit */}
         <button
           onClick={handleFinalize}
           disabled={submitting}
-          className="ui-button-primary px-8 py-3 disabled:opacity-60"
+          className="px-8 py-3 rounded-xl font-semibold bg-green-600 text-white hover:bg-green-700 transition-all shadow-md hover:shadow-lg disabled:opacity-60"
         >
-
           {submitting ? "Submitting..." : "Finalize Submission"}
-
         </button>
 
       </div>
-
     </div>
-
   );
-
 };
 
 export default DeclarationStep;

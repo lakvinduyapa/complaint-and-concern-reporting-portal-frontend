@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import Stepper from "../../components/forms/Stepper";
 import { useComplaint } from "../../hooks/useComplaint";
 
-
 const ReporterStep = () => {
 
   const navigate = useNavigate();
   const { complaintData, setComplaintData } = useComplaint();
   const { reporter } = complaintData;
+
   const submissionType = reporter.submissionType;
 
   const updateReporter = (field, value) => {
@@ -35,13 +35,13 @@ const ReporterStep = () => {
 
   };
 
-
   return (
 
     <div className="ui-card-strong p-6 md:p-10">
 
       {/* Stepper */}
       <Stepper currentStep={1} />
+
 
 
       {/* Header */}
@@ -78,12 +78,12 @@ const ReporterStep = () => {
           <button
             type="button"
             onClick={() => setType("named")}
-            className={`border-2 rounded-xl p-5 text-left transition-all bg-transparent
+            className={`border-2 rounded-xl p-5 text-left transition-all duration-300 bg-transparent
 
             ${
               submissionType === "named"
-                ? "border-cyan-500 ring-1 ring-cyan-500/10"
-                : "border-slate-200 hover:border-cyan-500"
+                ? "border-[#4CB744] bg-[#F3FFF2] ring-2 ring-[#4CB744]/20 shadow-sm"
+                : "border-slate-200 hover:border-[#4CB744]"
             }
             `}
           >
@@ -108,12 +108,12 @@ const ReporterStep = () => {
           <button
             type="button"
             onClick={() => setType("anonymous")}
-            className={`border-2 rounded-xl p-5 text-left transition-all bg-transparent
+            className={`border-2 rounded-xl p-5 text-left transition-all duration-300 bg-transparent
 
             ${
               submissionType === "anonymous"
-                ? "border-cyan-500 ring-1 ring-cyan-500/10"
-                : "border-slate-200 hover:border-cyan-500"
+                ? "border-[#4CB744] bg-[#F3FFF2] ring-2 ring-[#4CB744]/20 shadow-sm"
+                : "border-slate-200 hover:border-[#4CB744]"
             }
             `}
           >
@@ -303,9 +303,9 @@ const ReporterStep = () => {
 
 
       {/* Confidential Notice */}
-      <div className="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-4">
+      <div className="mt-8 bg-[#F3FFF2] border border-[#4CB744]/30 rounded-xl p-4">
 
-        <p className="text-sm text-blue-700">
+        <p className="text-sm text-[#2E7D32]">
 
           All submissions are treated with strict confidentiality by the
           Internal Affairs Unit (IAU).
@@ -321,7 +321,7 @@ const ReporterStep = () => {
 
         <button
           onClick={() => navigate("/complaint-details")}
-          className="ui-button-primary px-8 py-3"
+          className="bg-[#3e9638] hover:bg-[#31802c] text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg"
         >
 
           Continue

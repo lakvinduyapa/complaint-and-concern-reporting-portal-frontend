@@ -4,13 +4,21 @@ import { useNavigate } from "react-router-dom";
 import Stepper from "../../components/forms/Stepper";
 import { useComplaint } from "../../hooks/useComplaint";
 
-
 const ComplaintStep = () => {
 
   const navigate = useNavigate();
+
   const { complaintData, setComplaintData } = useComplaint();
+
   const [error, setError] = useState("");
+
   const { complaint } = complaintData;
+
+
+
+  // ========================================
+  // Update Complaint Data
+  // ========================================
 
   const updateComplaint = (field, value) => {
 
@@ -24,41 +32,57 @@ const ComplaintStep = () => {
 
   };
 
+
+
+  // ========================================
+  // Continue Validation
+  // ========================================
+
   const handleContinue = () => {
 
     if (!complaint.category) {
+
       setError("Please select a complaint category.");
+
       return;
+
     }
 
     if (!complaint.description || complaint.description.trim().length < 50) {
+
       setError("Incident description must be at least 50 characters.");
+
       return;
+
     }
 
     setError("");
+
     navigate("/subject-information");
 
   };
 
+
+
   return (
 
-    <div className="ui-card-strong p-6 md:p-10">
+    <div className="ui-card-strong p-4 sm:p-6 md:p-10">
 
       {/* Stepper */}
       <Stepper currentStep={2} />
 
 
+
       {/* Header */}
       <div className="mb-8">
 
-        <h2 className="ui-section-title">
+        <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
 
           Complaint Details
 
         </h2>
 
-        <p className="ui-subtitle mt-2">
+        <p className="text-sm md:text-base text-slate-500 mt-2 leading-relaxed">
 
           Provide detailed information regarding the incident or concern.
 
@@ -69,7 +93,7 @@ const ComplaintStep = () => {
 
 
       {/* Form */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
 
         {/* Complaint Category */}
         <div>
@@ -135,7 +159,9 @@ const ComplaintStep = () => {
           <input
             type="text"
             value={complaint.incidentLocation}
-            onChange={(e) => updateComplaint("incidentLocation", e.target.value)}
+            onChange={(e) =>
+              updateComplaint("incidentLocation", e.target.value)
+            }
             placeholder="Enter incident location"
             className="ui-input"
           />
@@ -181,7 +207,9 @@ const ComplaintStep = () => {
 
           <select
             value={complaint.awarenessMethod}
-            onChange={(e) => updateComplaint("awarenessMethod", e.target.value)}
+            onChange={(e) =>
+              updateComplaint("awarenessMethod", e.target.value)
+            }
             className="ui-select"
           >
 
@@ -209,12 +237,14 @@ const ComplaintStep = () => {
           <textarea
             rows="6"
             value={complaint.description}
-            onChange={(e) => updateComplaint("description", e.target.value)}
+            onChange={(e) =>
+              updateComplaint("description", e.target.value)
+            }
             placeholder="Provide a detailed description of the incident..."
             className="ui-textarea resize-none"
           />
 
-          <p className="text-sm text-slate-400 mt-2">
+          <p className="text-sm text-slate-400 mt-2 leading-relaxed">
 
             Include relevant names, actions, dates, and circumstances.
 
@@ -233,28 +263,38 @@ const ComplaintStep = () => {
 
           </label>
 
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center gap-6">
 
+            {/* Yes */}
             <label className="flex items-center gap-2 text-slate-700">
 
               <input
                 type="radio"
                 name="reported"
                 checked={complaint.previouslyReported === true}
-                onChange={() => updateComplaint("previouslyReported", true)}
+                onChange={() =>
+                  updateComplaint("previouslyReported", true)
+                }
+                className="accent-[#3e9638]"
               />
 
               Yes
 
             </label>
 
+
+
+            {/* No */}
             <label className="flex items-center gap-2 text-slate-700">
 
               <input
                 type="radio"
                 name="reported"
                 checked={complaint.previouslyReported === false}
-                onChange={() => updateComplaint("previouslyReported", false)}
+                onChange={() =>
+                  updateComplaint("previouslyReported", false)
+                }
+                className="accent-[#3e9638]"
               />
 
               No
@@ -267,11 +307,14 @@ const ComplaintStep = () => {
 
       </div>
 
+
+
+      {/* Previous Report Details */}
       {complaint.previouslyReported && (
 
         <div className="mt-6">
 
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
 
             Previous Report Details
 
@@ -280,20 +323,25 @@ const ComplaintStep = () => {
           <textarea
             rows="3"
             value={complaint.previousReportDetails}
-            onChange={(e) => updateComplaint("previousReportDetails", e.target.value)}
+            onChange={(e) =>
+              updateComplaint("previousReportDetails", e.target.value)
+            }
             placeholder="Where and when was this reported before?"
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            className="w-full border border-slate-300 rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-[#3e9638]"
           />
 
         </div>
 
       )}
 
+
+
+      {/* Error Message */}
       {error && (
 
-        <div className="mt-6 bg-red-50 border border-red-200 rounded-xl p-4">
+        <div className="mt-6 bg-red-50 border border-red-200 rounded-2xl p-4">
 
-          <p className="text-sm text-red-700">
+          <p className="text-sm text-red-700 leading-relaxed">
 
             {error}
 
@@ -306,9 +354,9 @@ const ComplaintStep = () => {
 
 
       {/* Compliance Notice */}
-      <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+      <div className="mt-8 bg-[#F5FFE8] border border-[#B9E48B] rounded-2xl p-4 md:p-5">
 
-        <p className="text-sm text-yellow-700">
+        <p className="text-sm md:text-base text-[#3e9638] leading-relaxed font-medium">
 
           False or intentionally misleading submissions may be subject to
           internal disciplinary review.
@@ -320,19 +368,25 @@ const ComplaintStep = () => {
 
 
       {/* Buttons */}
-      <div className="mt-10 flex items-center justify-between">
+      <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4">
 
-        <button 
+        {/* Back Button */}
+        <button
           onClick={() => navigate("/")}
-          className="ui-button-secondary px-6 py-3">
+          className="w-full sm:w-auto border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 font-semibold px-6 py-3 rounded-xl transition-all duration-300"
+        >
 
           Back
 
         </button>
 
-        <button 
+
+
+        {/* Continue Button */}
+        <button
           onClick={handleContinue}
-          className="ui-button-primary px-8 py-3">
+          className="w-full sm:w-auto bg-[#3e9638] hover:bg-[#31802c] text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg"
+        >
 
           Continue
 
