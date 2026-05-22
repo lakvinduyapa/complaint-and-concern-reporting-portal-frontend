@@ -1,58 +1,114 @@
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { FiMenu, FiX } from "react-icons/fi";
 
 const Navbar = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const navItemClass = ({ isActive }) =>
-    `px-4 py-2 text-sm font-semibold rounded-lg transition-colors border ${
+    `px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-300 ${
       isActive
-        ? "text-green-300 border-green-400/60 bg-gradient-to-r from-green-500/30 to-green-600/30"
-        : "text-cyan-100 border-transparent hover:bg-green-500/10 hover:border-green-400/30"
+        ? "bg-green-600 text-white"
+        : "text-white hover:bg-white/10"
     }`;
 
   return (
-    <header
-      className="sticky top-0 z-30 text-white border-b border-cyan-500/20 shadow-[0_12px_30px_rgba(0,229,255,0.15)]"
-      style={{
-        background: "#0156A6",
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center gap-4">
-        {/* Left Side */}
-        <div className="flex items-center">
-          <div className="h-14 md:h-20 w-auto max-w-[220px]">
-            <img
-              src="/logoSlt.jpg"
-              alt="SLTMobitel"
-              className="h-full w-auto object-contain drop-shadow-lg"
-              style={{ display: "block" }}
-            />
-          </div>
-        </div>
-
-        {/* Middle Navigation */}
-        <div className="hidden md:flex items-center gap-2 ml-auto">
-          <NavLink to="/" end className={navItemClass}>
-            Home
-          </NavLink>
-
-          <NavLink to="/track-complaint" className={navItemClass}>
-            Track Status
-          </NavLink>
-        </div>
-
-        {/* Right Side */}
-        <div className="flex items-center gap-3">
+    <header className="sticky top-0 z-50 w-full shadow-lg bg-[#0156A6]">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4">
+        {/* Main Navbar */}
+        <div className="h-32 md:h-36 flex items-center justify-between">
+          
+          {/* Logo */}
           <NavLink
-            to="/admin/login"
-            className={({ isActive }) =>
-              `ml-2 px-4 py-2 text-sm font-semibold rounded-lg transition-colors border ${
-                isActive
-                  ? "bg-gradient-to-r from-green-500 to-green-600 text-white border-green-400"
-                  : "text-cyan-100 border-cyan-500/40 hover:bg-gradient-to-r hover:from-green-500/20 hover:to-green-600/20 hover:text-green-300"
-              }`
-            }
+            to="/"
+            className="flex items-center flex-shrink-0 bg-[#0156A6]"
           >
-            Admin Portal
+            <img
+              src="/01SLT.jpg.jpeg"
+              alt="SLTMobitel"
+              className="h-24 sm:h-28 md:h-32 lg:h-36 w-auto object-contain bg-[#0156A6]"
+            />
           </NavLink>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-3">
+            <NavLink to="/" end className={navItemClass}>
+              Home
+            </NavLink>
+
+            <NavLink
+              to="/track-complaint"
+              className={navItemClass}
+            >
+              Track Status
+            </NavLink>
+
+            <NavLink
+              to="/admin/login"
+              className={({ isActive }) =>
+                `px-4 py-2 text-sm font-semibold rounded-lg border transition-all duration-300 ${
+                  isActive
+                    ? "bg-green-600 text-white border-green-500"
+                    : "text-white border-white/20 hover:bg-white/10"
+                }`
+              }
+            >
+              Admin Portal
+            </NavLink>
+          </nav>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden text-white p-2"
+            aria-label="Toggle Menu"
+          >
+            {menuOpen ? (
+              <FiX size={30} />
+            ) : (
+              <FiMenu size={30} />
+            )}
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        <div
+          className={`md:hidden overflow-hidden transition-all duration-300 ${
+            menuOpen ? "max-h-64 pb-4" : "max-h-0"
+          }`}
+        >
+          <div className="flex flex-col gap-2">
+            <NavLink
+              to="/"
+              end
+              className={navItemClass}
+              onClick={() => setMenuOpen(false)}
+            >
+              Home
+            </NavLink>
+
+            <NavLink
+              to="/track-complaint"
+              className={navItemClass}
+              onClick={() => setMenuOpen(false)}
+            >
+              Track Status
+            </NavLink>
+
+            <NavLink
+              to="/admin/login"
+              onClick={() => setMenuOpen(false)}
+              className={({ isActive }) =>
+                `px-4 py-2 text-sm font-semibold rounded-lg border transition-all duration-300 ${
+                  isActive
+                    ? "bg-green-600 text-white border-green-500"
+                    : "text-white border-white/20 hover:bg-white/10"
+                }`
+              }
+            >
+              Admin Portal
+            </NavLink>
+          </div>
         </div>
       </div>
     </header>

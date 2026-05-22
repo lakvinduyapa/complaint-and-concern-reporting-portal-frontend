@@ -158,7 +158,7 @@ const SubjectStep = () => {
               />
             </div>
 
-            {/* Organization */}
+          
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Organization

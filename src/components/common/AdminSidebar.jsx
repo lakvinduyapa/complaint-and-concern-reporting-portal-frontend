@@ -32,7 +32,7 @@ const AdminSidebar = () => {
       >
         <div className="flex items-center gap-2">
           <img
-            src="/logoSlt.jpg"
+            src="/01SLT.jpg.jpeg"
             alt="SLTMobitel"
             className="h-10 w-auto object-contain"
           />
