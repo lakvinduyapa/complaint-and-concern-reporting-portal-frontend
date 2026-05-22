@@ -15,9 +15,8 @@ import AdminLogin from "../pages/admin/Login";
 import AdminDashboard from "../pages/admin/Dashboard";
 import ComplaintList from "../pages/admin/ComplaintList";
 import ComplaintDetails from "../pages/admin/ComplaintDetails";
-
 import AdminProtectedRoute from "../components/common/AdminProtectedRoute";
-
+import Reports from "../pages/admin/Reports";
 
 const AppRoutes = () => {
 
@@ -88,6 +87,7 @@ const AppRoutes = () => {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="complaints" element={<ComplaintList />} />
           <Route path="complaints/:id" element={<ComplaintDetails />} />
+          <Route path="/admin/reports" element={<Reports />} />
         </Route>
 
       </Routes>

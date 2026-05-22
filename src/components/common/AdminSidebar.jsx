@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAdminAuth } from "../../hooks/useAdminAuth";
-import { FiHome, FiFileText, FiLogOut } from "react-icons/fi";
+import { FiHome, FiFileText, FiBarChart2, FiLogOut } from "react-icons/fi";
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
@@ -131,6 +131,15 @@ const AdminSidebar = () => {
           </NavLink>
 
           <NavLink
+            to="/admin/reports"
+            className={({ isActive }) => getNavItemClass(isActive)}
+            onClick={() => setIsOpen(false)}
+          >
+          <FiBarChart2 className="w-5 h-5 flex-shrink-0" />
+          {!isCollapsed && <span>Reports</span>}
+          </NavLink>
+
+          <NavLink
             to="/admin/complaints"
             className={({ isActive }) => getNavItemClass(isActive)}
             onClick={() => setIsOpen(false)}
@@ -139,6 +148,8 @@ const AdminSidebar = () => {
             {!isCollapsed && <span>Complaints</span>}
           </NavLink>
         </nav>
+
+        
 
         {/* Push Logout to Bottom */}
         <div className="flex-1" />
