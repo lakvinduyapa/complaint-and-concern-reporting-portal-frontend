@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAdminAuth } from "../../hooks/useAdminAuth";
 import {
   FiHome,
-  FiAlertCircle,
+  FiFileText,
   FiLogOut,
 } from "react-icons/fi";
 
@@ -33,14 +33,14 @@ const AdminSidebar = () => {
     <>
       {/* Mobile Header */}
       <div
-        className="fixed top-0 left-0 right-0 h-24 border-b border-cyan-400/30 shadow-lg z-40 md:hidden flex items-center justify-between px-4"
+        className="fixed top-0 left-0 right-0 h-16 border-b border-cyan-400/30 shadow-lg z-40 md:hidden flex items-center justify-between px-4"
         style={{ background: "#0156A6" }}
       >
         <div className="flex items-center">
           <img
             src="/01SLT.jpg.jpeg"
             alt="SLTMobitel"
-            className="h-20 sm:h-24 w-auto object-contain bg-[#0156A6]"
+            className="h-14 w-auto object-contain bg-[#0156A6]"
           />
         </div>
 
@@ -59,7 +59,11 @@ const AdminSidebar = () => {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
+              d={
+                isOpen
+                  ? "M6 18L18 6M6 6l12 12"
+                  : "M4 6h16M4 12h16M4 18h16"
+              }
             />
           </svg>
         </button>
@@ -75,9 +79,9 @@ const AdminSidebar = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 h-screen border-r border-cyan-400/30 shadow-xl transition-all duration-300 ease-in-out z-40 md:z-30 md:translate-x-0 overflow-y-auto flex flex-col ${
+        className={`fixed left-0 top-0 h-screen border-r border-cyan-400/30 shadow-xl transition-all duration-300 ease-in-out z-40 md:z-30 overflow-y-auto flex flex-col ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } md:sticky md:top-0 ${
+        } md:translate-x-0 ${
           isCollapsed ? "md:w-24 w-64" : "w-64"
         }`}
         style={{ background: "#0156A6" }}
@@ -120,7 +124,7 @@ const AdminSidebar = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="px-4 py-6 space-y-2">
+        <nav className="px-4 py-4 space-y-2">
           <NavLink
             to="/admin/dashboard"
             className={({ isActive }) => getNavItemClass(isActive)}
@@ -135,14 +139,14 @@ const AdminSidebar = () => {
             className={({ isActive }) => getNavItemClass(isActive)}
             onClick={() => setIsOpen(false)}
           >
-            <FiAlertCircle className="w-5 h-5 flex-shrink-0" />
+            <FiFileText className="w-5 h-5 flex-shrink-0" />
             {!isCollapsed && <span>Complaints</span>}
           </NavLink>
         </nav>
 
         <div className="mx-4 border-t border-cyan-300/35" />
 
-        {/* Logout Section */}
+        {/* Logout */}
         <div className="p-4 mt-auto">
           <button
             onClick={() => {
@@ -160,7 +164,7 @@ const AdminSidebar = () => {
       </aside>
 
       {/* Mobile Header Spacer */}
-      <div className="h-24 md:hidden" />
+      <div className="h-16 md:hidden" />
     </>
   );
 };
