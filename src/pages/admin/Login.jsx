@@ -6,6 +6,7 @@ import { useAdminAuth } from "../../hooks/useAdminAuth";
 const AdminLogin = () => {
   const navigate = useNavigate();
   const { login } = useAdminAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -24,7 +25,11 @@ const AdminLogin = () => {
 
     try {
       setLoading(true);
-      const response = await adminLogin(normalizedEmail, password);
+
+      const response = await adminLogin(
+        normalizedEmail,
+        password
+      );
 
       if (response?.user) {
         login(response.user);
@@ -32,37 +37,57 @@ const AdminLogin = () => {
 
       navigate("/admin/dashboard");
     } catch (err) {
-      setError(err?.message || "Login failed. Please try again.");
+      setError(
+        err?.message ||
+        "Login failed. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="app-shell min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        {/* Card */}
-        <div className="rounded-2xl p-8 bg-white shadow-xl border border-gray-200">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+
+      <div className="w-full max-w-lg">
+
+        {/* Login Card */}
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-xl p-8 md:p-10">
+
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">
+
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-50 border border-green-100 mb-4">
+              <span className="text-sm font-medium text-green-700">
+                Internal Access
+              </span>
+            </div>
+
+            <h1 className="text-4xl font-bold text-slate-900 mb-3">
               Admin Portal
             </h1>
 
-            <p className="text-slate-600 text-sm">
-              Internal Affairs Unit — Complaint Investigation System
+            <p className="text-slate-500">
+              Internal Affairs Unit Complaint Management System
             </p>
+
           </div>
 
           {/* Error Message */}
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
-              <p className="text-red-700 text-sm font-medium">{error}</p>
+              <p className="text-red-700 text-sm font-medium">
+                {error}
+              </p>
             </div>
           )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} noValidate className="space-y-5">
+          {/* Login Form */}
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-5"
+          >
+
             {/* Email */}
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -72,10 +97,12 @@ const AdminLogin = () => {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) =>
+                  setEmail(e.target.value)
+                }
                 placeholder="admin@iau.com"
                 disabled={loading}
-                className="ui-input bg-white border-gray-300 text-slate-900 placeholder-slate-400 disabled:bg-gray-100 disabled:text-slate-400"
+                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
               />
             </div>
 
@@ -88,39 +115,50 @@ const AdminLogin = () => {
               <input
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) =>
+                  setPassword(e.target.value)
+                }
                 placeholder="••••••••"
                 disabled={loading}
-                className="ui-input bg-white border-gray-300 text-slate-900 placeholder-slate-400 disabled:bg-gray-100 disabled:text-slate-400"
+                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
               />
             </div>
 
-            {/* Submit Button */}
+            {/* Login Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-3 disabled:bg-gray-300 disabled:cursor-not-allowed mt-6 rounded-xl font-semibold transition-all"
+              className="w-full py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading
+                ? "Signing In..."
+                : "Sign In"}
             </button>
+
           </form>
 
           {/* Footer */}
-          <p className="text-center text-slate-500 text-xs mt-6">
-            Authorized personnel only. All activity is logged.
-          </p>
+          <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+            <p className="text-xs text-slate-500">
+              Authorized personnel only.
+              All activity is monitored and logged.
+            </p>
+          </div>
+
         </div>
 
-        {/* Public Link */}
+        {/* Back Link */}
         <div className="text-center mt-6">
           <Link
             to="/"
-            className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
+            className="text-green-600 hover:text-green-700 font-medium text-sm"
           >
             ← Back to Public Portal
           </Link>
         </div>
+
       </div>
+
     </div>
   );
 };

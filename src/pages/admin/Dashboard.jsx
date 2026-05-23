@@ -66,8 +66,8 @@ const Dashboard = () => {
       label: "Total Complaints",
       value: stats?.totalComplaints || 0,
       icon: <FiFileText size={20} />,
-      bgColor: "bg-white",
-      iconBg: "bg-slate-100",
+      bgColor: "bg-gradient-to-r from-blue-50 to-cyan-50",
+      iconBg: "bg-blue-200",
       iconColor: "text-slate-700",
     },
 
@@ -75,8 +75,8 @@ const Dashboard = () => {
       label: "Pending Review",
       value: stats?.pending || 0,
       icon: <FiClock size={20} />,
-      bgColor: "bg-white",
-      iconBg: "bg-yellow-100",
+      bgColor: "bg-gradient-to-r from-yellow-50 to-amber-50",
+      iconBg: "bg-yellow-200",
       iconColor: "text-yellow-700",
     },
 
@@ -84,7 +84,7 @@ const Dashboard = () => {
       label: "Under Investigation",
       value: stats?.underInvestigation || 0,
       icon: <FiSearch size={20} />,
-      bgColor: "bg-white",
+      bgColor: "bg-gradient-to-r from-orange-50 to-red-50",
       iconBg: "bg-orange-100",
       iconColor: "text-orange-700",
     },
@@ -93,7 +93,7 @@ const Dashboard = () => {
       label: "Resolved",
       value: stats?.resolved || 0,
       icon: <FiCheckCircle size={20} />,
-      bgColor: "bg-white",
+      bgColor: "bg-gradient-to-r from-green-50 to-emerald-50",
       iconBg: "bg-green-100",
       iconColor: "text-green-700",
     },
@@ -132,7 +132,7 @@ const Dashboard = () => {
       <div className="bg-white shadow-lg shadow-slate-950/10 rounded-3xl p-6 border border-slate-200">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight">
               Investigation Dashboard
             </h1>
 
@@ -141,8 +141,8 @@ const Dashboard = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 shadow-sm min-w-[140px]">
+          <div className="grid grid-cols-2 gap-3 w-full lg:w-auto">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-sm">
               <p className="text-xs text-slate-500 font-medium">
                 Escalated Cases
               </p>
@@ -152,7 +152,7 @@ const Dashboard = () => {
               </p>
             </div>
 
-            <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 shadow-sm min-w-[170px]">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-sm">
               <p className="text-xs text-slate-500 font-medium">
                 Active Investigations
               </p>
@@ -166,7 +166,7 @@ const Dashboard = () => {
       </div>
 
       {/* Primary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
         {primaryStats.map((card, index) => {
           let statusFilter = "";
 
@@ -233,26 +233,26 @@ const Dashboard = () => {
 
         {recentComplaints.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="min-w-[800px] w-full">
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  <th className="text-left px-3 md:px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                     CRN
                   </th>
 
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  <th className="text-left px-3 md:px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                     Category
                   </th>
 
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  <th className="text-left px-3 md:px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                     Status
                   </th>
 
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  <th className="text-left px-3 md:px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                     Report Type
                   </th>
 
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  <th className="text-left px-3 md:px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                     Submitted
                   </th>
                 </tr>

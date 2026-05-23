@@ -23,29 +23,33 @@ const TrackComplaint = () => {
 
   const handleTrack = async () => {
 
-    try {
+  if (!crn.trim()) {
+    setError("Please enter a Complaint Reference Number");
+    return;
+  }
 
-      setLoading(true);
+  try {
 
-      setError("");
+    setLoading(true);
+    setError("");
 
-      const data = await trackComplaintByCRN(crn);
+    const data = await trackComplaintByCRN(crn);
 
-      setComplaint(data.data);
+    setComplaint(data.data);
 
-    } catch (err) {
+  } catch (err) {
 
-      setComplaint(null);
+    setComplaint(null);
 
-      setError(err.message || "Complaint not found");
+    setError(err.message || "Complaint not found");
 
-    } finally {
+  } finally {
 
-      setLoading(false);
+    setLoading(false);
 
-    }
+  }
 
-  };
+};
 
 
 
@@ -54,22 +58,32 @@ const TrackComplaint = () => {
   // ========================================
 
   const getStatusColor = (status) => {
+  switch (status) {
+    case "Submitted":
+      return "bg-cyan-50 text-cyan-700 border border-cyan-200";
 
-    const colors = {
+    case "Preliminary Review":
+      return "bg-purple-50 text-purple-700 border border-purple-200";
 
-      "Submitted": "text-cyan-600",
-      "Preliminary Review": "text-yellow-600",
-      "Under Investigation": "text-orange-600",
-      "Awaiting Evidence": "text-purple-600",
-      "Escalated to CIABOC": "text-red-600",
-      "Resolved": "text-green-600",
-      "Closed": "text-gray-600"
+    case "Under Investigation":
+      return "bg-yellow-50 text-yellow-700 border border-yellow-200";
 
-    };
+    case "Awaiting Evidence":
+      return "bg-orange-50 text-orange-700 border border-orange-200";
 
-    return colors[status] || "text-gray-600";
+    case "Escalated to CIABOC":
+      return "bg-red-50 text-red-700 border border-red-200";
 
-  };
+    case "Resolved":
+      return "bg-green-50 text-green-700 border border-green-200";
+
+    case "Closed":
+      return "bg-gray-50 text-gray-700 border border-gray-200";
+
+    default:
+      return "bg-slate-50 text-slate-700 border border-slate-200";
+  }
+};
 
 
 
@@ -99,7 +113,7 @@ const TrackComplaint = () => {
 
   return (
 
-    <div className="ui-card-strong p-4 sm:p-6 md:p-10">
+    <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6 md:p-10">
 
       {/* Header */}
       <div className="text-center mb-10">
@@ -119,10 +133,23 @@ const TrackComplaint = () => {
 
       </div>
 
+      <div className="flex justify-center mb-8">
+  <div className="bg-green-50 border border-green-100 rounded-2xl px-6 py-4">
+    <p className="text-sm text-slate-500">
+      Complaint Tracking Portal
+    </p>
+
+    <h3 className="text-xl font-bold text-slate-900 mt-1">
+      Real-Time Status Updates
+    </h3>
+  </div>
+</div>
+
+
 
 
       {/* Search Section */}
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-3xl mx-auto bg-slate-50 border border-slate-200 rounded-3xl p-6">
 
         <div className="flex flex-col md:flex-row gap-4">
 
@@ -186,11 +213,13 @@ const TrackComplaint = () => {
 
               </p>
 
-              <h4 className="font-bold text-slate-900 break-all">
-
-                {complaint.crn}
-
-              </h4>
+              <span
+  className={`inline-flex px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
+    complaint.currentStatus
+  )}`}
+>
+  {complaint.currentStatus}
+</span>
 
             </div>
 
@@ -251,7 +280,7 @@ const TrackComplaint = () => {
 
                 <div
                   key={index}
-                  className="flex items-start gap-4"
+                   className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex items-start gap-4"
                 >
 
                   <div

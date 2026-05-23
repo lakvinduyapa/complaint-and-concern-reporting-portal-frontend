@@ -240,30 +240,46 @@ const Reports = () => {
     : [];
 
   return (
-    <div className="p-3 sm:p-4 md:p-6">
-      <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
-        Complaint Reports
-      </h1>
+    
+   <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6 md:p-8 mb-6">
 
-      <div className="flex flex-col md:flex-row gap-3 mb-6">
-        <select
-          value={period}
-          onChange={(e) => setPeriod(e.target.value)}
-          className="border p-2 rounded w-full md:w-auto"
-        >
-          <option value="2days">Last 2 Days</option>
-          <option value="weekly">Last 7 Days</option>
-          <option value="2weekly">Last 14 Days</option>
-          <option value="monthly">Last 30 Days</option>
-        </select>
 
-        <button
-          onClick={downloadPDF}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-medium w-full md:w-auto"
-        >
-          Download PDF
-        </button>
-      </div>
+
+    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8 gap-5">
+
+  <div>
+    <h1 className="text-3xl md:text-4xl font-bold text-slate-900">
+      Complaint Reports
+    </h1>
+
+    <p className="text-slate-500 mt-2">
+      Monitor complaint trends, investigation progress, and operational statistics.
+    </p>
+  </div>
+
+  <div className="flex flex-col sm:flex-row gap-3">
+    <select
+      value={period}
+      onChange={(e) => setPeriod(e.target.value)}
+      className="px-4 py-3 border border-slate-300 rounded-xl bg-white min-w-[180px]"
+    >
+      <option value="2days">Last 2 Days</option>
+      <option value="weekly">Last 7 Days</option>
+      <option value="2weekly">Last 14 Days</option>
+      <option value="monthly">Last 30 Days</option>
+    </select>
+
+    <button
+      onClick={downloadPDF}
+      className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium"
+    >
+      Download PDF
+    </button>
+  </div>
+
+</div>
+
+    
 
       {loading ? (
         <div className="text-center py-10">
@@ -272,111 +288,133 @@ const Reports = () => {
       ) : (
         report && (
           <>
-            {/* Summary Cards */}
-            {/* Complaint Status Summary */}
 
-<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
 
-  <div className="bg-blue-50 p-4 rounded shadow text-center">
-    <h3>Total Complaints</h3>
-    <p className="text-2xl sm:text-3xl font-bold">
+
+
+
+      {/* Complaint Status Summary */}
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+
+  {/* Total Complaints */}
+  <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 shadow-sm">
+    <p className="text-sm text-slate-600">Total Complaints</p>
+    <h3 className="text-3xl font-bold text-slate-900 mt-2">
       {report.summary.totalComplaints}
-    </p>
+    </h3>
   </div>
 
-  <div className="bg-cyan-50 p-4 rounded shadow text-center">
-    <h3>Submitted</h3>
-    <p className="text-2xl sm:text-3xl font-bold">
+  {/* Submitted */}
+  <div className="bg-cyan-50 border border-cyan-100 rounded-2xl p-5 shadow-sm">
+    <p className="text-sm text-slate-600">Submitted</p>
+    <h3 className="text-3xl font-bold text-slate-900 mt-2">
       {report.summary.submitted}
-    </p>
+    </h3>
   </div>
 
-  <div className="bg-purple-50 p-4 rounded shadow text-center">
-    <h3>Preliminary Review</h3>
-    <p className="text-2xl sm:text-3xl font-bold">
+  {/* Preliminary Review */}
+  <div className="bg-purple-50 border border-purple-100 rounded-2xl p-5 shadow-sm">
+    <p className="text-sm text-slate-600">Preliminary Review</p>
+    <h3 className="text-3xl font-bold text-slate-900 mt-2">
       {report.summary.preliminaryReview}
-    </p>
+    </h3>
   </div>
 
-  <div className="bg-yellow-50 p-4 rounded shadow text-center">
-    <h3>Under Investigation</h3>
-    <p className="text-2xl sm:text-3xl font-bold">
+  {/* Under Investigation */}
+  <div className="bg-yellow-50 border border-yellow-100 rounded-2xl p-5 shadow-sm">
+    <p className="text-sm text-slate-600">Under Investigation</p>
+    <h3 className="text-3xl font-bold text-slate-900 mt-2">
       {report.summary.underInvestigation}
-    </p>
+    </h3>
   </div>
 
-  <div className="bg-orange-50 p-4 rounded shadow text-center">
-    <h3>Awaiting Evidence</h3>
-    <p className="text-2xl sm:text-3xl font-bold">
+  {/* Awaiting Evidence */}
+  <div className="bg-orange-50 border border-orange-100 rounded-2xl p-5 shadow-sm">
+    <p className="text-sm text-slate-600">Awaiting Evidence</p>
+    <h3 className="text-3xl font-bold text-slate-900 mt-2">
       {report.summary.awaitingEvidence}
-    </p>
+    </h3>
   </div>
 
-  <div className="bg-red-50 p-4 rounded shadow text-center">
-    <h3>Escalated to CIABOC</h3>
-    <p className="text-2xl sm:text-3xl font-bold">
+  {/* Escalated */}
+  <div className="bg-red-50 border border-red-100 rounded-2xl p-5 shadow-sm">
+    <p className="text-sm text-slate-600">Escalated to CIABOC</p>
+    <h3 className="text-3xl font-bold text-slate-900 mt-2">
       {report.summary.escalated}
-    </p>
+    </h3>
   </div>
 
-  <div className="bg-green-50 p-4 rounded shadow text-center">
-    <h3>Resolved</h3>
-    <p className="text-2xl sm:text-3xl font-bold">
+  {/* Resolved */}
+  <div className="bg-green-50 border border-green-100 rounded-2xl p-5 shadow-sm">
+    <p className="text-sm text-slate-600">Resolved</p>
+    <h3 className="text-3xl font-bold text-slate-900 mt-2">
       {report.summary.resolved}
-    </p>
+    </h3>
   </div>
 
-  <div className="bg-gray-50 p-4 rounded shadow text-center">
-    <h3>Closed</h3>
-    <p className="text-2xl sm:text-3xl font-bold">
+  {/* Closed */}
+  <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 shadow-sm">
+    <p className="text-sm text-slate-600">Closed</p>
+    <h3 className="text-3xl font-bold text-slate-900 mt-2">
       {report.summary.closed}
-    </p>
+    </h3>
   </div>
 
 </div>
 
 
-
-
-          {/* Additional Statistics */}
-<div className="mb-6">
-  <h2 className="text-lg font-bold mb-4">
+   {/* Additional Statistics */}
+<div className="mb-8">
+  <h2 className="text-xl font-bold text-slate-900 mb-5">
     Additional Statistics
   </h2>
 
-  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
-    <div className="bg-purple-50 p-4 rounded shadow text-center">
-      <h3>Anonymous Complaints</h3>
-      <p className="text-2xl sm:text-3xl font-bold">
+    {/* Anonymous Complaints */}
+    <div className="bg-[#F5F3FF] border border-[#DDD6FE] rounded-2xl p-5 shadow-sm">
+      <p className="text-sm text-slate-600 font-medium">
+        Anonymous Complaints
+      </p>
+
+      <h3 className="text-3xl font-bold text-slate-900 mt-2">
         {report.summary.anonymousComplaints}
-      </p>
+      </h3>
     </div>
 
-    <div className="bg-indigo-50 p-4 rounded shadow text-center">
-      <h3>Named Complaints</h3>
-      <p className="text-2xl sm:text-3xl font-bold">
+    {/* Named Complaints */}
+    <div className="bg-[#EEF2FF] border border-[#C7D2FE] rounded-2xl p-5 shadow-sm">
+      <p className="text-sm text-slate-600 font-medium">
+        Named Complaints
+      </p>
+
+      <h3 className="text-3xl font-bold text-slate-900 mt-2">
         {report.summary.namedComplaints}
-      </p>
+      </h3>
     </div>
 
-    <div className="bg-orange-50 p-4 rounded shadow text-center">
-      <h3>Evidence Files</h3>
-      <p className="text-2xl sm:text-3xl font-bold">
-        {report.summary.totalEvidence}
+    {/* Evidence Files */}
+    <div className="bg-[#FFF7ED] border border-[#FED7AA] rounded-2xl p-5 shadow-sm">
+      <p className="text-sm text-slate-600 font-medium">
+        Evidence Files
       </p>
+
+      <h3 className="text-3xl font-bold text-slate-900 mt-2">
+        {report.summary.totalEvidence}
+      </h3>
     </div>
 
   </div>
 </div>
+ 
 
-
+   
 
 
 
             {/* Pie Chart */}
-            <div className="bg-white p-3 sm:p-6 rounded shadow mb-6">
-              <h2 className="text-lg font-bold mb-4">
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6 mb-8">
+              <h2 className="text-xl font-bold text-slate-900 mb-4">
                 Complaint Status Distribution
               </h2>
 
@@ -415,12 +453,14 @@ const Reports = () => {
             </div>
 
             {/* Total Records */}
-            <div className="mb-4 text-gray-600 font-medium">
-              Total Records Found : {report.complaints.length}
+            <div className="bg-white border border-slate-200 rounded-xl px-4 py-3 mb-4 shadow-sm">
+              <p className="text-slate-700 font-semibold">
+                   Total Records Found: {report.complaints.length}
+              </p>
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded shadow overflow-x-auto w-full">
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden">
               <table className="w-full min-w-[600px] text-sm">
                 <thead>
                   <tr className="bg-gray-100">
@@ -485,7 +525,7 @@ const Reports = () => {
       )
     }
     disabled={currentPage === 1}
-   className="w-full sm:w-auto px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+   className="w-full sm:w-auto px-5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 transition-all disabled:opacity-50 "
   >
     Previous
   </button>
@@ -501,7 +541,7 @@ const Reports = () => {
       )
     }
     disabled={currentPage === totalPages}
-    className="w-full sm:w-auto px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+    className="w-full sm:w-auto px-5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 transition-all disabled:opacity-50"
   >
     Next
   </button>
