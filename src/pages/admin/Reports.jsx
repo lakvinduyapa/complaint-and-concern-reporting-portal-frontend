@@ -36,10 +36,6 @@ const Reports = () => {
 }, []);
 
 
-
-
-
-
   const fetchReport = async () => {
     try {
       setLoading(true);
@@ -384,31 +380,36 @@ const Reports = () => {
                 Complaint Status Distribution
               </h2>
 
-              <ResponsiveContainer width="100%" height={isMobile ? 250 : 350}>
+              <ResponsiveContainer width="100%" height={isMobile ? 420 : 350}>
                 <PieChart>
                   <Pie
                     data={chartData}
                     dataKey="value"
                     nameKey="name"
-                    outerRadius={isMobile ? 80 : 120}
-                    label
+                    outerRadius={isMobile ? 60 : 120}
+                    label={!isMobile}
                   >
-                    <Cell fill="#3B82F6" />
-                    <Cell fill="#F59E0B" />
-                    <Cell fill="#10B981" />
-                    <Cell fill="#EF4444" />
-                    <Cell fill="#3B82F6" />
-                    <Cell fill="#8B5CF6" />
-                    <Cell fill="#F59E0B" />
-                    <Cell fill="#FB923C" />
-                    <Cell fill="#EF4444" />
-                    <Cell fill="#10B981" />
-                    <Cell fill="#6B7280" />
+                   
+                    <Cell fill="#2563EB" /> {/* Submitted */}
+                    <Cell fill="#F59E0B" /> {/* Preliminary Review */}
+                    <Cell fill="#10B981" /> {/* Under Investigation */}
+                    <Cell fill="#EF4444" /> {/* Awaiting Evidence */}
+                    <Cell fill="#8B5CF6" /> {/* Escalated */}
+                    <Cell fill="#06B6D4" /> {/* Resolved */}
+                    <Cell fill="#6B7280" /> {/* Closed */}
 
                   </Pie>
 
                   <Tooltip />
-                  <Legend />
+                  <Legend 
+                     verticalAlign="bottom"
+                      align="center"
+                      wrapperStyle={{
+                         fontSize: isMobile ? "11px" : "14px",
+                         paddingTop: "10px",
+                      }}
+                  />
+                  
                 </PieChart>
               </ResponsiveContainer>
             </div>
