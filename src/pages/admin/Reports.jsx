@@ -418,13 +418,13 @@ const Reports = () => {
                 Complaint Status Distribution
               </h2>
 
-              <ResponsiveContainer width="100%" height={isMobile ? 420 : 350}>
+              <ResponsiveContainer width="100%" height={isMobile ? 300 : 350}>
                 <PieChart>
                   <Pie
                     data={chartData}
                     dataKey="value"
                     nameKey="name"
-                    outerRadius={isMobile ? 60 : 120}
+                    outerRadius={isMobile ? 90 : 120}
                     label={!isMobile}
                   >
                    
@@ -439,14 +439,16 @@ const Reports = () => {
                   </Pie>
 
                   <Tooltip />
-                  <Legend 
-                     verticalAlign="bottom"
-                      align="center"
-                      wrapperStyle={{
-                         fontSize: isMobile ? "11px" : "14px",
-                         paddingTop: "10px",
-                      }}
-                  />
+                  {!isMobile && (
+  <Legend
+    verticalAlign="bottom"
+    align="center"
+    wrapperStyle={{
+      fontSize: "14px",
+      paddingTop: "10px",
+    }}
+  />
+)}
                   
                 </PieChart>
               </ResponsiveContainer>
@@ -461,7 +463,9 @@ const Reports = () => {
 
             {/* Table */}
             <div className="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden">
-              <table className="w-full min-w-[600px] text-sm">
+
+            <div className="overflow-x-auto">    
+              <table className="w-full min-w-[700px] text-sm">
                 <thead>
                   <tr className="bg-gray-100">
                     <th className="p-3 text-left">CRN</th>
@@ -470,6 +474,7 @@ const Reports = () => {
                     <th className="p-3 text-left">Date</th>
                   </tr>
                 </thead>
+            
 
                 <tbody>
                   {report.complaints.length > 0 ? (
@@ -545,6 +550,7 @@ const Reports = () => {
   >
     Next
   </button>
+</div>
 </div>
           </>
         )
