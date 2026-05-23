@@ -12,8 +12,8 @@ const AdminLayout = () => {
       <AdminSidebar />
 
       {/* Main Content */}
-      <main className="flex-1 w-full md:overflow-y-auto">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+      <main className="flex-1 w-full md:ml-64 md:overflow-y-auto">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-8 md:py-10">
           <Outlet />
         </div>
       </main>

@@ -8,7 +8,6 @@ const AdminSidebar = () => {
   const { logout } = useAdminAuth();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -16,9 +15,8 @@ const AdminSidebar = () => {
   };
 
   const getNavItemClass = (isActive) => {
-    const baseClass = `flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-all border ${
-      isCollapsed ? "justify-center" : ""
-    }`;
+    const baseClass =
+      "flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-all border";
 
     return isActive
       ? `${baseClass} bg-green-600 text-white border-green-500`
@@ -77,46 +75,16 @@ const AdminSidebar = () => {
       <aside
         className={`fixed left-0 top-16 md:top-0 h-[calc(100vh-4rem)] md:h-screen border-r border-cyan-400/30 shadow-xl transition-all duration-300 ease-in-out z-50 md:z-30 flex flex-col overflow-y-hidden md:overflow-y-auto ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 ${
-          isCollapsed ? "md:w-24 w-64" : "w-64"
-        }`}
+        } md:translate-x-0 w-64`}
         style={{ background: "#0156A6" }}
       >
         {/* Desktop Logo */}
-        <div className="hidden md:flex items-center justify-between py-4 px-4">
-          <div
-            className={`transition-all duration-300 ${
-              isCollapsed ? "opacity-0 w-0 overflow-hidden" : ""
-            }`}
-          >
-            <img
-              src="/01SLT.jpg.jpeg"
-              alt="SLTMobitel"
-              className="h-20 sm:h-24 md:h-28 lg:h-32 w-auto object-contain"
-            />
-          </div>
-
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2 hover:bg-white/10 rounded-lg text-white"
-            aria-label="Collapse Sidebar"
-          >
-            <svg
-              className={`w-5 h-5 transition-transform ${
-                isCollapsed ? "rotate-180" : ""
-              }`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
+        <div className="hidden md:flex justify-center py-4 px-4">
+          <img
+            src="/01SLT.jpg.jpeg"
+            alt="SLTMobitel"
+            className="h-24 w-auto object-contain"
+          />
         </div>
 
         {/* Navigation */}
@@ -127,7 +95,7 @@ const AdminSidebar = () => {
             onClick={() => setIsOpen(false)}
           >
             <FiHome className="w-5 h-5 flex-shrink-0" />
-            {!isCollapsed && <span>Dashboard</span>}
+            <span>Dashboard</span>
           </NavLink>
 
           <NavLink
@@ -135,8 +103,8 @@ const AdminSidebar = () => {
             className={({ isActive }) => getNavItemClass(isActive)}
             onClick={() => setIsOpen(false)}
           >
-          <FiBarChart2 className="w-5 h-5 flex-shrink-0" />
-          {!isCollapsed && <span>Reports</span>}
+            <FiBarChart2 className="w-5 h-5 flex-shrink-0" />
+            <span>Reports</span>
           </NavLink>
 
           <NavLink
@@ -145,11 +113,9 @@ const AdminSidebar = () => {
             onClick={() => setIsOpen(false)}
           >
             <FiFileText className="w-5 h-5 flex-shrink-0" />
-            {!isCollapsed && <span>Complaints</span>}
+            <span>Complaints</span>
           </NavLink>
         </nav>
-
-        
 
         {/* Push Logout to Bottom */}
         <div className="flex-1" />
@@ -164,12 +130,10 @@ const AdminSidebar = () => {
               handleLogout();
               setIsOpen(false);
             }}
-            className={`w-full px-4 py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-all flex items-center gap-3 ${
-              isCollapsed ? "justify-center" : ""
-            }`}
+            className="w-full px-4 py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-all flex items-center gap-3"
           >
             <FiLogOut className="w-5 h-5 flex-shrink-0" />
-            {!isCollapsed && <span>Logout</span>}
+            <span>Logout</span>
           </button>
         </div>
       </aside>
