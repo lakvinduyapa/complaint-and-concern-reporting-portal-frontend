@@ -104,23 +104,47 @@ const Reports = () => {
     doc.text(
       `Submitted : ${report.summary.submitted}`,
       20,
-      93
+      95
+    );
+
+    doc.text(
+     `Preliminary Review : ${report.summary.preliminaryReview}`,
+     20,
+     105
     );
 
     doc.text(
       `Under Investigation : ${report.summary.underInvestigation}`,
       20,
-      101
+      115
+    );
+
+    doc.text(
+     `Awaiting Evidence : ${report.summary.awaitingEvidence}`,
+     20,
+     125
+    );
+
+    doc.text(
+     `Escalated to CIABOC : ${report.summary.escalated}`,
+     20,
+     135
     );
 
     doc.text(
       `Resolved : ${report.summary.resolved}`,
       20,
-      109
+      145
+    );
+
+    doc.text(
+     `Closed : ${report.summary.closed}`,
+     20,
+     155
     );
 
     autoTable(doc, {
-      startY: 120,
+      startY: 170,
       head: [["CRN", "Category", "Status", "Date Submitted"]],
       body: report.complaints.map((item) => [
         item.crn,
@@ -185,22 +209,39 @@ const Reports = () => {
           name: "Submitted",
           value: report.summary.submitted,
         },
+
         {
-          name: "Investigation",
-          value: report.summary.underInvestigation,
+        name: "Preliminary Review",
+        value: report.summary.preliminaryReview,
         },
+
+        {
+        name: "Under Investigation",
+        value: report.summary.underInvestigation,
+        },
+
+        {
+        name: "Awaiting Evidence",
+        value: report.summary.awaitingEvidence,
+        },
+
+        {
+        name: "Escalated to CIABOC",
+        value: report.summary.escalated,
+        },
+        
         {
           name: "Resolved",
           value: report.summary.resolved,
         },
+
         {
-          name: "Escalated",
-          value: report.summary.escalated,
+        name: "Closed",
+        value: report.summary.closed,
         },
+        
       ]
     : [];
-
-
 
   return (
     <div className="p-3 sm:p-4 md:p-6">
@@ -236,63 +277,106 @@ const Reports = () => {
         report && (
           <>
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-              <div className="bg-blue-50 p-4 rounded shadow text-center">
-                <h3>Total Complaints</h3>
-                <p className="text-2xl sm:text-3xl font-bold">
-                  {report.summary.totalComplaints}
-                </p>
-              </div>
+            {/* Complaint Status Summary */}
 
-              <div className="bg-cyan-50 p-4 rounded shadow text-center">
-                <h3>Submitted</h3>
-                <p className="text-2xl sm:text-3xl font-bold">
-                  {report.summary.submitted}
-                </p>
-              </div>
+<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
 
-              <div className="bg-yellow-50 p-4 rounded shadow text-center">
-                <h3>Investigation</h3>
-                <p className="text-2xl sm:text-3xl font-bold">
-                  {report.summary.underInvestigation}
-                </p>
-              </div>
+  <div className="bg-blue-50 p-4 rounded shadow text-center">
+    <h3>Total Complaints</h3>
+    <p className="text-2xl sm:text-3xl font-bold">
+      {report.summary.totalComplaints}
+    </p>
+  </div>
 
-              <div className="bg-green-50 p-4 rounded shadow text-center">
-                <h3>Resolved</h3>
-                <p className="text-2xl sm:text-3xl font-bold">
-                  {report.summary.resolved}
-                </p>
-              </div>
+  <div className="bg-cyan-50 p-4 rounded shadow text-center">
+    <h3>Submitted</h3>
+    <p className="text-2xl sm:text-3xl font-bold">
+      {report.summary.submitted}
+    </p>
+  </div>
 
-              <div className="bg-red-50 p-4 rounded shadow text-center">
-                <h3>Escalated</h3>
-                <p className="text-2xl sm:text-3xl font-bold">
-                  {report.summary.escalated}
-                </p>
-              </div>
+  <div className="bg-purple-50 p-4 rounded shadow text-center">
+    <h3>Preliminary Review</h3>
+    <p className="text-2xl sm:text-3xl font-bold">
+      {report.summary.preliminaryReview}
+    </p>
+  </div>
 
-              <div className="bg-purple-50 p-4 rounded shadow text-center">
-                <h3>Anonymous Complaints</h3>
-                <p className="text-2xl sm:text-3xl font-bold">
-                  {report.summary.anonymousComplaints}
-                </p>
-              </div>
+  <div className="bg-yellow-50 p-4 rounded shadow text-center">
+    <h3>Under Investigation</h3>
+    <p className="text-2xl sm:text-3xl font-bold">
+      {report.summary.underInvestigation}
+    </p>
+  </div>
 
-              <div className="bg-indigo-50 p-4 rounded shadow text-center">
-                <h3>Named Complaints</h3>
-                <p className="text-2xl sm:text-3xl font-bold">
-                  {report.summary.namedComplaints}
-                </p>
-              </div>
+  <div className="bg-orange-50 p-4 rounded shadow text-center">
+    <h3>Awaiting Evidence</h3>
+    <p className="text-2xl sm:text-3xl font-bold">
+      {report.summary.awaitingEvidence}
+    </p>
+  </div>
 
-              <div className="bg-orange-50 p-4 rounded shadow text-center">
-                <h3>Evidence Files</h3>
-                <p className="text-2xl sm:text-3xl font-bold">
-                  {report.summary.totalEvidence}
-                </p>
-              </div>
-            </div>
+  <div className="bg-red-50 p-4 rounded shadow text-center">
+    <h3>Escalated to CIABOC</h3>
+    <p className="text-2xl sm:text-3xl font-bold">
+      {report.summary.escalated}
+    </p>
+  </div>
+
+  <div className="bg-green-50 p-4 rounded shadow text-center">
+    <h3>Resolved</h3>
+    <p className="text-2xl sm:text-3xl font-bold">
+      {report.summary.resolved}
+    </p>
+  </div>
+
+  <div className="bg-gray-50 p-4 rounded shadow text-center">
+    <h3>Closed</h3>
+    <p className="text-2xl sm:text-3xl font-bold">
+      {report.summary.closed}
+    </p>
+  </div>
+
+</div>
+
+
+
+
+          {/* Additional Statistics */}
+<div className="mb-6">
+  <h2 className="text-lg font-bold mb-4">
+    Additional Statistics
+  </h2>
+
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+    <div className="bg-purple-50 p-4 rounded shadow text-center">
+      <h3>Anonymous Complaints</h3>
+      <p className="text-2xl sm:text-3xl font-bold">
+        {report.summary.anonymousComplaints}
+      </p>
+    </div>
+
+    <div className="bg-indigo-50 p-4 rounded shadow text-center">
+      <h3>Named Complaints</h3>
+      <p className="text-2xl sm:text-3xl font-bold">
+        {report.summary.namedComplaints}
+      </p>
+    </div>
+
+    <div className="bg-orange-50 p-4 rounded shadow text-center">
+      <h3>Evidence Files</h3>
+      <p className="text-2xl sm:text-3xl font-bold">
+        {report.summary.totalEvidence}
+      </p>
+    </div>
+
+  </div>
+</div>
+
+
+
+
 
             {/* Pie Chart */}
             <div className="bg-white p-3 sm:p-6 rounded shadow mb-6">
@@ -313,6 +397,14 @@ const Reports = () => {
                     <Cell fill="#F59E0B" />
                     <Cell fill="#10B981" />
                     <Cell fill="#EF4444" />
+                    <Cell fill="#3B82F6" />
+                    <Cell fill="#8B5CF6" />
+                    <Cell fill="#F59E0B" />
+                    <Cell fill="#FB923C" />
+                    <Cell fill="#EF4444" />
+                    <Cell fill="#10B981" />
+                    <Cell fill="#6B7280" />
+
                   </Pie>
 
                   <Tooltip />
