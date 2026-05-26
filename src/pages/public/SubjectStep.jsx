@@ -11,17 +11,16 @@ const SubjectStep = () => {
 
   const [error, setError] = useState("");
 
-  const isAnonymousReporter =
-    complaintData.reporter.submissionType === "anonymous";
-
   const subjects = complaintData.subjects.length
     ? complaintData.subjects
     : [
         {
           fullName: "",
           designation: "",
-          organization: "",
+          organisation: "",
           relationship: "",
+          seniorManagementInvolved: false,
+          seniorManagementPersonName: ""
         },
       ];
 
@@ -45,21 +44,6 @@ const SubjectStep = () => {
     });
   };
 
-  const addSubject = () => {
-    setComplaintData((prev) => ({
-      ...prev,
-      subjects: [
-        ...prev.subjects,
-        {
-          fullName: "",
-          designation: "",
-          organization: "",
-          relationship: "",
-        },
-      ],
-    }));
-  };
-
   const removeSubject = (index) => {
     setComplaintData((prev) => {
       if (prev.subjects.length <= 1) {
@@ -81,8 +65,15 @@ const SubjectStep = () => {
       return;
     }
 
+    if (subjects[0].seniorManagementInvolved === true) {
+      if (!subjects[0].seniorManagementPersonName || !subjects[0].seniorManagementPersonName.trim()) {
+        setError("Senior personnel name is required when 'Yes' is selected.");
+        return;
+      }
+    }
+
     setError("");
-    navigate("/evidence-upload");
+    navigate("/report/evidence-upload");
   };
 
   return (
@@ -127,7 +118,7 @@ const SubjectStep = () => {
             {/* Full Name */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Full Name
+                Name(s) of person(s) involved
               </label>
 
               <input
@@ -136,7 +127,7 @@ const SubjectStep = () => {
                 onChange={(e) =>
                   updateSubject(index, "fullName", e.target.value)
                 }
-                placeholder="Enter subject name"
+                placeholder="Multiple names separated by comma. State 'Unknown' if not known."
                 className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
@@ -158,53 +149,58 @@ const SubjectStep = () => {
               />
             </div>
 
-          
+
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Organization
+                Organisation of subject(s)
               </label>
 
-              <input
-                type="text"
-                value={subject.organization}
+              <select
+                value={subject.organisation}
                 onChange={(e) =>
-                  updateSubject(index, "organization", e.target.value)
+                  updateSubject(index, "organisation", e.target.value)
                 }
-                placeholder="Enter organization"
-                className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
+                className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500"
+              >
+                <option value="">Select Organisation</option>
+                <option value="SLT">SLT</option>
+                <option value="Mobitel">Mobitel</option>
+                <option value="SLTS">SLTS</option>
+                <option value="External">External</option>
+                <option value="Vendor">Vendor</option>
+                <option value="Unknown">Unknown</option>
+              </select>
             </div>
 
             {/* Relationship */}
-            {!isAnonymousReporter && (
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Relationship to Reporter
-                </label>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-4">
+                Relationship of subject to reporter
+              </label>
 
-                <input
-                  type="text"
-                  value={subject.relationship}
-                  onChange={(e) =>
-                    updateSubject(index, "relationship", e.target.value)
-                  }
-                  placeholder="Example: Supervisor"
-                  className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                  {["Superior", "Manager", "Peer", "Colleague", "Subordinate", "External party", "Unknown"].map((rel) => (
+                    <label key={rel} className="flex items-center gap-3 p-3 border border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-all cursor-pointer">
+                      <input
+                        type="radio"
+                        name={`relationship-${index}`}
+                        value={rel}
+                        checked={subject.relationship === rel}
+                        onChange={(e) =>
+                          updateSubject(index, "relationship", e.target.value)
+                        }
+                        className="accent-green-600 w-4 h-4 cursor-pointer"
+                      />
+                      <span className="text-sm font-medium text-gray-700">{rel}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
       ))}
-
-      {/* Add Subject */}
-      <button
-        type="button"
-        onClick={addSubject}
-        className="w-full border-2 border-dashed border-gray-300 rounded-2xl py-5 text-gray-500 hover:border-green-500 hover:text-green-600 transition-all"
-      >
-        + Add Another Subject
-      </button>
 
       {/* Error */}
       {error && (
@@ -216,32 +212,76 @@ const SubjectStep = () => {
       {/* Senior Management */}
       <div className="mt-8">
         <label className="block text-sm font-semibold text-gray-700 mb-4">
-          Does this involve senior management?
+          Does the complaint involve senior management or any IAU member? <span className="text-red-500">*</span>
         </label>
 
         <div className="flex flex-wrap items-center gap-6">
           <label className="flex items-center gap-2 text-gray-700">
-            <input type="radio" name="management" />
+            <input
+              type="radio"
+              name="management"
+              checked={subjects[0].seniorManagementInvolved === true}
+              onChange={() => updateSubject(0, "seniorManagementInvolved", true)}
+              className="accent-green-600"
+            />
             Yes
           </label>
 
           <label className="flex items-center gap-2 text-gray-700">
-            <input type="radio" name="management" />
+            <input
+              type="radio"
+              name="management"
+              checked={subjects[0].seniorManagementInvolved === false}
+              onChange={() => updateSubject(0, "seniorManagementInvolved", false)}
+              className="accent-green-600"
+            />
             No
           </label>
 
           <label className="flex items-center gap-2 text-gray-700">
-            <input type="radio" name="management" />
+            <input
+              type="radio"
+              name="management"
+              checked={subjects[0].seniorManagementInvolved === "unsure"}
+              onChange={() => updateSubject(0, "seniorManagementInvolved", "unsure")}
+              className="accent-green-600"
+            />
             Unsure
           </label>
         </div>
       </div>
 
+      {/* Senior Management Person Name */}
+      {subjects[0].seniorManagementInvolved === true && (
+        <div className="mt-6">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            If yes — name(s) of senior personnel involved <span className="text-red-500">*</span>
+          </label>
+
+          <input
+            type="text"
+            value={subjects[0].seniorManagementPersonName}
+            onChange={(e) => updateSubject(0, "seniorManagementPersonName", e.target.value)}
+            placeholder="Conditionally displayed. Free text."
+            className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+        </div>
+      )}
+
+      {/* CIABOC Escalation Notice */}
+      {subjects[0].seniorManagementInvolved === true && (
+        <div className="mt-6 bg-red-50 border-l-4 border-red-600 rounded-lg p-4">
+          <p className="text-sm text-red-700 font-semibold mb-2">🚨 CIABOC Escalation Flag</p>
+          <p className="text-sm text-red-600">
+            This complaint involves senior management or IAU member. The system will automatically flag this submission for direct CIABOC escalation and display an on-screen notice to the reporter.
+          </p>
+        </div>
+      )}
+
       {/* Escalation Notice */}
-      <div className="mt-8 bg-red-50 border border-red-200 rounded-xl p-4">
-        <p className="text-sm text-red-700">
-          Complaints involving senior management may require escalation to
-          higher governance or external oversight authorities.
+      <div className="mt-8 bg-amber-50 border-l-4 border-amber-600 rounded-lg p-4">
+        <p className="text-sm text-amber-700">
+          Complaints involving senior management may require escalation to higher governance or external oversight authorities.
         </p>
       </div>
 
@@ -249,7 +289,7 @@ const SubjectStep = () => {
       <div className="mt-10 flex items-center justify-between">
         {/* Back */}
         <button
-          onClick={() => navigate("/complaint-details")}
+          onClick={() => navigate("/report/complaint-details")}
           className="px-6 py-3 rounded-xl font-semibold border border-green-600 text-green-600 hover:bg-green-50 transition-all"
         >
           Back
@@ -260,7 +300,7 @@ const SubjectStep = () => {
           onClick={handleContinue}
           className="px-8 py-3 rounded-xl font-semibold bg-green-600 text-white hover:bg-green-700 transition-all shadow-md hover:shadow-lg"
         >
-          Continue
+          Next
         </button>
       </div>
     </div>

@@ -37,23 +37,17 @@ const Navbar = () => {
             </NavLink>
 
             <NavLink
+              to="/report"
+              className={navItemClass}
+            >
+              Report
+            </NavLink>
+
+            <NavLink
               to="/track-complaint"
               className={navItemClass}
             >
               Track Status
-            </NavLink>
-
-            <NavLink
-              to="/admin/login"
-              className={({ isActive }) =>
-                `px-4 py-2 text-sm font-semibold rounded-lg border transition-all duration-300 ${
-                  isActive
-                    ? "bg-green-600 text-white border-green-500"
-                    : "text-white border-white/20 hover:bg-white/10"
-                }`
-              }
-            >
-              Admin Portal
             </NavLink>
           </nav>
 
@@ -88,25 +82,19 @@ const Navbar = () => {
             </NavLink>
 
             <NavLink
+              to="/report"
+              className={navItemClass}
+              onClick={() => setMenuOpen(false)}
+            >
+              Report
+            </NavLink>
+
+            <NavLink
               to="/track-complaint"
               className={navItemClass}
               onClick={() => setMenuOpen(false)}
             >
               Track Status
-            </NavLink>
-
-            <NavLink
-              to="/admin/login"
-              onClick={() => setMenuOpen(false)}
-              className={({ isActive }) =>
-                `px-4 py-2 text-sm font-semibold rounded-lg border transition-all duration-300 ${
-                  isActive
-                    ? "bg-green-600 text-white border-green-500"
-                    : "text-white border-white/20 hover:bg-white/10"
-                }`
-              }
-            >
-              Admin Portal
             </NavLink>
           </div>
         </div>

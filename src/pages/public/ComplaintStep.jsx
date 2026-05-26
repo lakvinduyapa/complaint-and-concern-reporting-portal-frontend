@@ -48,6 +48,30 @@ const ComplaintStep = () => {
 
     }
 
+    if (!complaint.incidentDate) {
+
+      setError("Incident date is required.");
+
+      return;
+
+    }
+
+    if (!complaint.frequency) {
+
+      setError("Please select the frequency of the incident.");
+
+      return;
+
+    }
+
+    if (!complaint.awarenessMethod) {
+
+      setError("Please select how you became aware of the incident.");
+
+      return;
+
+    }
+
     if (!complaint.description || complaint.description.trim().length < 50) {
 
       setError("Incident description must be at least 50 characters.");
@@ -58,7 +82,7 @@ const ComplaintStep = () => {
 
     setError("");
 
-    navigate("/subject-information");
+    navigate("/report/subject-information");
 
   };
 
@@ -93,248 +117,271 @@ const ComplaintStep = () => {
 
 
       {/* Form */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
-
-        {/* Complaint Category */}
-        <div>
-
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
-
-            Complaint Category
-
-          </label>
-
-          <select
-            value={complaint.category}
-            onChange={(e) => updateComplaint("category", e.target.value)}
-            className="ui-select"
-          >
-
-            <option value="">Select Category</option>
-            <option value="Bribery">Bribery</option>
-            <option value="Corruption">Corruption</option>
-            <option value="Fraud">Fraud</option>
-            <option value="Financial Misconduct">Financial Misconduct</option>
-            <option value="Abuse of Authority">Abuse of Authority</option>
-            <option value="Procurement Irregularity">Procurement Irregularity</option>
-            <option value="Harassment">Harassment</option>
-            <option value="Confidentiality Breach">Confidentiality Breach</option>
-            <option value="Other Malpractice">Other Malpractice</option>
-
-          </select>
-
-        </div>
-
-
-
-        {/* Incident Date */}
-        <div>
-
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
-
-            Incident Date
-
-          </label>
-
-          <input
-            type="date"
-            value={complaint.incidentDate}
-            onChange={(e) => updateComplaint("incidentDate", e.target.value)}
-            className="ui-input"
-          />
-
-        </div>
-
-
-
-        {/* Incident Location */}
-        <div className="md:col-span-2">
-
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
-
-            Incident Location
-
-          </label>
-
-          <input
-            type="text"
-            value={complaint.incidentLocation}
-            onChange={(e) =>
-              updateComplaint("incidentLocation", e.target.value)
-            }
-            placeholder="Enter incident location"
-            className="ui-input"
-          />
-
-        </div>
-
-
-
-        {/* Frequency */}
-        <div>
-
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
-
-            Frequency
-
-          </label>
-
-          <select
-            value={complaint.frequency}
-            onChange={(e) => updateComplaint("frequency", e.target.value)}
-            className="ui-select"
-          >
-
-            <option value="">Select Frequency</option>
-            <option value="One-time incident">One-time incident</option>
-            <option value="Repeated incident">Repeated incident</option>
-            <option value="Ongoing">Ongoing</option>
-
-          </select>
-
-        </div>
-
-
-
-        {/* Awareness Method */}
-        <div>
-
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
-
-            How did you become aware?
-
-          </label>
-
-          <select
-            value={complaint.awarenessMethod}
-            onChange={(e) =>
-              updateComplaint("awarenessMethod", e.target.value)
-            }
-            className="ui-select"
-          >
-
-            <option value="">Select Method</option>
-            <option value="Direct Witness">Direct Witness</option>
-            <option value="Indirect Knowledge">Indirect Knowledge</option>
-            <option value="Documentation Review">Documentation Review</option>
-            <option value="Third-party Information">Third-party Information</option>
-
-          </select>
-
-        </div>
-
-
-
-        {/* Description */}
-        <div className="md:col-span-2">
-
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
-
-            Incident Description
-
-          </label>
-
-          <textarea
-            rows="6"
-            value={complaint.description}
-            onChange={(e) =>
-              updateComplaint("description", e.target.value)
-            }
-            placeholder="Provide a detailed description of the incident..."
-            className="ui-textarea resize-none"
-          />
-
-          <p className="text-sm text-slate-400 mt-2 leading-relaxed">
-
-            Include relevant names, actions, dates, and circumstances.
-
-          </p>
-
-        </div>
-
-
-
-        {/* Previously Reported */}
-        <div className="md:col-span-2">
-
-          <label className="block text-sm font-semibold text-slate-700 mb-4">
-
-            Has this matter been reported previously?
-
-          </label>
-
-          <div className="flex flex-wrap items-center gap-6">
-
-            {/* Yes */}
-            <label className="flex items-center gap-2 text-slate-700">
-
+      <div className="space-y-8">
+
+        {/* ===== INCIDENT DETAILS SECTION ===== */}
+        <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-6 md:p-8 border border-slate-200">
+
+          <h3 className="text-lg font-bold text-slate-900 mb-6">
+            Incident Details
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            {/* Complaint Category */}
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Complaint Category <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={complaint.category}
+                onChange={(e) => updateComplaint("category", e.target.value)}
+                className="ui-select"
+              >
+                <option value="">Select Category</option>
+                <option value="Bribery">Bribery</option>
+                <option value="Corruption">Corruption</option>
+                <option value="Fraud">Fraud</option>
+                <option value="Financial Misconduct">Financial Misconduct</option>
+                <option value="Abuse of Authority">Abuse of Authority</option>
+                <option value="Misuse of Position">Misuse of Position</option>
+                <option value="Discrimination">Discrimination</option>
+                <option value="Unfair Contract Award">Unfair Contract Award</option>
+                <option value="Company Property">Company Property</option>
+                <option value="Conflict of Interest">Conflict of Interest</option>
+                <option value="Confidentiality Breach">Confidentiality Breach</option>
+                <option value="Falsification of Records">Falsification of Records</option>
+                <option value="Harassment">Harassment</option>
+                <option value="Workplace Misconduct">Workplace Misconduct</option>
+                <option value="Policy Violation">Policy Violation</option>
+                <option value="Other Malpractice">Other Malpractice</option>
+              </select>
+            </div>
+
+            {/* Incident Date */}
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Incident Date <span className="text-red-500">*</span>
+              </label>
               <input
-                type="radio"
-                name="reported"
-                checked={complaint.previouslyReported === true}
-                onChange={() =>
-                  updateComplaint("previouslyReported", true)
-                }
-                className="accent-[#3e9638]"
+                type="date"
+                value={complaint.incidentDate}
+                onChange={(e) => updateComplaint("incidentDate", e.target.value)}
+                max={new Date().toISOString().split('T')[0]}
+                className="ui-input"
               />
+            </div>
 
-              Yes
-
-            </label>
-
-
-
-            {/* No */}
-            <label className="flex items-center gap-2 text-slate-700">
-
+            {/* Incident End Date */}
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Incident End Date <span className="text-slate-400 text-xs font-normal">(if applicable)</span>
+              </label>
               <input
-                type="radio"
-                name="reported"
-                checked={complaint.previouslyReported === false}
-                onChange={() =>
-                  updateComplaint("previouslyReported", false)
-                }
-                className="accent-[#3e9638]"
+                type="date"
+                value={complaint.incidentEndDate}
+                onChange={(e) => updateComplaint("incidentEndDate", e.target.value)}
+                max={new Date().toISOString().split('T')[0]}
+                className="ui-input"
               />
+            </div>
 
-              No
-
-            </label>
+            {/* Incident Location */}
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Location / Division <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={complaint.incidentLocation}
+                onChange={(e) => updateComplaint("incidentLocation", e.target.value)}
+                placeholder="e.g., Head Office, Regional Unit, Department"
+                className="ui-input"
+              />
+            </div>
 
           </div>
 
         </div>
 
-      </div>
+        {/* ===== INCIDENT CONTEXT SECTION ===== */}
+        <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-6 md:p-8 border border-slate-200">
 
+          <h3 className="text-lg font-bold text-slate-900 mb-6">
+            Incident Context
+          </h3>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-      {/* Previous Report Details */}
-      {complaint.previouslyReported && (
+            {/* Frequency */}
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Frequency of Occurrence <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={complaint.frequency}
+                onChange={(e) => updateComplaint("frequency", e.target.value)}
+                className="ui-select"
+              >
+                <option value="">Select Frequency</option>
+                <option value="One-time incident">One-time incident</option>
+                <option value="Repeated incident">Repeated (periodic)</option>
+                <option value="Ongoing">Ongoing continuously</option>
+                <option value="Unknown">Unknown</option>
+              </select>
+            </div>
 
-        <div className="mt-6">
+          </div>
 
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
-
-            Previous Report Details
-
-          </label>
-
-          <textarea
-            rows="3"
-            value={complaint.previousReportDetails}
-            onChange={(e) =>
-              updateComplaint("previousReportDetails", e.target.value)
-            }
-            placeholder="Where and when was this reported before?"
-            className="w-full border border-slate-300 rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-[#3e9638]"
-          />
+          {/* How did you become aware */}
+          <div className="mt-6">
+            <label className="block text-sm font-semibold text-slate-700 mb-4">
+              How Did You Become Aware? <span className="text-red-500">*</span>
+            </label>
+            <div className="flex flex-wrap gap-6">
+              <label className="flex items-center gap-2 text-slate-700">
+                <input
+                  type="radio"
+                  name="awarenessMethod"
+                  value="Direct Witness"
+                  checked={complaint.awarenessMethod === "Direct Witness"}
+                  onChange={(e) => updateComplaint("awarenessMethod", e.target.value)}
+                  className="accent-green-600 w-4 h-4"
+                />
+                <span>Direct Witness</span>
+              </label>
+              <label className="flex items-center gap-2 text-slate-700">
+                <input
+                  type="radio"
+                  name="awarenessMethod"
+                  value="Another Person Informed Me"
+                  checked={complaint.awarenessMethod === "Another Person Informed Me"}
+                  onChange={(e) => updateComplaint("awarenessMethod", e.target.value)}
+                  className="accent-green-600 w-4 h-4"
+                />
+                <span>Another Person Informed Me</span>
+              </label>
+              <label className="flex items-center gap-2 text-slate-700">
+                <input
+                  type="radio"
+                  name="awarenessMethod"
+                  value="Documents/Records"
+                  checked={complaint.awarenessMethod === "Documents/Records"}
+                  onChange={(e) => updateComplaint("awarenessMethod", e.target.value)}
+                  className="accent-green-600 w-4 h-4"
+                />
+                <span>Documents/Records</span>
+              </label>
+              <label className="flex items-center gap-2 text-slate-700">
+                <input
+                  type="radio"
+                  name="awarenessMethod"
+                  value="Other"
+                  checked={complaint.awarenessMethod === "Other"}
+                  onChange={(e) => updateComplaint("awarenessMethod", e.target.value)}
+                  className="accent-green-600 w-4 h-4"
+                />
+                <span>Other</span>
+              </label>
+            </div>
+          </div>
 
         </div>
 
-      )}
+        {/* ===== DESCRIPTION SECTION ===== */}
+        <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-6 md:p-8 border border-slate-200">
 
+          <h3 className="text-lg font-bold text-slate-900 mb-6">
+            Incident Description
+          </h3>
 
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
+            Description of Complaint <span className="text-red-500">*</span>
+          </label>
+
+          <textarea
+            rows="6"
+            value={complaint.description}
+            onChange={(e) => updateComplaint("description", e.target.value)}
+            placeholder="Describe what occurred, when it happened, what actions were taken, and why you believe this is a concern. Minimum 50 characters required."
+            className="ui-textarea resize-none"
+          />
+
+          <p className="text-xs text-slate-500 mt-2">
+            Minimum 50 characters required. Include relevant names, actions, dates, and circumstances.
+          </p>
+
+        </div>
+
+        {/* ===== PREVIOUS REPORT SECTION ===== */}
+        <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-6 md:p-8 border border-slate-200">
+
+          <h3 className="text-lg font-bold text-slate-900 mb-6">
+            Prior Reporting History
+          </h3>
+
+          <label className="block text-sm font-semibold text-slate-700 mb-4">
+            Has this matter been reported previously? <span className="text-red-500">*</span>
+          </label>
+
+          <div className="flex gap-8">
+            <label className="flex items-center gap-2 text-slate-700">
+              <input
+                type="radio"
+                name="reported"
+                checked={complaint.previouslyReported === true}
+                onChange={() => updateComplaint("previouslyReported", true)}
+                className="accent-green-600 w-4 h-4"
+              />
+              <span className="font-medium">Yes</span>
+            </label>
+            <label className="flex items-center gap-2 text-slate-700">
+              <input
+                type="radio"
+                name="reported"
+                checked={complaint.previouslyReported === false}
+                onChange={() => updateComplaint("previouslyReported", false)}
+                className="accent-green-600 w-4 h-4"
+              />
+              <span className="font-medium">No</span>
+            </label>
+          </div>
+
+          {complaint.previouslyReported && (
+            <div className="mt-6 p-5 bg-white border border-slate-200 rounded-xl space-y-4">
+              <p className="text-sm text-slate-600 font-medium">Please provide details about the previous report:</p>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Reported to whom?
+                </label>
+                <input
+                  type="text"
+                  value={complaint.previousReportedTo}
+                  onChange={(e) => updateComplaint("previousReportedTo", e.target.value)}
+                  placeholder="Enter person or department name"
+                  className="ui-input"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  What was the outcome?
+                </label>
+                <input
+                  type="text"
+                  value={complaint.previousReportOutcome}
+                  onChange={(e) => updateComplaint("previousReportOutcome", e.target.value)}
+                  placeholder="Enter outcome or current status"
+                  className="ui-input"
+                />
+              </div>
+            </div>
+          )}
+
+        </div>
+
+      </div>
 
       {/* Error Message */}
       {error && (
@@ -353,13 +400,12 @@ const ComplaintStep = () => {
 
 
 
-      {/* Compliance Notice */}
-      <div className="mt-8 bg-[#F5FFE8] border border-[#B9E48B] rounded-2xl p-4 md:p-5">
+      {/* Important Notice */}
+      <div className="mt-8 bg-amber-50 border-l-4 border-amber-500 rounded-lg p-5">
 
-        <p className="text-sm md:text-base text-[#3e9638] leading-relaxed font-medium">
+        <p className="text-sm text-amber-900 leading-relaxed">
 
-          False or intentionally misleading submissions may be subject to
-          internal disciplinary review.
+          <span className="font-semibold">⚠️ Important:</span> False or intentionally misleading submissions may be subject to internal disciplinary review.
 
         </p>
 
@@ -372,7 +418,7 @@ const ComplaintStep = () => {
 
         {/* Back Button */}
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/report")}
           className="w-full sm:w-auto border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 font-semibold px-6 py-3 rounded-xl transition-all duration-300"
         >
 
@@ -381,14 +427,12 @@ const ComplaintStep = () => {
         </button>
 
 
-
-        {/* Continue Button */}
         <button
           onClick={handleContinue}
           className="w-full sm:w-auto bg-[#3e9638] hover:bg-[#31802c] text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg"
         >
 
-          Continue
+          Next
 
         </button>
 

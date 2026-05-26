@@ -23,13 +23,17 @@ const defaultComplaintData = {
 
     fullName: "",
 
-    organization: "",
+    employeeId: "",
+
+    department: "",
+
+    designation: "",
 
     email: "",
 
     phone: "",
 
-    preferredContact: ""
+    preferredContactMethod: ""
 
   },
 
@@ -44,6 +48,8 @@ const defaultComplaintData = {
 
     incidentDate: "",
 
+    incidentEndDate: "",
+
     incidentLocation: "",
 
     frequency: "",
@@ -54,7 +60,9 @@ const defaultComplaintData = {
 
     previouslyReported: false,
 
-    previousReportDetails: ""
+    previousReportedTo: "",
+
+    previousReportOutcome: ""
 
   },
 
@@ -71,9 +79,13 @@ const defaultComplaintData = {
 
       designation: "",
 
-      organization: "",
+      organisation: "",
 
-      relationship: ""
+      relationship: "",
+
+      seniorManagementInvolved: false,
+
+      seniorManagementPersonName: ""
 
     }
 
@@ -85,6 +97,8 @@ const defaultComplaintData = {
   // ====================================
 
   evidence: {
+
+    hasEvidence: false,
 
     evidenceTypes: [],
 

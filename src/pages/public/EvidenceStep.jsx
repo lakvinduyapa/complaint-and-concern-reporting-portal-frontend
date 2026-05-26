@@ -11,40 +11,54 @@ const EvidenceStep = () => {
   const { evidence } = complaintData;
 
   const evidenceOptions = [
-    { label: "Document", value: "Document" },
-    { label: "Record", value: "Record" },
-    { label: "Email or Communication", value: "Email or Communication" },
-    { label: "Photograph", value: "Photograph" },
-    { label: "Video", value: "Video" },
-    { label: "Witness Testimony", value: "Witness Testimony" },
-    { label: "Financial Record", value: "Financial Record" },
-    { label: "Other", value: "Other" }
+    "Document",
+    "Record",
+    "Email or Communication",
+    "Photograph",
+    "Video",
+    "Witness Testimony",
+    "Financial Record",
+    "Other"
   ];
-
-  const toggleEvidenceType = (item) => {
-    const selected = evidence.evidenceTypes.includes(item);
-
-    const nextTypes = selected
-      ? evidence.evidenceTypes.filter((type) => type !== item)
-      : [...evidence.evidenceTypes, item];
-
-    setComplaintData((prev) => ({
-      ...prev,
-      evidence: {
-        ...prev.evidence,
-        evidenceTypes: nextTypes
-      }
-    }));
-  };
 
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files || []);
+    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png'];
+    const maxSizePerFile = 10 * 1024 * 1024;
 
+    let validFiles = [];
+    let validationError = "";
+
+    if (selectedFiles.length > 5) {
+      setError("You can upload up to 5 files maximum.");
+      return;
+    }
+
+    for (let file of selectedFiles) {
+      if (!allowedTypes.includes(file.type)) {
+        validationError = `${file.name} is not allowed. Only PDF, DOCX, JPG, PNG accepted.`;
+        break;
+      }
+
+      if (file.size > maxSizePerFile) {
+        validationError = `${file.name} exceeds 10MB limit.`;
+        break;
+      }
+
+      validFiles.push(file);
+    }
+
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    setError("");
     setComplaintData((prev) => ({
       ...prev,
       evidence: {
         ...prev.evidence,
-        files: selectedFiles
+        files: validFiles
       }
     }));
   };
@@ -59,167 +73,195 @@ const EvidenceStep = () => {
     }));
   };
 
+  const toggleEvidenceType = (type) => {
+    const selected = evidence.evidenceTypes.includes(type);
+    const nextTypes = selected
+      ? evidence.evidenceTypes.filter((t) => t !== type)
+      : [...evidence.evidenceTypes, type];
+
+    setComplaintData((prev) => ({
+      ...prev,
+      evidence: {
+        ...prev.evidence,
+        evidenceTypes: nextTypes
+      }
+    }));
+  };
+
   const handleContinue = () => {
-    if (evidence.files.length > 5) {
-      setError("You can upload up to 5 files.");
+    if (evidence.hasEvidence === null || evidence.hasEvidence === undefined) {
+      setError("Please select whether you have supporting evidence.");
       return;
     }
 
     setError("");
-    navigate("/declaration");
+    navigate("/report/declaration");
   };
 
   return (
     <div className="ui-card-strong p-6 md:p-10">
 
-      {/* Stepper */}
       <Stepper currentStep={4} />
 
-      {/* Header */}
       <div className="mb-8">
-        <h2 className="ui-section-title">
-          Supporting Evidence
-        </h2>
-
-        <p className="ui-subtitle mt-2">
-          Upload any supporting evidence related to the complaint.
-        </p>
+        <h2 className="ui-section-title">Supporting Evidence</h2>
+        <p className="ui-subtitle mt-2">Provide any supporting documents or evidence related to your complaint.</p>
       </div>
 
-      {/* Evidence Type */}
-      <div className="mb-8">
+      {/* Do you have supporting evidence? */}
+      <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-6 md:p-8 border border-slate-200 mb-8">
+
         <label className="block text-sm font-semibold text-slate-700 mb-4">
-          Evidence Type
+          Do you have supporting evidence? <span className="text-red-500">*</span>
         </label>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {evidenceOptions.map((item) => (
-            <button
-              type="button"
-              key={item.value}
-              onClick={() => toggleEvidenceType(item.value)}
-              className={`border rounded-xl py-4 px-3 text-sm font-medium transition-all ${
-                evidence.evidenceTypes.includes(item.value)
-                  ? "border-green-600 bg-green-50 text-green-700"
-                  : "border-slate-300 text-slate-700 hover:border-green-600 hover:bg-green-50"
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
+        <div className="flex gap-8">
+          <label className="flex items-center gap-2 text-slate-700">
+            <input
+              type="radio"
+              name="hasEvidence"
+              checked={evidence.hasEvidence === true}
+              onChange={() => updateEvidence("hasEvidence", true)}
+              className="accent-green-600 w-4 h-4"
+            />
+            <span>Yes</span>
+          </label>
+
+          <label className="flex items-center gap-2 text-slate-700">
+            <input
+              type="radio"
+              name="hasEvidence"
+              checked={evidence.hasEvidence === false}
+              onChange={() => updateEvidence("hasEvidence", false)}
+              className="accent-green-600 w-4 h-4"
+            />
+            <span>No</span>
+          </label>
         </div>
+
       </div>
 
-      {/* Upload Area */}
-      <label className="border-2 border-dashed border-slate-300 rounded-2xl p-10 text-center hover:border-green-600 transition-all cursor-pointer block bg-transparent">
+      {/* Conditional sections - Show only if Yes */}
+      {evidence.hasEvidence && (
+        <>
+          {/* Evidence Type */}
+          <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-6 md:p-8 border border-slate-200 mb-8">
 
-        <div className="flex flex-col items-center">
+            <label className="block text-sm font-semibold text-slate-700 mb-4">
+              Evidence Type
+            </label>
 
-          <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mb-4">
-            <span className="text-2xl text-green-600">
-              ↑
-            </span>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {evidenceOptions.map((type) => (
+                <button
+                  type="button"
+                  key={type}
+                  onClick={() => toggleEvidenceType(type)}
+                  className={`border rounded-lg py-2 px-3 text-sm font-medium transition-all ${
+                    evidence.evidenceTypes.includes(type)
+                      ? "border-green-600 bg-green-50 text-green-700"
+                      : "border-slate-300 text-slate-700 hover:border-green-500"
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+
           </div>
 
-          <h3 className="text-lg font-bold text-slate-900">
-            Drag & Drop Files Here
-          </h3>
+          {/* File Upload */}
+          <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-6 md:p-8 border border-slate-200 mb-8">
 
-          <p className="text-slate-500 mt-2">
-            or click to browse evidence files
-          </p>
+            <label className="block text-sm font-semibold text-slate-700 mb-4">
+              File Upload
+            </label>
 
-          <span className="mt-5 inline-block bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all">
-            Browse Files
-          </span>
+            <label className="border-2 border-dashed border-slate-300 rounded-2xl p-10 text-center hover:border-green-600 transition-all cursor-pointer block bg-white">
 
-          <input
-            type="file"
-            multiple
-            className="hidden"
-            onChange={handleFileChange}
-          />
+              <div className="flex flex-col items-center">
 
-        </div>
-      </label>
+                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-3">
+                  <span className="text-xl text-green-600">↑</span>
+                </div>
 
-      {/* Selected Files */}
-      {evidence.files.length > 0 && (
-        <div className="mt-4 bg-green-50 border border-green-200 rounded-xl p-4">
-          <p className="text-sm font-semibold text-green-700 mb-2">
-            Selected Files ({evidence.files.length})
-          </p>
+                <h4 className="font-semibold text-slate-900 mb-1">Drag & Drop Files Here</h4>
+                <p className="text-sm text-slate-500 mb-4">or click to browse</p>
 
-          <ul className="text-sm text-slate-700 space-y-1">
-            {evidence.files.map((file) => (
-              <li key={file.name}>{file.name}</li>
-            ))}
-          </ul>
-        </div>
+                <span className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-all">
+                  Browse Files
+                </span>
+
+                <input
+                  type="file"
+                  multiple
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+
+              </div>
+
+            </label>
+
+            <div className="mt-4 text-xs text-slate-600 space-y-2">
+              <p><strong>Allowed:</strong> PDF, DOCX, JPG, PNG</p>
+              <p><strong>Limits:</strong> Max 10MB per file. Up to 5 files.</p>
+            </div>
+
+            {evidence.files.length > 0 && (
+              <div className="mt-4 bg-white border border-slate-200 rounded-lg p-4">
+                <p className="text-sm font-semibold text-slate-700 mb-2">Selected ({evidence.files.length}):</p>
+                <ul className="text-sm text-slate-600 space-y-1">
+                  {evidence.files.map((file) => (
+                    <li key={file.name}>• {file.name}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+          </div>
+        </>
       )}
 
-      {/* Upload Rules */}
-      <div className="mt-6 bg-slate-50 border border-slate-200 rounded-xl p-5">
-        <h4 className="font-semibold text-slate-900 mb-3">
-          Accepted File Types
-        </h4>
+      {/* Names of witness(es) */}
+      <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-6 md:p-8 border border-slate-200 mb-8">
 
-        <div className="flex flex-wrap gap-3">
-          {["PDF", "DOCX", "JPG", "PNG", "MP4"].map((type) => (
-            <span
-              key={type}
-              className="bg-white border border-slate-200 px-3 py-1 rounded-full text-sm text-slate-700"
-            >
-              {type}
-            </span>
-          ))}
-        </div>
-
-        <p className="text-sm text-slate-500 mt-4">
-          Maximum upload size: 10MB per file
-        </p>
-      </div>
-
-      {/* Witness Info */}
-      <div className="mt-8">
         <label className="block text-sm font-semibold text-slate-700 mb-2">
-          Witness Information (Optional)
+          Names of witness(es)
         </label>
 
-        <textarea
-          rows="4"
+        <input
+          type="text"
           value={evidence.witnessInfo}
           onChange={(e) => updateEvidence("witnessInfo", e.target.value)}
-          placeholder="Provide names or details of witnesses if available..."
-          className="ui-textarea resize-none"
+          placeholder="Enter witness names separated by comma (optional)"
+          className="ui-input"
         />
+
+        <p className="text-xs text-slate-500 mt-2">Multiple names separated by comma. Kept confidential.</p>
+
       </div>
 
-      {/* Additional Notes */}
-      <div className="mt-6">
+      {/* Additional Information */}
+      <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-6 md:p-8 border border-slate-200 mb-8">
+
         <label className="block text-sm font-semibold text-slate-700 mb-2">
-          Additional Notes
+          Additional Information
         </label>
 
         <textarea
           rows="4"
           value={evidence.additionalNotes}
           onChange={(e) => updateEvidence("additionalNotes", e.target.value)}
-          placeholder="Add any additional evidence-related information..."
+          placeholder="Any other context or related information (optional)"
           className="ui-textarea resize-none"
         />
-      </div>
 
-      {/* Security Notice */}
-      <div className="mt-8 bg-green-50 border border-green-200 rounded-xl p-4">
-        <p className="text-sm text-green-700">
-          All uploaded evidence is encrypted and securely stored for investigation purposes only.
-        </p>
       </div>
 
       {/* Error */}
       {error && (
-        <div className="mt-6 bg-red-50 border border-red-200 rounded-xl p-4">
+        <div className="mb-8 bg-red-50 border border-red-200 rounded-xl p-4">
           <p className="text-sm text-red-700">{error}</p>
         </div>
       )}
@@ -227,23 +269,22 @@ const EvidenceStep = () => {
       {/* Buttons */}
       <div className="mt-10 flex items-center justify-between">
 
-        {/* Back */}
         <button
-          onClick={() => navigate("/subject-information")}
+          onClick={() => navigate("/report/subject-information")}
           className="px-6 py-3 rounded-xl font-semibold border border-green-600 text-green-600 hover:bg-green-50 transition-all"
         >
           Back
         </button>
 
-        {/* Continue */}
         <button
           onClick={handleContinue}
           className="px-8 py-3 rounded-xl font-semibold bg-green-600 text-white hover:bg-green-700 transition-all shadow-md hover:shadow-lg"
         >
-          Continue
+          Next
         </button>
 
       </div>
+
     </div>
   );
 };

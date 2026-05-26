@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import PublicLayout from "../layouts/PublicLayout";
 import AdminLayout from "../layouts/AdminLayout";
 
+import LandingPage from "../pages/public/LandingPage";
 import ReporterStep from "../pages/public/ReporterStep";
 import ComplaintStep from "../pages/public/ComplaintStep";
 import SubjectStep from "../pages/public/SubjectStep";
@@ -29,39 +30,45 @@ const AppRoutes = () => {
         {/* Public Routes */}
         <Route path="/" element={<PublicLayout />}>
 
-          {/* Step 1 */}
+          {/* Landing Page */}
           <Route
             index
+            element={<LandingPage />}
+          />
+
+          {/* Step 1 */}
+          <Route
+            path="report"
             element={<ReporterStep />}
           />
 
           {/* Step 2 */}
           <Route
-            path="complaint-details"
+            path="report/complaint-details"
             element={<ComplaintStep />}
           />
 
           {/* Step 3 */}
           <Route
-            path="subject-information"
+            path="report/subject-information"
             element={<SubjectStep />}
           />
 
           {/* Step 4 */}
           <Route
-            path="evidence-upload"
+            path="report/evidence-upload"
             element={<EvidenceStep />}
           />
 
           {/* Step 5 */}
           <Route
-            path="declaration"
+            path="report/declaration"
             element={<DeclarationStep />}
           />
 
           {/* Step 6 */}
           <Route
-            path="confirmation"
+            path="report/confirmation"
             element={<ConfirmationStep />}
           />
 

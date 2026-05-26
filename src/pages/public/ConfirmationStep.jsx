@@ -1,32 +1,35 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import Stepper from "../../components/forms/Stepper";
 import { useComplaint } from "../../hooks/useComplaint";
 
 const ConfirmationStep = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { submissionResult, complaintData } = useComplaint();
   const [copied, setCopied] = useState(false);
 
+  const submittedData = submissionResult || location.state?.submissionResult;
+
   useEffect(() => {
-    if (!submissionResult?.data?.crn) {
+    if (!submittedData?.data?.crn) {
       navigate("/");
     }
-  }, [submissionResult, navigate]);
+  }, [submittedData, navigate]);
 
-  const crn = submissionResult?.data?.crn || "N/A";
-  const status = submissionResult?.data?.status || "Submitted";
-  const submittedAt = submissionResult?.data?.submittedAt
-    ? new Date(submissionResult.data.submittedAt).toLocaleDateString()
+  const crn = submittedData?.data?.crn || "N/A";
+  const status = submittedData?.data?.status || "Submitted";
+  const submittedAt = submittedData?.data?.submittedAt
+    ? new Date(submittedData.data.submittedAt).toLocaleDateString()
     : new Date().toLocaleDateString();
 
   const category =
-    submissionResult?.data?.category ||
+    submittedData?.data?.category ||
     complaintData?.complaint?.category ||
     "N/A";
 
-  const uploadSummary = submissionResult?.uploadSummary;
+  const uploadSummary = submittedData?.uploadSummary;
 
   const handleCopy = async () => {
     if (!crn || crn === "N/A") return;

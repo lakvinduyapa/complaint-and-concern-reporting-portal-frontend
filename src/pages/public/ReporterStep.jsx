@@ -2,12 +2,14 @@ import { useNavigate } from "react-router-dom";
 
 import Stepper from "../../components/forms/Stepper";
 import { useComplaint } from "../../hooks/useComplaint";
+import { useState } from "react";
 
 const ReporterStep = () => {
 
   const navigate = useNavigate();
   const { complaintData, setComplaintData } = useComplaint();
   const { reporter } = complaintData;
+  const [error, setError] = useState("");
 
   const submissionType = reporter.submissionType;
 
@@ -25,14 +27,69 @@ const ReporterStep = () => {
 
   const setType = (type) => {
 
-    setComplaintData((prev) => ({
-      ...prev,
-      reporter: {
-        ...prev.reporter,
-        submissionType: type
-      }
-    }));
+    if (type === "anonymous") {
+      setComplaintData((prev) => ({
+        ...prev,
+        reporter: {
+          ...prev.reporter,
+          submissionType: type,
+          fullName: "",
+          employeeId: "",
+          department: "",
+          designation: "",
+          email: "",
+          phone: "",
+          preferredContactMethod: "none"
+        }
+      }));
+    } else {
+      setComplaintData((prev) => ({
+        ...prev,
+        reporter: {
+          ...prev.reporter,
+          submissionType: type
+        }
+      }));
+    }
 
+  };
+
+  const handleContinue = () => {
+    setError("");
+
+    if (!reporter.reporterCategory) {
+      setError("Please select a reporter category.");
+      return;
+    }
+
+    if (submissionType === "named") {
+      if (!reporter.fullName || !reporter.fullName.trim()) {
+        setError("Full name is required.");
+        return;
+      }
+      if (!reporter.email || !reporter.email.trim()) {
+        setError("Email address is required.");
+        return;
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(reporter.email)) {
+        setError("Please enter a valid email address.");
+        return;
+      }
+      if (reporter.phone && reporter.phone.trim()) {
+        const digitsOnly = reporter.phone.replace(/\D/g, "");
+        if (digitsOnly.length !== 10) {
+          setError("Phone number must be exactly 10 digits.");
+          return;
+        }
+      }
+      if (!reporter.preferredContactMethod) {
+        setError("Please select a preferred contact method.");
+        return;
+      }
+    }
+
+    navigate("/report/complaint-details");
   };
 
   return (
@@ -157,12 +214,17 @@ const ReporterStep = () => {
           >
 
             <option value="">Select Category</option>
-            <option value="Employee">Employee</option>
+            <option value="SLT Employee">SLT Employee</option>
+            <option value="Mobitel Employee">Mobitel Employee</option>
+            <option value="SLTS Employee">SLTS Employee</option>
             <option value="Vendor">Vendor</option>
+            <option value="Supplier">Supplier</option>
             <option value="Contractor">Contractor</option>
             <option value="Customer">Customer</option>
             <option value="Shareholder">Shareholder</option>
-            <option value="Public">Public</option>
+            <option value="Investor">Investor</option>
+            <option value="General Public">General Public</option>
+            <option value="Other">Other</option>
 
           </select>
 
@@ -195,22 +257,72 @@ const ReporterStep = () => {
 
 
 
-        {/* Organization */}
+        {/* Employee ID */}
         {submissionType !== "anonymous" && (
 
           <div>
 
             <label className="block text-sm font-semibold text-slate-700 mb-2">
 
-              Organization / Department
+              Employee ID
 
             </label>
 
             <input
               type="text"
-              value={reporter.organization}
-              onChange={(e) => updateReporter("organization", e.target.value)}
-              placeholder="Enter organization or department"
+              value={reporter.employeeId}
+              onChange={(e) => updateReporter("employeeId", e.target.value)}
+              placeholder="Enter your employee ID"
+              className="ui-input"
+            />
+
+          </div>
+
+        )}
+
+
+
+        {/* Department */}
+        {submissionType !== "anonymous" && (
+
+          <div>
+
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
+
+              Department
+
+            </label>
+
+            <input
+              type="text"
+              value={reporter.department}
+              onChange={(e) => updateReporter("department", e.target.value)}
+              placeholder="Enter your department"
+              className="ui-input"
+            />
+
+          </div>
+
+        )}
+
+
+
+        {/* Designation */}
+        {submissionType !== "anonymous" && (
+
+          <div>
+
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
+
+              Designation
+
+            </label>
+
+            <input
+              type="text"
+              value={reporter.designation}
+              onChange={(e) => updateReporter("designation", e.target.value)}
+              placeholder="Enter your designation"
               className="ui-input"
             />
 
@@ -257,10 +369,10 @@ const ReporterStep = () => {
             </label>
 
             <input
-              type="text"
+              type="tel"
               value={reporter.phone}
               onChange={(e) => updateReporter("phone", e.target.value)}
-              placeholder="Enter your phone number"
+              placeholder="Enter 10-digit phone number (e.g., 5551234567)"
               className="ui-input"
             />
 
@@ -273,26 +385,62 @@ const ReporterStep = () => {
         {/* Preferred Contact */}
         {submissionType !== "anonymous" && (
 
-          <div>
+          <div className="md:col-span-2">
 
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-4">
 
               Preferred Contact Method
 
             </label>
 
-            <select
-              value={reporter.preferredContact}
-              onChange={(e) => updateReporter("preferredContact", e.target.value)}
-              className="ui-select"
-            >
+            <div className="flex flex-wrap items-center gap-8">
 
-              <option value="">Select Contact Method</option>
-              <option value="email">Email</option>
-              <option value="phone">Phone</option>
-              <option value="none">No Contact Preferred</option>
+              <label className="flex items-center gap-2 text-slate-700">
 
-            </select>
+                <input
+                  type="radio"
+                  name="preferredContactMethod"
+                  value="email"
+                  checked={reporter.preferredContactMethod === "email"}
+                  onChange={(e) => updateReporter("preferredContactMethod", e.target.value)}
+                  className="accent-green-600"
+                />
+
+                Email
+
+              </label>
+
+              <label className="flex items-center gap-2 text-slate-700">
+
+                <input
+                  type="radio"
+                  name="preferredContactMethod"
+                  value="phone"
+                  checked={reporter.preferredContactMethod === "phone"}
+                  onChange={(e) => updateReporter("preferredContactMethod", e.target.value)}
+                  className="accent-green-600"
+                />
+
+                Phone
+
+              </label>
+
+              <label className="flex items-center gap-2 text-slate-700">
+
+                <input
+                  type="radio"
+                  name="preferredContactMethod"
+                  value="none"
+                  checked={reporter.preferredContactMethod === "none"}
+                  onChange={(e) => updateReporter("preferredContactMethod", e.target.value)}
+                  className="accent-green-600"
+                />
+
+                No Contact Preferred
+
+              </label>
+
+            </div>
 
           </div>
 
@@ -314,17 +462,32 @@ const ReporterStep = () => {
 
       </div>
 
+      {/* Error Message */}
+      {error && (
+
+        <div className="mt-6 bg-red-50 border border-red-200 rounded-2xl p-4">
+
+          <p className="text-sm text-red-700 leading-relaxed">
+
+            {error}
+
+          </p>
+
+        </div>
+
+      )}
+
 
 
       {/* Buttons */}
       <div className="mt-10 flex justify-end">
 
         <button
-          onClick={() => navigate("/complaint-details")}
+          onClick={handleContinue}
           className="bg-[#3e9638] hover:bg-[#31802c] text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg"
         >
 
-          Continue
+          Next
 
         </button>
 
