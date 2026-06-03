@@ -14,65 +14,58 @@ import TrackComplaint from "../pages/public/TrackComplaint";
 
 import AdminLogin from "../pages/admin/Login";
 import AdminDashboard from "../pages/admin/Dashboard";
+import InvestigationManagement from "../pages/admin/InvestigationManagement";
 import ComplaintList from "../pages/admin/ComplaintList";
 import ComplaintDetails from "../pages/admin/ComplaintDetails";
-import AdminProtectedRoute from "../components/common/AdminProtectedRoute";
 import Reports from "../pages/admin/Reports";
 
+import AdminProtectedRoute from "../components/common/AdminProtectedRoute";
+
 const AppRoutes = () => {
-
   return (
-
     <BrowserRouter>
-
       <Routes>
 
-        {/* Public Routes */}
+        {/* =======================================
+            PUBLIC ROUTES
+        ======================================= */}
         <Route path="/" element={<PublicLayout />}>
 
-          {/* Landing Page */}
           <Route
             index
             element={<LandingPage />}
           />
 
-          {/* Step 1 */}
           <Route
             path="report"
             element={<ReporterStep />}
           />
 
-          {/* Step 2 */}
           <Route
             path="report/complaint-details"
             element={<ComplaintStep />}
           />
 
-          {/* Step 3 */}
           <Route
             path="report/subject-information"
             element={<SubjectStep />}
           />
 
-          {/* Step 4 */}
           <Route
             path="report/evidence-upload"
             element={<EvidenceStep />}
           />
 
-          {/* Step 5 */}
           <Route
             path="report/declaration"
             element={<DeclarationStep />}
           />
 
-          {/* Step 6 */}
           <Route
             path="report/confirmation"
             element={<ConfirmationStep />}
           />
 
-          {/* Tracking */}
           <Route
             path="track-complaint"
             element={<TrackComplaint />}
@@ -80,9 +73,17 @@ const AppRoutes = () => {
 
         </Route>
 
-        {/* Admin Routes */}
-        <Route path="/admin/login" element={<AdminLogin />} />
+        {/* =======================================
+            ADMIN LOGIN
+        ======================================= */}
+        <Route
+          path="/admin/login"
+          element={<AdminLogin />}
+        />
 
+        {/* =======================================
+            ADMIN PROTECTED ROUTES
+        ======================================= */}
         <Route
           path="/admin"
           element={
@@ -91,18 +92,42 @@ const AppRoutes = () => {
             </AdminProtectedRoute>
           }
         >
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="complaints" element={<ComplaintList />} />
-          <Route path="complaints/:id" element={<ComplaintDetails />} />
-          <Route path="/admin/reports" element={<Reports />} />
+
+          {/* Dashboard */}
+          <Route
+            path="dashboard"
+            element={<AdminDashboard />}
+          />
+
+          {/* Investigation Management */}
+          <Route
+            path="investigations"
+            element={<InvestigationManagement />}
+          />
+
+          {/* Complaint Management */}
+          <Route
+            path="complaints"
+            element={<ComplaintList />}
+          />
+
+          {/* Complaint Details */}
+          <Route
+            path="complaints/:id"
+            element={<ComplaintDetails />}
+          />
+
+          {/* Reports */}
+          <Route
+            path="reports"
+            element={<Reports />}
+          />
+
         </Route>
 
       </Routes>
-
     </BrowserRouter>
-
   );
-
 };
 
 export default AppRoutes;

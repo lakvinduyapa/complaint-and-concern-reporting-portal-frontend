@@ -1,13 +1,27 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAdminAuth } from "../../hooks/useAdminAuth";
-import { FiHome, FiFileText, FiBarChart2, FiLogOut } from "react-icons/fi";
+import {
+  FiHome,
+  FiFileText,
+  FiBarChart2,
+  FiLogOut,
+  FiSearch,
+} from "react-icons/fi";
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
   const { logout } = useAdminAuth();
 
   const [isOpen, setIsOpen] = useState(false);
+
+  const currentUser = JSON.parse(
+    localStorage.getItem("adminUser") || "{}"
+  );
+
+  const canManageInvestigations =
+    currentUser.role === "admin" ||
+    currentUser.role === "senior_investigator";
 
   const handleLogout = () => {
     logout();
@@ -25,7 +39,6 @@ const AdminSidebar = () => {
 
   return (
     <>
-      {/* Mobile Header */}
       <div
         className="fixed top-0 left-0 right-0 h-16 border-b border-cyan-400/30 shadow-lg z-50 md:hidden flex items-center justify-between px-4"
         style={{ background: "#0156A6" }}
@@ -63,7 +76,6 @@ const AdminSidebar = () => {
         </button>
       </div>
 
-      {/* Mobile Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-40 md:hidden"
@@ -71,14 +83,12 @@ const AdminSidebar = () => {
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={`fixed left-0 top-16 md:top-0 h-[calc(100vh-4rem)] md:h-screen border-r border-cyan-400/30 shadow-xl transition-all duration-300 ease-in-out z-50 md:z-30 flex flex-col overflow-y-hidden md:overflow-y-auto ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 w-64`}
         style={{ background: "#0156A6" }}
       >
-        {/* Desktop Logo */}
         <div className="hidden md:flex justify-center py-4 px-4">
           <img
             src="/01SLT.jpg.jpeg"
@@ -87,7 +97,6 @@ const AdminSidebar = () => {
           />
         </div>
 
-        {/* Navigation */}
         <nav className="px-4 py-4 space-y-2">
           <NavLink
             to="/admin/dashboard"
@@ -98,6 +107,26 @@ const AdminSidebar = () => {
             <span>Dashboard</span>
           </NavLink>
 
+          {canManageInvestigations && (
+            <NavLink
+              to="/admin/investigations"
+              className={({ isActive }) => getNavItemClass(isActive)}
+              onClick={() => setIsOpen(false)}
+            >
+              <FiSearch className="w-5 h-5 flex-shrink-0" />
+              <span>Investigation Management</span>
+            </NavLink>
+          )}
+
+          <NavLink
+            to="/admin/complaints"
+            className={({ isActive }) => getNavItemClass(isActive)}
+            onClick={() => setIsOpen(false)}
+          >
+            <FiFileText className="w-5 h-5 flex-shrink-0" />
+            <span>Complaint Management</span>
+          </NavLink>
+
           <NavLink
             to="/admin/reports"
             className={({ isActive }) => getNavItemClass(isActive)}
@@ -106,24 +135,12 @@ const AdminSidebar = () => {
             <FiBarChart2 className="w-5 h-5 flex-shrink-0" />
             <span>Reports</span>
           </NavLink>
-
-          <NavLink
-            to="/admin/complaints"
-            className={({ isActive }) => getNavItemClass(isActive)}
-            onClick={() => setIsOpen(false)}
-          >
-            <FiFileText className="w-5 h-5 flex-shrink-0" />
-            <span>Complaints</span>
-          </NavLink>
         </nav>
 
-        {/* Push Logout to Bottom */}
         <div className="flex-1" />
 
-        {/* Divider */}
         <div className="mx-4 border-t border-cyan-300/35" />
 
-        {/* Logout */}
         <div className="p-4">
           <button
             onClick={() => {
@@ -138,7 +155,6 @@ const AdminSidebar = () => {
         </div>
       </aside>
 
-      {/* Mobile Header Spacer */}
       <div className="h-16 md:hidden" />
     </>
   );

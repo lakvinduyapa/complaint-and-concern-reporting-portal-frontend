@@ -56,3 +56,39 @@ export const updateComplaintStatus = async (id, payload) => {
     };
   }
 };
+
+export const getAssignableOfficers = async () => {
+  try {
+    const response = await API.get("/admin/complaints/officers/list");
+    return response.data.data;
+  } catch (error) {
+    throw error.response?.data || {
+      message: error.message || "Failed to fetch officers"
+    };
+  }
+};
+
+export const assignComplaintToOfficer = async (id, assignedTo) => {
+  try {
+    const response = await API.put(`/admin/complaints/${id}/assign`, {
+      assignedTo
+    });
+
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || {
+      message: error.message || "Failed to assign complaint"
+    };
+  }
+};
+
+export const getUnassignedComplaints = async () => {
+  try {
+    const response = await API.get("/admin/complaints/unassigned/list");
+    return response.data.data;
+  } catch (error) {
+    throw error.response?.data || {
+      message: error.message || "Failed to fetch unassigned complaints"
+    };
+  }
+};

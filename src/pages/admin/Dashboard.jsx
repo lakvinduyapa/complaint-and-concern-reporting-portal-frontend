@@ -141,27 +141,6 @@ const Dashboard = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 w-full lg:w-auto">
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-sm">
-              <p className="text-xs text-slate-500 font-medium">
-                Escalated Cases
-              </p>
-
-              <p className="text-xl font-bold text-slate-900 mt-1">
-                {stats?.escalated || 0}
-              </p>
-            </div>
-
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-sm">
-              <p className="text-xs text-slate-500 font-medium">
-                Active Investigations
-              </p>
-
-              <p className="text-xl font-bold text-slate-900 mt-1">
-                {stats?.underInvestigation || 0}
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -261,12 +240,12 @@ const Dashboard = () => {
               <tbody className="divide-y divide-slate-100">
                 {recentComplaints.map((complaint) => (
                   <tr
-                    key={complaint._id}
+                    key={complaint.id}
                     className="hover:bg-slate-50 transition-colors"
                   >
                     <td className="px-6 py-4">
                       <Link
-                        to={`/admin/complaints/${complaint._id}`}
+                        to={`/admin/complaints/${complaint.id}`}
                         className="font-mono text-sm text-cyan-700 hover:text-cyan-800"
                       >
                         {complaint.crn}

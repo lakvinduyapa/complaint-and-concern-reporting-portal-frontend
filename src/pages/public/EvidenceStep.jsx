@@ -21,47 +21,96 @@ const EvidenceStep = () => {
     "Other"
   ];
 
-  const handleFileChange = (event) => {
-    const selectedFiles = Array.from(event.target.files || []);
-    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png'];
-    const maxSizePerFile = 10 * 1024 * 1024;
 
-    let validFiles = [];
-    let validationError = "";
 
-    if (selectedFiles.length > 5) {
+
+const handleFileChange = (event) => {
+  const selectedFiles = Array.from(event.target.files || []);
+
+  const allowedTypes = [
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "image/jpeg",
+    "image/png",
+  ];
+
+  const maxSizePerFile = 10 * 1024 * 1024;
+
+  let validFiles = [];
+  let validationError = "";
+
+  for (const file of selectedFiles) {
+    if (!allowedTypes.includes(file.type)) {
+      validationError = `${file.name} is not allowed. Only PDF, DOCX, JPG, PNG accepted.`;
+      break;
+    }
+
+    if (file.size > maxSizePerFile) {
+      validationError = `${file.name} exceeds 10MB limit.`;
+      break;
+    }
+
+    validFiles.push(file);
+  }
+
+  if (validationError) {
+    setError(validationError);
+    return;
+  }
+
+  setError("");
+
+  setComplaintData((prev) => {
+    const existingFiles = prev.evidence.files || [];
+
+    const combinedFiles = [...existingFiles, ...validFiles];
+
+    if (combinedFiles.length > 5) {
       setError("You can upload up to 5 files maximum.");
-      return;
+      return prev;
     }
 
-    for (let file of selectedFiles) {
-      if (!allowedTypes.includes(file.type)) {
-        validationError = `${file.name} is not allowed. Only PDF, DOCX, JPG, PNG accepted.`;
-        break;
-      }
-
-      if (file.size > maxSizePerFile) {
-        validationError = `${file.name} exceeds 10MB limit.`;
-        break;
-      }
-
-      validFiles.push(file);
-    }
-
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-
-    setError("");
-    setComplaintData((prev) => ({
+    return {
       ...prev,
       evidence: {
         ...prev.evidence,
-        files: validFiles
-      }
-    }));
-  };
+        files: combinedFiles,
+      },
+    };
+  });
+
+  // allow selecting same file again
+  event.target.value = "";
+};
+
+
+
+
+
+
+
+const handleRemoveFile = (removeIndex) => {
+  setComplaintData((prev) => {
+    const updatedFiles = (prev.evidence.files || []).filter(
+      (_, index) => index !== removeIndex
+    );
+
+    return {
+      ...prev,
+      evidence: {
+        ...prev.evidence,
+        files: updatedFiles,
+      },
+    };
+  });
+};
+
+
+
+
+
+
+
 
   const updateEvidence = (field, value) => {
     setComplaintData((prev) => ({
@@ -212,9 +261,38 @@ const EvidenceStep = () => {
               <div className="mt-4 bg-white border border-slate-200 rounded-lg p-4">
                 <p className="text-sm font-semibold text-slate-700 mb-2">Selected ({evidence.files.length}):</p>
                 <ul className="text-sm text-slate-600 space-y-1">
-                  {evidence.files.map((file) => (
-                    <li key={file.name}>• {file.name}</li>
-                  ))}
+
+                  {evidence.files.map((file, index) => (
+  <li
+    key={`${file.name}-${index}`}
+    className="flex items-center justify-between"
+  >
+    <span>• {file.name}</span>
+
+    <button
+      type="button"
+      onClick={() => handleRemoveFile(index)}
+      className="text-red-600 hover:text-red-700 text-xs font-semibold"
+    >
+      Remove
+    </button>
+  </li>
+))}
+
+
+
+                  
+
+
+
+
+
+
+
+
+
+
+
                 </ul>
               </div>
             )}

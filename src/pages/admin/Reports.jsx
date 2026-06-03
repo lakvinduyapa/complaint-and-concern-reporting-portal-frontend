@@ -11,7 +11,6 @@ import {
 } from "recharts";
 import pdflogo from "../../assets/pdflogo1.jpeg";
 
-
 const Reports = () => {
   const [period, setPeriod] = useState("weekly");
   const [report, setReport] = useState(null);
@@ -29,15 +28,9 @@ const Reports = () => {
   }, [period]);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
     window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const fetchReport = async () => {
@@ -67,270 +60,203 @@ const Reports = () => {
     }
   };
 
-  
   const getBase64ImageFromURL = (url) => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.setAttribute("crossOrigin", "anonymous");
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.setAttribute("crossOrigin", "anonymous");
 
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
 
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0);
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
 
-      const dataURL = canvas.toDataURL("image/jpeg", 1.0);
-      resolve(dataURL);
-    };
+        resolve(canvas.toDataURL("image/jpeg", 1.0));
+      };
 
-    img.onerror = reject;
-    img.src = url;
-  });
-};
+      img.onerror = reject;
+      img.src = url;
+    });
+  };
 
   const downloadPDF = async () => {
-  if (!report) return;
+    if (!report) return;
 
-  const doc = new jsPDF();
+    const doc = new jsPDF();
 
-  //  convert logo to base64
-  let logoBase64 = null;
+    let logoBase64 = null;
 
-try {
-  logoBase64 = await getBase64ImageFromURL(pdflogo);
-} catch (error) {
-  console.log("Logo failed to load", error);
-}
+    try {
+      logoBase64 = await getBase64ImageFromURL(pdflogo);
+    } catch (error) {
+      console.log("Logo failed to load", error);
+    }
 
-  // ================= HEADER =================
-  if (logoBase64) {
-  doc.addImage(logoBase64, "JPEG", -5, -8, 60, 60);
-}
+    if (logoBase64) {
+      doc.addImage(logoBase64, "JPEG", -5, -8, 60, 60);
+    }
 
-  doc.setFontSize(16);
-  doc.setFont("helvetica", "bold");
-  doc.text("SLTMobitel Internal Audit Unit (IAU)", 50, 18);
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text("SLTMobitel Internal Audit Unit (IAU)", 50, 18);
 
-  doc.setFontSize(11);
-  doc.setFont("helvetica", "normal");
-  doc.text("Complaint Management Portal - Operational Report", 50, 25);
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.text("Complaint Management Portal - Operational Report", 50, 25);
 
-  // blue line (like professional report)
-  doc.setDrawColor(37, 99, 235);
-  doc.setLineWidth(0.8);
-  doc.line(14, 35, 195, 35);
+    doc.setDrawColor(37, 99, 235);
+    doc.setLineWidth(0.8);
+    doc.line(14, 35, 195, 35);
 
-  // ================= META =================
-  const today = new Date().toLocaleDateString();
+    const today = new Date().toLocaleDateString();
 
-  doc.setFontSize(10);
-  doc.text(`Generated Date: ${today}`, 14, 45);
-  doc.text(`Report Period: ${period}`, 14, 52);
+    doc.setFontSize(10);
+    doc.text(`Generated Date: ${today}`, 14, 45);
+    doc.text(`Report Period: ${period}`, 14, 52);
 
-  // ================= SUMMARY =================
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("Executive Summary", 14, 65);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Executive Summary", 14, 65);
 
-  doc.setFont("helvetica", "normal");
+    doc.setFont("helvetica", "normal");
 
-  const summaryData = [
-    `Total Complaints: ${report.summary.totalComplaints}`,
-    `Submitted: ${report.summary.submitted}`,
-    `Preliminary Review: ${report.summary.preliminaryReview}`,
-    `Under Investigation: ${report.summary.underInvestigation}`,
-    `Awaiting Evidence: ${report.summary.awaitingEvidence}`,
-    `Escalated: ${report.summary.escalated}`,
-    `Resolved: ${report.summary.resolved}`,
-    `Closed: ${report.summary.closed}`,
-  ];
+    const summaryData = [
+      `Total Complaints: ${report.summary.totalComplaints}`,
+      `Submitted: ${report.summary.submitted}`,
+      `Preliminary Review: ${report.summary.preliminaryReview}`,
+      `Under Investigation: ${report.summary.underInvestigation}`,
+      `Awaiting Evidence: ${report.summary.awaitingEvidence}`,
+      `Escalated: ${report.summary.escalated}`,
+      `Resolved: ${report.summary.resolved}`,
+      `Closed: ${report.summary.closed}`,
+      `Anonymous Complaints: ${report.summary.anonymousComplaints}`,
+      `Named Complaints: ${report.summary.namedComplaints}`,
+      `Evidence Files: ${report.summary.totalEvidence}`,
+    ];
 
-  summaryData.forEach((line, i) => {
-    doc.text(line, 20, 75 + i * 8);
-  });
+    summaryData.forEach((line, i) => {
+      doc.text(line, 20, 75 + i * 8);
+    });
 
-  // ================= TABLE =================
-  autoTable(doc, {
-    startY: 75 + summaryData.length * 8 + 10,
-    head: [["CRN", "Category", "Status", "Date"]],
-    body: report.complaints.map((item) => [
-      item.crn,
-      item.category,
-      item.currentStatus,
-      new Date(item.createdAt).toLocaleDateString(),
-    ]),
+    autoTable(doc, {
+      startY: 75 + summaryData.length * 8 + 10,
+      head: [["CRN", "Category", "Status", "Date"]],
+      body: report.complaints.map((item) => [
+        item.crn,
+        item.category,
+        item.current_status,
+        item.created_at
+          ? new Date(item.created_at).toLocaleDateString()
+          : "N/A",
+      ]),
+      headStyles: {
+        fillColor: [37, 99, 235],
+        textColor: 255,
+        fontStyle: "bold",
+      },
+      styles: {
+        fontSize: 9,
+        cellPadding: 3,
+      },
+      alternateRowStyles: {
+        fillColor: [245, 247, 255],
+      },
+    });
 
-    headStyles: {
-      fillColor: [37, 99, 235],
-      textColor: 255,
-      fontStyle: "bold",
-    },
+    const finalY = doc.lastAutoTable.finalY + 10;
 
-    styles: {
-      fontSize: 9,
-      cellPadding: 3,
-    },
+    doc.setFontSize(9);
+    doc.setTextColor(100);
+    doc.text("Generated by IAU Complaint Portal", 14, finalY + 10);
+    doc.text("Confidential - Internal Use Only", 14, finalY + 16);
 
-    alternateRowStyles: {
-      fillColor: [245, 247, 255],
-    },
-  });
-
-  // ================= FOOTER =================
-  const finalY = doc.lastAutoTable.finalY + 10;
-
-  doc.setFontSize(9);
-  doc.setTextColor(100);
-
-  doc.text("Generated by IAU Complaint Portal", 14, finalY + 10);
-  doc.text("Confidential - Internal Use Only", 14, finalY + 16);
-
-  doc.save(`IAU_Operational_Report_${period}.pdf`);
-};
-
-
-
-
-
-
-
-
-
+    doc.save(`IAU_Operational_Report_${period}.pdf`);
+  };
 
   const downloadExcel = async () => {
-  try {
-    const token = localStorage.getItem("adminToken");
+    try {
+      const token = localStorage.getItem("adminToken");
 
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/admin/reports/export-excel?period=${period}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/admin/reports/export-excel?period=${period}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    const blob = await response.blob();
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
 
-    const url = window.URL.createObjectURL(blob);
+      link.href = url;
+      link.download = `Complaint_Report_${period}.xlsx`;
 
-    const link = document.createElement("a");
-
-    link.href = url;
-
-    link.download = `Complaint_Report_${period}.xlsx`;
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    link.remove();
-
-  } catch (error) {
-    console.error("Excel Download Error:", error);
-  }
-};
-
-
-
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Excel Download Error:", error);
+    }
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
       case "Resolved":
         return "bg-green-100 text-green-700";
-
       case "Under Investigation":
         return "bg-yellow-100 text-yellow-700";
-
       case "Submitted":
         return "bg-blue-100 text-blue-700";
-
       case "Awaiting Evidence":
         return "bg-orange-100 text-orange-700";
-
+      case "Escalated to CIABOC":
+        return "bg-red-100 text-red-700";
+      case "Closed":
+        return "bg-gray-100 text-gray-700";
       default:
         return "bg-gray-100 text-gray-700";
     }
   };
 
-  const indexOfLastRecord =
-    currentPage * recordsPerPage;
-
-  const indexOfFirstRecord =
-    indexOfLastRecord - recordsPerPage;
-
   const currentRecords =
-    report?.complaints.slice(
-      indexOfFirstRecord,
-      indexOfLastRecord
+    report?.complaints?.slice(
+      (currentPage - 1) * recordsPerPage,
+      currentPage * recordsPerPage
     ) || [];
 
   const totalPages = report
-    ? Math.ceil(
-        report.complaints.length / recordsPerPage
-      )
+    ? Math.max(Math.ceil(report.complaints.length / recordsPerPage), 1)
     : 1;
 
   const chartData = report
     ? [
-        {
-          name: "Submitted",
-          value: report.summary.submitted,
-        },
-
-        {
-          name: "Preliminary Review",
-          value: report.summary.preliminaryReview,
-        },
-
-        {
-          name: "Under Investigation",
-          value: report.summary.underInvestigation,
-        },
-
-        {
-          name: "Awaiting Evidence",
-          value: report.summary.awaitingEvidence,
-        },
-
-        {
-          name: "Escalated to CIABOC",
-          value: report.summary.escalated,
-        },
-
-        {
-          name: "Resolved",
-          value: report.summary.resolved,
-        },
-
-        {
-          name: "Closed",
-          value: report.summary.closed,
-        },
+        { name: "Submitted", value: report.summary.submitted },
+        { name: "Preliminary Review", value: report.summary.preliminaryReview },
+        { name: "Under Investigation", value: report.summary.underInvestigation },
+        { name: "Awaiting Evidence", value: report.summary.awaitingEvidence },
+        { name: "Escalated to CIABOC", value: report.summary.escalated },
+        { name: "Resolved", value: report.summary.resolved },
+        { name: "Closed", value: report.summary.closed },
       ]
     : [];
 
   return (
     <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6 md:p-8 mb-6">
-
-      {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8 gap-5">
-
         <div>
           <h1 className="text-3xl md:text-4xl font-bold text-slate-900">
             Complaint Reports
           </h1>
-
           <p className="text-slate-500 mt-2">
-            Monitor complaint trends, investigation progress,
-            and operational statistics.
+            Monitor complaint trends, investigation progress, and operational statistics.
           </p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
-
           <select
             value={period}
             onChange={(e) => setPeriod(e.target.value)}
@@ -354,169 +280,64 @@ try {
             className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium"
           >
             Download Excel
-         </button>
-
-
-
-
-
+          </button>
         </div>
       </div>
 
       {loading ? (
-        <div className="text-center py-10">
-          Loading Report...
-        </div>
+        <div className="text-center py-10">Loading Report...</div>
       ) : (
         report && (
           <>
-
-            {/* Complaint Status Summary */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-
-              <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 shadow-sm">
-                <p className="text-sm text-slate-600">
-                  Total Complaints
-                </p>
-
-                <h3 className="text-3xl font-bold text-slate-900 mt-2">
-                  {report.summary.totalComplaints}
-                </h3>
-              </div>
-
-              <div className="bg-cyan-50 border border-cyan-100 rounded-2xl p-5 shadow-sm">
-                <p className="text-sm text-slate-600">
-                  Submitted
-                </p>
-
-                <h3 className="text-3xl font-bold text-slate-900 mt-2">
-                  {report.summary.submitted}
-                </h3>
-              </div>
-
-              <div className="bg-purple-50 border border-purple-100 rounded-2xl p-5 shadow-sm">
-                <p className="text-sm text-slate-600">
-                  Preliminary Review
-                </p>
-
-                <h3 className="text-3xl font-bold text-slate-900 mt-2">
-                  {report.summary.preliminaryReview}
-                </h3>
-              </div>
-
-              <div className="bg-yellow-50 border border-yellow-100 rounded-2xl p-5 shadow-sm">
-                <p className="text-sm text-slate-600">
-                  Under Investigation
-                </p>
-
-                <h3 className="text-3xl font-bold text-slate-900 mt-2">
-                  {report.summary.underInvestigation}
-                </h3>
-              </div>
-
-              <div className="bg-orange-50 border border-orange-100 rounded-2xl p-5 shadow-sm">
-                <p className="text-sm text-slate-600">
-                  Awaiting Evidence
-                </p>
-
-                <h3 className="text-3xl font-bold text-slate-900 mt-2">
-                  {report.summary.awaitingEvidence}
-                </h3>
-              </div>
-
-              <div className="bg-red-50 border border-red-100 rounded-2xl p-5 shadow-sm">
-                <p className="text-sm text-slate-600">
-                  Escalated to CIABOC
-                </p>
-
-                <h3 className="text-3xl font-bold text-slate-900 mt-2">
-                  {report.summary.escalated}
-                </h3>
-              </div>
-
-              <div className="bg-green-50 border border-green-100 rounded-2xl p-5 shadow-sm">
-                <p className="text-sm text-slate-600">
-                  Resolved
-                </p>
-
-                <h3 className="text-3xl font-bold text-slate-900 mt-2">
-                  {report.summary.resolved}
-                </h3>
-              </div>
-
-              <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 shadow-sm">
-                <p className="text-sm text-slate-600">
-                  Closed
-                </p>
-
-                <h3 className="text-3xl font-bold text-slate-900 mt-2">
-                  {report.summary.closed}
-                </h3>
-              </div>
-
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+              {[
+                ["Total Complaints", report.summary.totalComplaints, "bg-blue-50 border-blue-100"],
+                ["Preliminary Review", report.summary.preliminaryReview, "bg-purple-50 border-purple-100"],
+                ["Under Investigation", report.summary.underInvestigation, "bg-yellow-50 border-yellow-100"],
+                ["Resolved", report.summary.resolved, "bg-green-50 border-green-100"],
+                ["Closed", report.summary.closed, "bg-gray-50 border-gray-100"],
+                ["Escalated to CIABOC", report.summary.escalated, "bg-red-50 border-red-100"],
+              ].map(([label, value, style]) => (
+                <div key={label} className={`${style} border rounded-2xl p-5 shadow-sm`}>
+                  <p className="text-sm text-slate-600">{label}</p>
+                  <h3 className="text-3xl font-bold text-slate-900 mt-2">{value}</h3>
+                </div>
+              ))}
             </div>
 
-            {/* Additional Statistics */}
             <div className="mb-8">
-
               <h2 className="text-xl font-bold text-slate-900 mb-5">
                 Additional Statistics
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-
                 <div className="bg-[#F5F3FF] border border-[#DDD6FE] rounded-2xl p-5 shadow-sm">
-
                   <p className="text-sm text-slate-600 font-medium">
                     Anonymous Complaints
                   </p>
-
                   <h3 className="text-3xl font-bold text-slate-900 mt-2">
                     {report.summary.anonymousComplaints}
                   </h3>
-
                 </div>
 
                 <div className="bg-[#EEF2FF] border border-[#C7D2FE] rounded-2xl p-5 shadow-sm">
-
                   <p className="text-sm text-slate-600 font-medium">
                     Named Complaints
                   </p>
-
                   <h3 className="text-3xl font-bold text-slate-900 mt-2">
                     {report.summary.namedComplaints}
                   </h3>
-
                 </div>
-
-                <div className="bg-[#FFF7ED] border border-[#FED7AA] rounded-2xl p-5 shadow-sm">
-
-                  <p className="text-sm text-slate-600 font-medium">
-                    Evidence Files
-                  </p>
-
-                  <h3 className="text-3xl font-bold text-slate-900 mt-2">
-                    {report.summary.totalEvidence}
-                  </h3>
-
-                </div>
-
               </div>
             </div>
 
-            {/* Pie Chart */}
             <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6 mb-8">
-
               <h2 className="text-xl font-bold text-slate-900 mb-4">
                 Complaint Status Distribution
               </h2>
 
-              <ResponsiveContainer
-                width="100%"
-                height={isMobile ? 420 : 350}
-              >
+              <ResponsiveContainer width="100%" height={isMobile ? 420 : 350}>
                 <PieChart>
-
                   <Pie
                     data={chartData}
                     dataKey="value"
@@ -524,7 +345,6 @@ try {
                     outerRadius={isMobile ? 70 : 120}
                     label={!isMobile}
                   >
-
                     <Cell fill="#2563EB" />
                     <Cell fill="#F59E0B" />
                     <Cell fill="#10B981" />
@@ -532,7 +352,6 @@ try {
                     <Cell fill="#8B5CF6" />
                     <Cell fill="#06B6D4" />
                     <Cell fill="#6B7280" />
-
                   </Pie>
 
                   <Tooltip />
@@ -547,30 +366,19 @@ try {
                       }}
                     />
                   )}
-
                 </PieChart>
               </ResponsiveContainer>
-
             </div>
 
-            {/* Total Records */}
             <div className="bg-white border border-slate-200 rounded-xl px-4 py-3 mb-4 shadow-sm">
-
               <p className="text-slate-700 font-semibold">
-                Total Records Found:
-                {" "}
-                {report.complaints.length}
+                Total Records Found: {report.complaints.length}
               </p>
-
             </div>
 
-            {/* Table */}
             <div className="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden">
-
               <div className="overflow-x-auto">
-
                 <table className="w-full min-w-max text-xs sm:text-sm">
-
                   <thead>
                     <tr className="bg-gray-100">
                       <th className="p-3 text-left">CRN</th>
@@ -581,69 +389,47 @@ try {
                   </thead>
 
                   <tbody>
-
-                    {report.complaints.length > 0 ? (
+                    {currentRecords.length > 0 ? (
                       currentRecords.map((item) => (
                         <tr
-                          key={item._id}
+                          key={item.id}
                           className="border-b hover:bg-gray-50"
                         >
-
+                          <td className="p-3">{item.crn}</td>
+                          <td className="p-3">{item.category}</td>
                           <td className="p-3">
-                            {item.crn}
-                          </td>
-
-                          <td className="p-3">
-                            {item.category}
-                          </td>
-
-                          <td className="p-3">
-
                             <span
                               className={`px-2 py-1 rounded-full text-[10px] sm:text-xs font-medium whitespace-nowrap ${getStatusColor(
-                                item.currentStatus
+                                item.current_status
                               )}`}
                             >
-                              {item.currentStatus}
+                              {item.current_status}
                             </span>
-
                           </td>
-
                           <td className="p-3">
-                            {new Date(
-                              item.createdAt
-                            ).toLocaleDateString()}
+                            {item.created_at
+                              ? new Date(item.created_at).toLocaleDateString()
+                              : "N/A"}
                           </td>
-
                         </tr>
                       ))
                     ) : (
                       <tr>
-
                         <td
                           colSpan="4"
                           className="text-center p-8 text-gray-500"
                         >
                           No complaints found for this period
                         </td>
-
                       </tr>
                     )}
-
                   </tbody>
-
                 </table>
               </div>
 
-              {/* Pagination */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6 p-5">
-
                 <button
-                  onClick={() =>
-                    setCurrentPage((prev) =>
-                      Math.max(prev - 1, 1)
-                    )
-                  }
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
                   className="w-full sm:w-auto px-5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 transition-all disabled:opacity-50"
                 >
@@ -656,20 +442,15 @@ try {
 
                 <button
                   onClick={() =>
-                    setCurrentPage((prev) =>
-                      Math.min(prev + 1, totalPages)
-                    )
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
                   disabled={currentPage === totalPages}
                   className="w-full sm:w-auto px-5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 transition-all disabled:opacity-50"
                 >
                   Next
                 </button>
-
               </div>
-
             </div>
-
           </>
         )
       )}
