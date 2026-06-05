@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAdminAuth } from "../../hooks/useAdminAuth";
+
 import {
   FiHome,
   FiFileText,
   FiBarChart2,
   FiLogOut,
   FiSearch,
+  FiActivity,
 } from "react-icons/fi";
 
 const AdminSidebar = () => {
@@ -20,6 +22,10 @@ const AdminSidebar = () => {
   );
 
   const canManageInvestigations =
+    currentUser.role === "admin" ||
+    currentUser.role === "senior_investigator";
+
+  const canViewAuditLogs =
     currentUser.role === "admin" ||
     currentUser.role === "senior_investigator";
 
@@ -39,6 +45,7 @@ const AdminSidebar = () => {
 
   return (
     <>
+      {/* Mobile Header */}
       <div
         className="fixed top-0 left-0 right-0 h-16 border-b border-cyan-400/30 shadow-lg z-50 md:hidden flex items-center justify-between px-4"
         style={{ background: "#0156A6" }}
@@ -76,6 +83,7 @@ const AdminSidebar = () => {
         </button>
       </div>
 
+      {/* Mobile Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-40 md:hidden"
@@ -83,12 +91,14 @@ const AdminSidebar = () => {
         />
       )}
 
+      {/* Sidebar */}
       <aside
         className={`fixed left-0 top-16 md:top-0 h-[calc(100vh-4rem)] md:h-screen border-r border-cyan-400/30 shadow-xl transition-all duration-300 ease-in-out z-50 md:z-30 flex flex-col overflow-y-hidden md:overflow-y-auto ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 w-64`}
         style={{ background: "#0156A6" }}
       >
+        {/* Desktop Logo */}
         <div className="hidden md:flex justify-center py-4 px-4">
           <img
             src="/01SLT.jpg.jpeg"
@@ -97,6 +107,7 @@ const AdminSidebar = () => {
           />
         </div>
 
+        {/* Navigation */}
         <nav className="px-4 py-4 space-y-2">
           <NavLink
             to="/admin/dashboard"
@@ -135,12 +146,24 @@ const AdminSidebar = () => {
             <FiBarChart2 className="w-5 h-5 flex-shrink-0" />
             <span>Reports</span>
           </NavLink>
+
+          {canViewAuditLogs && (
+            <NavLink
+              to="/admin/audit-logs"
+              className={({ isActive }) => getNavItemClass(isActive)}
+              onClick={() => setIsOpen(false)}
+            >
+              <FiActivity className="w-5 h-5 flex-shrink-0" />
+              <span>Audit Logs</span>
+            </NavLink>
+          )}
         </nav>
 
         <div className="flex-1" />
 
         <div className="mx-4 border-t border-cyan-300/35" />
 
+        {/* Logout */}
         <div className="p-4">
           <button
             onClick={() => {

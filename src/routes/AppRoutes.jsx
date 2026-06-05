@@ -18,6 +18,7 @@ import InvestigationManagement from "../pages/admin/InvestigationManagement";
 import ComplaintList from "../pages/admin/ComplaintList";
 import ComplaintDetails from "../pages/admin/ComplaintDetails";
 import Reports from "../pages/admin/Reports";
+import AuditLogs from "../pages/admin/AuditLogs";
 
 import AdminProtectedRoute from "../components/common/AdminProtectedRoute";
 
@@ -25,21 +26,11 @@ const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-
-        {/* =======================================
-            PUBLIC ROUTES
-        ======================================= */}
+        {/* PUBLIC ROUTES */}
         <Route path="/" element={<PublicLayout />}>
+          <Route index element={<LandingPage />} />
 
-          <Route
-            index
-            element={<LandingPage />}
-          />
-
-          <Route
-            path="report"
-            element={<ReporterStep />}
-          />
+          <Route path="report" element={<ReporterStep />} />
 
           <Route
             path="report/complaint-details"
@@ -70,20 +61,12 @@ const AppRoutes = () => {
             path="track-complaint"
             element={<TrackComplaint />}
           />
-
         </Route>
 
-        {/* =======================================
-            ADMIN LOGIN
-        ======================================= */}
-        <Route
-          path="/admin/login"
-          element={<AdminLogin />}
-        />
+        {/* ADMIN LOGIN */}
+        <Route path="/admin/login" element={<AdminLogin />} />
 
-        {/* =======================================
-            ADMIN PROTECTED ROUTES
-        ======================================= */}
+        {/* ADMIN PROTECTED ROUTES */}
         <Route
           path="/admin"
           element={
@@ -92,39 +75,21 @@ const AppRoutes = () => {
             </AdminProtectedRoute>
           }
         >
+          <Route path="dashboard" element={<AdminDashboard />} />
 
-          {/* Dashboard */}
-          <Route
-            path="dashboard"
-            element={<AdminDashboard />}
-          />
-
-          {/* Investigation Management */}
           <Route
             path="investigations"
             element={<InvestigationManagement />}
           />
 
-          {/* Complaint Management */}
-          <Route
-            path="complaints"
-            element={<ComplaintList />}
-          />
+          <Route path="complaints" element={<ComplaintList />} />
 
-          {/* Complaint Details */}
-          <Route
-            path="complaints/:id"
-            element={<ComplaintDetails />}
-          />
+          <Route path="complaints/:id" element={<ComplaintDetails />} />
 
-          {/* Reports */}
-          <Route
-            path="reports"
-            element={<Reports />}
-          />
+          <Route path="reports" element={<Reports />} />
 
+          <Route path="audit-logs" element={<AuditLogs />} />
         </Route>
-
       </Routes>
     </BrowserRouter>
   );
