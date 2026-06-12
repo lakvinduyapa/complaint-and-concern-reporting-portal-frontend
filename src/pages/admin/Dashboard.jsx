@@ -1,12 +1,24 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import {
   FiCheckCircle,
   FiClock,
   FiFileText,
   FiSearch,
 } from "react-icons/fi";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 import {
   getDashboardStats,
@@ -20,29 +32,63 @@ const Dashboard = () => {
   const [recentComplaints, setRecentComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth < 640 : false
+  );
+
+  // Additional data for charts and extra stats
+  const [allComplaints, setAllComplaints] = useState([]);
+  const [chartsLoading, setChartsLoading] = useState(true);
 
   const navigate = useNavigate();
+
+  // Fetch all complaints for charts and anonymous/named counts
+  const fetchAllComplaints = async () => {
+    try {
+      const token = localStorage.getItem("adminToken");
+      // Use a wide date range to get all complaints
+      const startDate = "2000-01-01";
+      const endDate = new Date().toISOString().split("T")[0];
+      const url = `${import.meta.env.VITE_API_URL}/admin/reports?startDate=${startDate}&endDate=${endDate}`;
+      const response = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      if (data.success) {
+        setAllComplaints(data.complaints || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch complaints for charts:", error);
+    } finally {
+      setChartsLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-
         const [statsData, complaintsData] = await Promise.all([
           getDashboardStats(),
           getRecentComplaints(5),
         ]);
-
         setStats(statsData);
         setRecentComplaints(complaintsData);
+        // Fetch all complaints for charts
+        await fetchAllComplaints();
       } catch (err) {
         setError(err?.message || "Failed to load dashboard");
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   if (loading) {
@@ -70,7 +116,6 @@ const Dashboard = () => {
       iconBg: "bg-blue-200",
       iconColor: "text-slate-700",
     },
-
     {
       label: "Pending Review",
       value: stats?.pending || 0,
@@ -79,7 +124,6 @@ const Dashboard = () => {
       iconBg: "bg-yellow-200",
       iconColor: "text-yellow-700",
     },
-
     {
       label: "Under Investigation",
       value: stats?.underInvestigation || 0,
@@ -88,7 +132,6 @@ const Dashboard = () => {
       iconBg: "bg-orange-100",
       iconColor: "text-orange-700",
     },
-
     {
       label: "Resolved",
       value: stats?.resolved || 0,
@@ -99,30 +142,51 @@ const Dashboard = () => {
     },
   ];
 
-  const getStatusBadge = (status) => {
-    const styles = {
-      Submitted: "bg-cyan-100 text-cyan-700",
-      "Preliminary Review": "bg-yellow-100 text-yellow-700",
-      "Under Investigation": "bg-orange-100 text-orange-700",
-      "Awaiting Evidence": "bg-purple-100 text-purple-700",
-      "Escalated to CIABOC": "bg-red-100 text-red-700",
-      Resolved: "bg-green-100 text-green-700",
-      Closed: "bg-gray-100 text-gray-700",
+  // Compute data for charts from allComplaints
+  const getStatusDistribution = () => {
+    const statusCounts = {
+      Submitted: 0,
+      "Preliminary Review": 0,
+      "Under Investigation": 0,
+      "Awaiting Evidence": 0,
+      "Escalated to CIABOC": 0,
+      Resolved: 0,
+      Closed: 0,
     };
-
-    return (
-      styles[status] || "bg-gray-100 text-gray-700"
-    );
+    allComplaints.forEach((c) => {
+      const status = c.current_status;
+      if (statusCounts.hasOwnProperty(status)) statusCounts[status]++;
+      else statusCounts[status] = 1;
+    });
+    return Object.entries(statusCounts)
+      .filter(([_, value]) => value > 0)
+      .map(([name, value]) => ({ name, value }));
   };
 
-  // Handler for stat box click
+  const getCategoryDistribution = () => {
+    const catCounts = {};
+    allComplaints.forEach((c) => {
+      const cat = c.category || "Unspecified";
+      catCounts[cat] = (catCounts[cat] || 0) + 1;
+    });
+    return Object.entries(catCounts)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value);
+  };
+
+  const anonymousCount = allComplaints.filter((c) => c.is_anonymous).length;
+  const namedCount = allComplaints.filter((c) => !c.is_anonymous).length;
+
+  const chartStatusData = getStatusDistribution();
+  const chartCategoryData = getCategoryDistribution();
+
+  const statusColors = ["#2563EB", "#F59E0B", "#10B981", "#EF4444", "#8B5CF6", "#06B6D4", "#6B7280"];
+
   const handleStatClick = (status) => {
     if (!status) {
       navigate("/admin/complaints");
     } else {
-      navigate(
-        `/admin/complaints?status=${encodeURIComponent(status)}`
-      );
+      navigate(`/admin/complaints?status=${encodeURIComponent(status)}`);
     }
   };
 
@@ -135,12 +199,10 @@ const Dashboard = () => {
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight">
               Investigation Dashboard
             </h1>
-
             <p className="text-slate-500 mt-1">
               Monitor complaints and investigation activities.
             </p>
           </div>
-
         </div>
       </div>
 
@@ -148,15 +210,9 @@ const Dashboard = () => {
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
         {primaryStats.map((card, index) => {
           let statusFilter = "";
-
-          if (card.label === "Pending Review") {
-            statusFilter = "Preliminary Review";
-          } else if (card.label === "Under Investigation") {
-            statusFilter = "Under Investigation";
-          } else if (card.label === "Resolved") {
-            statusFilter = "Resolved";
-          }
-
+          if (card.label === "Pending Review") statusFilter = "Preliminary Review";
+          else if (card.label === "Under Investigation") statusFilter = "Under Investigation";
+          else if (card.label === "Resolved") statusFilter = "Resolved";
           return (
             <div
               key={index}
@@ -166,25 +222,15 @@ const Dashboard = () => {
               role="button"
               aria-label={`Show ${card.label}`}
               onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  handleStatClick(statusFilter);
-                }
+                if (e.key === "Enter" || e.key === " ") handleStatClick(statusFilter);
               }}
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 font-medium">
-                    {card.label}
-                  </p>
-
-                  <h3 className="text-3xl font-bold text-slate-900 mt-3">
-                    {card.value}
-                  </h3>
+                  <p className="text-sm text-slate-500 font-medium">{card.label}</p>
+                  <h3 className="text-3xl font-bold text-slate-900 mt-3">{card.value}</h3>
                 </div>
-
-                <div
-                  className={`w-11 h-11 rounded-xl ${card.iconBg} ${card.iconColor} flex items-center justify-center`}
-                >
+                <div className={`w-11 h-11 rounded-xl ${card.iconBg} ${card.iconColor} flex items-center justify-center`}>
                   {card.icon}
                 </div>
               </div>
@@ -193,109 +239,73 @@ const Dashboard = () => {
         })}
       </div>
 
-      {/* Recent Complaints */}
-      <div className="bg-white rounded-3xl shadow-lg shadow-slate-950/10 overflow-hidden border border-slate-200">
-        <div className="px-6 py-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-          <div>
-            <h2 className="text-lg font-semibold text-slate-900">
-              Recent Complaint Activity
-            </h2>
+      {/* Additional Statistics: Anonymous & Named Complaints */}
+      <div>
+        <h2 className="text-xl font-bold text-slate-900 mb-5">Additional Statistics</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="bg-[#F5F3FF] border border-[#DDD6FE] rounded-2xl p-5 shadow-sm">
+            <p className="text-sm text-slate-600 font-medium">Anonymous Complaints</p>
+            <h3 className="text-3xl font-bold text-slate-900 mt-2">{anonymousCount}</h3>
           </div>
-
-          <Link
-            to="/admin/complaints"
-            className="text-sm font-semibold text-cyan-700 hover:text-cyan-800"
-          >
-            View All
-          </Link>
+          <div className="bg-[#EEF2FF] border border-[#C7D2FE] rounded-2xl p-5 shadow-sm">
+            <p className="text-sm text-slate-600 font-medium">Named Complaints</p>
+            <h3 className="text-3xl font-bold text-slate-900 mt-2">{namedCount}</h3>
+          </div>
         </div>
-
-        {recentComplaints.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="min-w-[800px] w-full">
-              <thead className="bg-slate-50">
-                <tr>
-                  <th className="text-left px-3 md:px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    CRN
-                  </th>
-
-                  <th className="text-left px-3 md:px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    Category
-                  </th>
-
-                  <th className="text-left px-3 md:px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    Status
-                  </th>
-
-                  <th className="text-left px-3 md:px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    Report Type
-                  </th>
-
-                  <th className="text-left px-3 md:px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    Submitted
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody className="divide-y divide-slate-100">
-                {recentComplaints.map((complaint) => (
-                  <tr
-                    key={complaint.id}
-                    className="hover:bg-slate-50 transition-colors"
-                  >
-                    <td className="px-6 py-4">
-                      <Link
-                        to={`/admin/complaints/${complaint.id}`}
-                        className="font-mono text-sm text-cyan-700 hover:text-cyan-800"
-                      >
-                        {complaint.crn}
-                      </Link>
-                    </td>
-
-                    <td className="px-6 py-4 text-sm text-slate-700">
-                      {complaint.category}
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-3 py-1 rounded-md text-xs font-medium ${getStatusBadge(
-                          complaint.currentStatus
-                        )}`}
-                      >
-                        {complaint.currentStatus}
-                      </span>
-                    </td>
-
-                    <td className="px-6 py-4">
-                      {complaint.isAnonymous ? (
-                        <span className="bg-slate-100 text-slate-700 px-3 py-1 rounded-md text-xs font-medium">
-                          Anonymous
-                        </span>
-                      ) : (
-                        <span className="bg-cyan-100 text-cyan-700 px-3 py-1 rounded-md text-xs font-medium">
-                          Named
-                        </span>
-                      )}
-                    </td>
-
-                    <td className="px-6 py-4 text-sm text-slate-500">
-                      {new Date(
-                        complaint.createdAt
-                      ).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="p-10 text-center">
-            <p className="text-slate-500 text-sm">
-              No complaints available.
-            </p>
-          </div>
-        )}
       </div>
+
+      {/* Charts Section */}
+      {!chartsLoading && allComplaints.length > 0 && (
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          {/* Pie Chart: Status Distribution */}
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">Complaint Status Distribution</h2>
+                <p className="text-sm text-slate-500 mt-1">Current workload by complaint status.</p>
+              </div>
+              <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold">Overview</span>
+            </div>
+            <ResponsiveContainer width="100%" height={isMobile ? 420 : 350}>
+              <PieChart>
+                <Pie data={chartStatusData} dataKey="value" nameKey="name" outerRadius={isMobile ? 70 : 120} label={!isMobile}>
+                  {chartStatusData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={statusColors[index % statusColors.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                {!isMobile && <Legend verticalAlign="bottom" align="center" wrapperStyle={{ fontSize: "14px", paddingTop: "10px" }} />}
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Bar Chart: Category Comparison */}
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">Complaint Type Comparison</h2>
+                <p className="text-sm text-slate-500 mt-1">Compare the number of complaints by category.</p>
+              </div>
+              <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold">Bar Chart</span>
+            </div>
+            <ResponsiveContainer width="100%" height={isMobile ? 340 : 350}>
+              <BarChart data={chartCategoryData} margin={{ top: 10, right: 10, left: -18, bottom: 42 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#475569" }} interval={0} angle={-18} textAnchor="end" height={70} />
+                <YAxis tick={{ fontSize: 12, fill: "#475569" }} allowDecimals={false} />
+                <Tooltip cursor={{ fill: "rgba(37, 99, 235, 0.08)" }} contentStyle={{ borderRadius: "12px", borderColor: "#CBD5E1", boxShadow: "0 10px 30px rgba(15, 23, 42, 0.12)" }} />
+                <Legend />
+                <Bar dataKey="value" fill="#2563EB" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+      {chartsLoading && (
+        <div className="text-center py-10">
+          <LoadingSpinner />
+        </div>
+      )}
     </div>
   );
 };
