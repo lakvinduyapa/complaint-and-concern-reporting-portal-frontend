@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import pdflogo from "../../assets/pdflogo1.jpeg";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import pdflogo from "../../assets/pdflogo1.jpeg"; // make sure this is a high-res PNG
 
 const Reports = () => {
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [showExcelModal, setShowExcelModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -18,9 +19,8 @@ const Reports = () => {
   const fetchAllComplaints = useCallback(async () => {
     try {
       setLoading(true);
-      setCurrentPage(1);
+      // No need to reset currentPage here – already done in filter handlers and initial state
       const token = localStorage.getItem("adminToken");
-      // Use a fixed wide custom range to get all complaints
       const startDate = "2000-01-01";
       const endDate = new Date().toISOString().split("T")[0];
       const url = `${import.meta.env.VITE_API_URL}/admin/reports?startDate=${startDate}&endDate=${endDate}`;
@@ -37,6 +37,7 @@ const Reports = () => {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchAllComplaints();
   }, [fetchAllComplaints]);
 
@@ -58,132 +59,172 @@ const Reports = () => {
     });
   };
 
-  // Compute statistics from filtered complaints
-  const getFilteredStats = (complaints) => {
-    const filtered = filterComplaintsByDate(complaints);
-    const total = filtered.length;
-    const preliminary = filtered.filter(c => c.current_status === "Preliminary Review").length;
-    const underInvestigation = filtered.filter(c => c.current_status === "Under Investigation").length;
-    const resolved = filtered.filter(c => c.current_status === "Resolved").length;
-    const closed = filtered.filter(c => c.current_status === "Closed").length;
-    const escalated = filtered.filter(c => c.current_status === "Escalated to CIABOC").length;
-    return { total, preliminary, underInvestigation, resolved, closed, escalated };
-  };
-
-  // Get base64 logo for PDF
-  const getBase64ImageFromURL = (url) => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.setAttribute("crossOrigin", "anonymous");
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-        resolve(canvas.toDataURL("image/jpeg", 1.0));
-      };
-      img.onerror = reject;
-      img.src = url;
-    });
-  };
-
-  // PDF export (uses filtered complaints)
+  // PDF export (uses filtered complaints) - PROFESSIONAL VERSION
   const viewPDF = async () => {
     if (!report) return;
     const allComplaints = report.complaints;
     const filteredComplaints = filterComplaintsByDate(allComplaints);
-    const stats = getFilteredStats(allComplaints);
-    const doc = new jsPDF();
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+    });
 
-    // Logo
-    let logoBase64 = null;
-    try {
-      logoBase64 = await getBase64ImageFromURL(pdflogo);
-    } catch (error) {
-      console.log("Logo failed to load", error);
-    }
-    if (logoBase64) doc.addImage(logoBase64, "JPEG", 10, 8, 35, 35);
+    // ========== 1. LOGO (DIRECT PNG – NO BASE64 BLUR) ==========
+    doc.addImage(pdflogo, "PNG", 10, 8, 70, 30);
 
-    // Header
+    // ========== 2. HEADER TEXTS ==========
     doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
-    doc.text("SLTMobitel Internal Audit Unit (IAU)", 50, 20);
+    doc.text("SLTMobitel Internal Audit Unit (IAU)", 70, 20);
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
-    doc.text("Complaint Management Portal - Operational Report", 50, 28);
-    doc.setDrawColor(37, 99, 235);
+    doc.text("Complaint Management Portal - Operational Report", 70, 28);
+    doc.setDrawColor(0, 102, 179);
     doc.setLineWidth(0.5);
     doc.line(14, 38, 196, 38);
 
-    // Meta info
+    // ========== 3. META INFO (LEFT / RIGHT ALIGNMENT, SAME LINE) ==========
+    const pageWidth = doc.internal.pageSize.getWidth();
     const today = new Date().toLocaleDateString();
     doc.setFontSize(10);
     doc.text(`Generated Date: ${today}`, 14, 48);
-    if (filterFrom || filterTo) {
-      doc.text(`Date Filter: ${filterFrom || "any"} to ${filterTo || "any"}`, 14, 56);
-    } else {
-      doc.text("Date Filter: none (all complaints)", 14, 56);
-    }
 
-    // Executive Summary (using filtered stats)
-    doc.setFontSize(13);
+    // Inline filter text – no unused variable warning
+    doc.text(
+      filterFrom || filterTo
+        ? `Date Filter: ${filterFrom || "any"} to ${filterTo || "any"}`
+        : "Date Filter: All Complaints",
+      pageWidth - 14,
+      48,
+      { align: "right" }
+    );
+
+    // ========== 4. EXECUTIVE SUMMARY – TWO TABLES (LEFT + RIGHT) ==========
+    const filteredStats = (() => {
+      const filtered = filterComplaintsByDate(allComplaints);
+      return {
+        total: filtered.length,
+        preliminary: filtered.filter(c => c.current_status === "Preliminary Review").length,
+        underInvestigation: filtered.filter(c => c.current_status === "Under Investigation").length,
+        resolved: filtered.filter(c => c.current_status === "Resolved").length,
+        closed: filtered.filter(c => c.current_status === "Closed").length,
+        escalated: filtered.filter(c => c.current_status === "Escalated to CIABOC").length,
+      };
+    })();
+
+    doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
-    doc.text("Executive Summary", 14, 70);
+    doc.text("Executive Summary", 14, 65);
     doc.setFont("helvetica", "normal");
 
-    const summaryItems = [
-      { label: "Total Complaints", value: stats.total },
-      { label: "Preliminary Review", value: stats.preliminary },
-      { label: "Under Investigation", value: stats.underInvestigation },
-      { label: "Resolved", value: stats.resolved },
-      { label: "Closed", value: stats.closed },
-      { label: "Escalated to CIABOC", value: stats.escalated },
-      // Additional useful stats from original report (not filtered, but keep for completeness)
-      { label: "Submitted (total)", value: report.summary.submitted },
-      { label: "Awaiting Evidence", value: report.summary.awaitingEvidence },
-      { label: "Anonymous Complaints", value: report.summary.anonymousComplaints },
-      { label: "Named Complaints", value: report.summary.namedComplaints },
-      { label: "Evidence Files", value: report.summary.totalEvidence },
+    const leftTableData = [
+      ["Metric", "Value"],
+      ["Total Complaints", filteredStats.total],
+      ["Preliminary Review", filteredStats.preliminary],
+      ["Under Investigation", filteredStats.underInvestigation],
+      ["Resolved", filteredStats.resolved],
+      ["Closed", filteredStats.closed],
+      ["Escalated to CIABOC", filteredStats.escalated],
     ];
 
-    const col1X = 14, col2X = 78, col3X = 142;
-    const rowHeight = 8;
-    let startY = 80;
-    for (let i = 0; i < summaryItems.length; i += 3) {
-      const item1 = summaryItems[i];
-      const item2 = summaryItems[i+1];
-      const item3 = summaryItems[i+2];
-      const y = startY + (i / 3) * rowHeight;
-      if (item1) doc.text(`${item1.label}: ${item1.value}`, col1X, y);
-      if (item2) doc.text(`${item2.label}: ${item2.value}`, col2X, y);
-      if (item3) doc.text(`${item3.label}: ${item3.value}`, col3X, y);
-    }
+    const rightTableData = [
+      ["Metric", "Value"],
+      ["Submitted (Total)", report.summary.submitted],
+      ["Awaiting Evidence", report.summary.awaitingEvidence],
+      ["Anonymous Complaints", report.summary.anonymousComplaints],
+      ["Named Complaints", report.summary.namedComplaints],
+      ["Evidence Files", report.summary.totalEvidence],
+    ];
 
-    const execEndY = startY + Math.ceil(summaryItems.length / 3) * rowHeight;
-
-    // Complaint table
+    // Left table
     autoTable(doc, {
-      startY: execEndY + 12,
-      head: [["CRN", "Category", "Status", "Date"]],
+      startY: 70,
+      head: [leftTableData[0]],
+      body: leftTableData.slice(1),
+      theme: "grid",
+      styles: { fontSize: 9, cellPadding: 4 },
+      headStyles: {
+        fillColor: [0, 102, 179],
+        textColor: 255,
+        fontStyle: "bold",
+        halign: "center",
+      },
+      columnStyles: {
+        0: { cellWidth: 50, halign: "left" },
+        1: { cellWidth: 25, halign: "center" },
+      },
+      margin: { left: 14 },
+      tableWidth: 85,
+    });
+    const leftEndY = doc.lastAutoTable.finalY;
+
+    // Right table
+    autoTable(doc, {
+      startY: 70,
+      head: [rightTableData[0]],
+      body: rightTableData.slice(1),
+      theme: "grid",
+      styles: { fontSize: 9, cellPadding: 4 },
+      headStyles: {
+        fillColor: [0, 102, 179],
+        textColor: 255,
+        fontStyle: "bold",
+        halign: "center",
+      },
+      columnStyles: {
+        0: { cellWidth: 50, halign: "left" },
+        1: { cellWidth: 25, halign: "center" },
+      },
+      margin: { left: 110 },
+      tableWidth: 85,
+    });
+    const rightEndY = doc.lastAutoTable.finalY;
+    const summaryEndY = Math.max(leftEndY, rightEndY);
+
+    // ========== 5. COMPLAINTS LIST TABLE ==========
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text("Complaints List", 14, summaryEndY + 12);
+    doc.setFont("helvetica", "normal");
+
+    autoTable(doc, {
+      startY: summaryEndY + 18,
+      head: [["CRN", "Category", "Status", "Submitted Date"]],
       body: filteredComplaints.map(item => [
         item.crn,
         item.category || "Unspecified",
         item.current_status,
         item.created_at ? new Date(item.created_at).toLocaleDateString() : "N/A",
       ]),
-      theme: "plain",
-      headStyles: { fillColor: [245,247,250], textColor: [31,41,55], fontStyle: "bold", halign: "left", lineWidth: 0 },
-      bodyStyles: { textColor: [75,85,99], lineWidth: 0 },
-      alternateRowStyles: { fillColor: [249,250,251] },
-      columnStyles: { 0: { cellWidth: 40 }, 1: { cellWidth: 50 }, 2: { cellWidth: 45 }, 3: { cellWidth: 35 } },
+      theme: "striped",
+      headStyles: {
+        fillColor: [0, 102, 179],
+        textColor: 255,
+        fontStyle: "bold",
+        halign: "left",
+      },
+      bodyStyles: { textColor: [31, 41, 55] },
+      alternateRowStyles: { fillColor: [240, 248, 255] },
+      columnStyles: {
+        0: { cellWidth: 35 },
+        1: { cellWidth: 45 },
+        2: { cellWidth: 45 },
+        3: { cellWidth: 40 },
+      },
       margin: { left: 14, right: 14 },
-      styles: { fontSize: 9, cellPadding: 5, valign: "middle", lineColor: [226,232,240], lineWidth: 0.1 },
+      styles: {
+        fontSize: 9,
+        cellPadding: 5,
+        valign: "middle",
+        lineColor: [0, 102, 179],
+        lineWidth: 0.1,
+      },
     });
 
     const finalY = doc.lastAutoTable.finalY + 12;
     doc.setFontSize(8);
-    doc.setTextColor(128,128,128);
+    doc.setTextColor(128, 128, 128);
     doc.text("Generated by IAU Complaint Portal", 14, finalY);
     doc.text("Confidential - Internal Use Only", 14, finalY + 6);
 
@@ -193,34 +234,41 @@ const Reports = () => {
     setTimeout(() => URL.revokeObjectURL(url), 100);
   };
 
-  // Excel export (CSV) using filtered complaints
-  const downloadExcel = async () => {
+  // Excel export using SheetJS (real .xlsx)
+  const downloadExcel = () => {
     if (!report) return;
+
     const filteredComplaints = filterComplaintsByDate(report.complaints);
-    const headers = ["CRN", "Category", "Status", "Report Type", "Submitted Date"];
-    const rows = filteredComplaints.map(c => [
-      c.crn,
-      c.category || "Unspecified",
-      c.current_status,
-      c.is_anonymous ? "Anonymous" : "Named",
-      c.created_at ? new Date(c.created_at).toLocaleDateString() : "N/A"
-    ]);
-    const csvContent = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const blobUrl = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = blobUrl;
-    link.download = `Complaint_Report_${new Date().toISOString().slice(0,19)}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(blobUrl);
+
+    const excelData = filteredComplaints.map((c) => ({
+      CRN: c.crn,
+      Category: c.category || "Unspecified",
+      Status: c.current_status,
+      "Report Type": c.is_anonymous ? "Anonymous" : "Named",
+      "Submitted Date": c.created_at
+        ? new Date(c.created_at).toLocaleDateString()
+        : "N/A",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Complaints");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    const fileData = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    saveAs(fileData, `Complaint_Report_${new Date().toISOString().slice(0, 19)}.xlsx`);
   };
 
   // Pagination & filtered data
   const allComplaints = report?.complaints || [];
   const filteredComplaints = filterComplaintsByDate(allComplaints);
-  const filteredStats = getFilteredStats(allComplaints);
   const totalPages = Math.ceil(filteredComplaints.length / itemsPerPage);
   const paginatedComplaints = filteredComplaints.slice(
     (currentPage - 1) * itemsPerPage,
@@ -244,9 +292,22 @@ const Reports = () => {
     if (newPage >= 1 && newPage <= totalPages) setCurrentPage(newPage);
   };
 
-  useEffect(() => {
+  // Date filter handlers – reset currentPage to 1 when filter changes
+  const handleFilterFromChange = (e) => {
+    setFilterFrom(e.target.value);
     setCurrentPage(1);
-  }, [filterFrom, filterTo]);
+  };
+
+  const handleFilterToChange = (e) => {
+    setFilterTo(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleClearFilters = () => {
+    setFilterFrom("");
+    setFilterTo("");
+    setCurrentPage(1);
+  };
 
   return (
     <>
@@ -265,19 +326,19 @@ const Reports = () => {
             <input
               type="date"
               value={filterFrom}
-              onChange={(e) => setFilterFrom(e.target.value)}
+              onChange={handleFilterFromChange}
               className="px-3 py-2 border border-slate-300 rounded-lg bg-white"
             />
             <span className="text-slate-500">to</span>
             <input
               type="date"
               value={filterTo}
-              onChange={(e) => setFilterTo(e.target.value)}
+              onChange={handleFilterToChange}
               className="px-3 py-2 border border-slate-300 rounded-lg bg-white"
             />
             {(filterFrom || filterTo) && (
               <button
-                onClick={() => { setFilterFrom(""); setFilterTo(""); }}
+                onClick={handleClearFilters}
                 className="px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg"
               >
                 Clear
@@ -308,34 +369,6 @@ const Reports = () => {
         ) : (
           report && (
             <>
-              {/* Statistics Cards (based on filtered complaints) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
-                <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 shadow-sm">
-                  <p className="text-sm text-slate-600">Total Complaints</p>
-                  <h3 className="text-3xl font-bold text-slate-900 mt-2">{filteredStats.total}</h3>
-                </div>
-                <div className="bg-purple-50 border border-purple-100 rounded-2xl p-5 shadow-sm">
-                  <p className="text-sm text-slate-600">Preliminary Review</p>
-                  <h3 className="text-3xl font-bold text-slate-900 mt-2">{filteredStats.preliminary}</h3>
-                </div>
-                <div className="bg-yellow-50 border border-yellow-100 rounded-2xl p-5 shadow-sm">
-                  <p className="text-sm text-slate-600">Under Investigation</p>
-                  <h3 className="text-3xl font-bold text-slate-900 mt-2">{filteredStats.underInvestigation}</h3>
-                </div>
-                <div className="bg-green-50 border border-green-100 rounded-2xl p-5 shadow-sm">
-                  <p className="text-sm text-slate-600">Resolved</p>
-                  <h3 className="text-3xl font-bold text-slate-900 mt-2">{filteredStats.resolved}</h3>
-                </div>
-                <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 shadow-sm">
-                  <p className="text-sm text-slate-600">Closed</p>
-                  <h3 className="text-3xl font-bold text-slate-900 mt-2">{filteredStats.closed}</h3>
-                </div>
-                <div className="bg-red-50 border border-red-100 rounded-2xl p-5 shadow-sm">
-                  <p className="text-sm text-slate-600">Escalated to CIABOC</p>
-                  <h3 className="text-3xl font-bold text-slate-900 mt-2">{filteredStats.escalated}</h3>
-                </div>
-              </div>
-
               {/* Recent Complaint Activity Table */}
               <div className="bg-white rounded-3xl border border-slate-200 shadow-md overflow-hidden">
                 <div className="px-6 py-5 border-b border-slate-200 bg-slate-50">
@@ -417,46 +450,6 @@ const Reports = () => {
           )
         )}
       </div>
-
-      {/* Excel Preview Modal (uses filtered complaints) */}
-      {showExcelModal && report && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-6xl max-h-[90vh] flex flex-col">
-            <div className="flex justify-between items-center px-6 py-4 border-b">
-              <h3 className="text-xl font-bold text-slate-900">Excel Preview – Complaint Data</h3>
-              <button onClick={() => setShowExcelModal(false)} className="text-slate-500 hover:text-slate-700 text-2xl leading-none">&times;</button>
-            </div>
-            <div className="overflow-auto flex-1 p-4">
-              <table className="min-w-full border-collapse text-sm">
-                <thead className="bg-slate-100 sticky top-0">
-                  <tr>
-                    <th className="border border-slate-300 px-4 py-2 text-left font-semibold text-slate-700">CRN</th>
-                    <th className="border border-slate-300 px-4 py-2 text-left font-semibold text-slate-700">Category</th>
-                    <th className="border border-slate-300 px-4 py-2 text-left font-semibold text-slate-700">Status</th>
-                    <th className="border border-slate-300 px-4 py-2 text-left font-semibold text-slate-700">Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredComplaints.map((complaint) => (
-                    <tr key={complaint.crn} className="hover:bg-slate-50">
-                      <td className="border border-slate-200 px-4 py-2 text-slate-600">{complaint.crn}</td>
-                      <td className="border border-slate-200 px-4 py-2 text-slate-600">{complaint.category || "Unspecified"}</td>
-                      <td className="border border-slate-200 px-4 py-2 text-slate-600">{complaint.current_status}</td>
-                      <td className="border border-slate-200 px-4 py-2 text-slate-600">
-                        {complaint.created_at ? new Date(complaint.created_at).toLocaleDateString() : "N/A"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="flex justify-end gap-3 px-6 py-4 border-t">
-              <button onClick={() => setShowExcelModal(false)} className="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50">Close</button>
-              <button onClick={downloadExcel} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Download Excel</button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };
