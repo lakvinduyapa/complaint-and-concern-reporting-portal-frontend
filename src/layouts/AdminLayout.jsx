@@ -1,22 +1,23 @@
 import { Outlet } from "react-router-dom";
+
 import AdminSidebar from "../components/common/AdminSidebar";
+import AdminHeader from "../components/common/AdminHeader";
 import SessionWarningModal from "../components/common/SessionWarningModal";
 
 const AdminLayout = () => {
   return (
-    <div className="app-shell min-h-screen flex flex-col md:flex-row">
-      {/* Session Warning Modal */}
+    <div className="min-h-screen bg-[#F5F7FA] flex">
       <SessionWarningModal />
 
-      {/* Admin Sidebar */}
       <AdminSidebar />
 
-      {/* Main Content */}
-      <main className="flex-1 w-full md:ml-64 md:overflow-y-auto">
-        <div className="w-full px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+      <div className="flex-1 ml-[220px] flex flex-col">
+        <AdminHeader />
+
+        <main className="flex-1 px-6 pt-8 pb-6">
           <Outlet />
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 };
