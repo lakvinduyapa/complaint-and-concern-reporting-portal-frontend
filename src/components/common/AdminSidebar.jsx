@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAdminAuth } from "../../hooks/useAdminAuth";
+import Logo from "../../assets/SLT Logo.png";
 
 import {
   FiHome,
@@ -35,28 +36,31 @@ const AdminSidebar = () => {
   };
 
   const getNavItemClass = (isActive) => {
-    const baseClass =
-      "flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-all border";
+  const baseClass =
+    "flex items-center gap-3 px-5 py-3 text-base font-semibold rounded-2xl transition-all duration-200";
 
-    return isActive
-      ? `${baseClass} bg-green-600 text-white border-green-500`
-      : `${baseClass} text-white border-transparent hover:bg-green-500/20`;
-  };
+  return isActive
+    ? `${baseClass} bg-white text-[#062B7D] shadow-lg`
+    : `${baseClass} text-white hover:bg-white/10`;
+};
 
   return (
     <>
       {/* Mobile Header */}
       <div
         className="fixed top-0 left-0 right-0 h-16 border-b border-cyan-400/30 shadow-lg z-50 md:hidden flex items-center justify-between px-4"
-        style={{ background: "#0156A6" }}
+        style={{
+  background:
+    "linear-gradient(180deg, #001A72 0%, #005E5E 35%, #005E5E 70%, #001A72 100%)",
+}}
       >
         <div className="flex items-center">
-          <img
-            src="/01SLT.jpg.jpeg"
-            alt="SLTMobitel"
-            className="h-14 w-auto object-contain"
-          />
-        </div>
+  <img
+    src={Logo}
+    alt="SLTMobitel"
+    className="w-36 h-auto object-contain"
+  />
+</div>
 
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -92,30 +96,58 @@ const AdminSidebar = () => {
       )}
 
       {/* Sidebar */}
-      <aside
-        className={`fixed left-0 top-16 md:top-0 h-[calc(100vh-4rem)] md:h-screen border-r border-cyan-400/30 shadow-xl transition-all duration-300 ease-in-out z-50 md:z-30 flex flex-col overflow-y-hidden md:overflow-y-auto ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 w-64`}
-        style={{ background: "#0156A6" }}
-      >
+ <aside
+  className={`
+    fixed
+    left-0
+    top-16
+    md:top-0
+    h-[calc(100vh-4rem)]
+    md:h-screen
+    w-[220px]
+    border-r
+    border-white/10
+    shadow-xl
+    flex
+    flex-col
+    transition-all
+    duration-300
+    ease-in-out
+    z-50
+    md:z-30
+    overflow-y-auto
+    ${
+      isOpen
+        ? "translate-x-0"
+        : "-translate-x-full"
+    }
+    md:translate-x-0
+  `}
+  style={{
+  background:
+    "linear-gradient(180deg, #001A72 0%, #005E5E 35%, #005E5E 70%, #001A72 100%)",
+}}
+>
         {/* Desktop Logo */}
-        <div className="hidden md:flex justify-center py-4 px-4">
-          <img
-            src="/01SLT.jpg.jpeg"
-            alt="SLTMobitel"
-            className="h-24 w-auto object-contain"
-          />
-        </div>
+        <div className="hidden md:flex justify-center items-center py-8">
+  <img
+    src={Logo}
+    alt="SLTMobitel"
+    className="w-44 h-auto object-contain"
+  />
+</div>
 
         {/* Navigation */}
-        <nav className="px-4 py-4 space-y-2">
+       <nav className="px-5 py-5 space-y-3">
           <NavLink
             to="/admin/dashboard"
             className={({ isActive }) => getNavItemClass(isActive)}
             onClick={() => setIsOpen(false)}
           >
             <FiHome className="w-5 h-5 flex-shrink-0" />
-            <span>Dashboard</span>
+            <span>
+              Dashboard
+            </span>
           </NavLink>
 
           {canManageInvestigations && (
@@ -125,7 +157,9 @@ const AdminSidebar = () => {
               onClick={() => setIsOpen(false)}
             >
               <FiSearch className="w-5 h-5 flex-shrink-0" />
-              <span>Investigation Management</span>
+              <span>
+                  Investigation Management
+                </span>
             </NavLink>
           )}
 
@@ -135,7 +169,9 @@ const AdminSidebar = () => {
             onClick={() => setIsOpen(false)}
           >
             <FiFileText className="w-5 h-5 flex-shrink-0" />
-            <span>Complaint Management</span>
+            <span>
+  Complaint Management
+</span>
           </NavLink>
 
           <NavLink
@@ -144,7 +180,9 @@ const AdminSidebar = () => {
             onClick={() => setIsOpen(false)}
           >
             <FiBarChart2 className="w-5 h-5 flex-shrink-0" />
-            <span>Reports</span>
+            <span>
+  Reports
+</span>
           </NavLink>
 
           {canViewAuditLogs && (
@@ -154,7 +192,9 @@ const AdminSidebar = () => {
               onClick={() => setIsOpen(false)}
             >
               <FiActivity className="w-5 h-5 flex-shrink-0" />
-              <span>Audit Logs</span>
+              <span>
+  Audit Logs
+</span>
             </NavLink>
           )}
         </nav>
@@ -170,10 +210,29 @@ const AdminSidebar = () => {
               handleLogout();
               setIsOpen(false);
             }}
-            className="w-full px-4 py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-all flex items-center gap-3"
+            className="
+w-full
+px-4
+py-3
+bg-[#1E429F]
+hover:bg-[#1E429F]
+text-white
+text-sm
+font-medium
+rounded-2xl
+transition-all
+flex
+items-center
+justify-center
+gap-3
+border
+border-white/10
+"
           >
             <FiLogOut className="w-5 h-5 flex-shrink-0" />
-            <span>Logout</span>
+            <span className="font-semibold text-slate-50 drop-shadow-sm">
+  Logout
+</span>
           </button>
         </div>
       </aside>
