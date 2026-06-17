@@ -108,39 +108,47 @@ const Dashboard = () => {
   }
 
   const primaryStats = [
-    {
-      label: "Total Complaints",
-      value: stats?.totalComplaints || 0,
-      icon: <FiFileText size={20} />,
-      bgColor: "bg-gradient-to-r from-blue-50 to-cyan-50",
-      iconBg: "bg-blue-200",
-      iconColor: "text-slate-700",
-    },
-    {
-      label: "Pending Review",
-      value: stats?.pending || 0,
-      icon: <FiClock size={20} />,
-      bgColor: "bg-gradient-to-r from-yellow-50 to-amber-50",
-      iconBg: "bg-yellow-200",
-      iconColor: "text-yellow-700",
-    },
-    {
-      label: "Under Investigation",
-      value: stats?.underInvestigation || 0,
-      icon: <FiSearch size={20} />,
-      bgColor: "bg-gradient-to-r from-orange-50 to-red-50",
-      iconBg: "bg-orange-100",
-      iconColor: "text-orange-700",
-    },
-    {
-      label: "Resolved",
-      value: stats?.resolved || 0,
-      icon: <FiCheckCircle size={20} />,
-      bgColor: "bg-gradient-to-r from-green-50 to-emerald-50",
-      iconBg: "bg-green-100",
-      iconColor: "text-green-700",
-    },
-  ];
+  {
+    label: "Total Complaints",
+    value: stats?.totalComplaints || 0,
+    icon: <FiFileText size={24} />,
+    bgColor: "bg-[#F8FBFF]",
+    gradient: "linear-gradient(135deg, #0A3D91 0%, #1456C4 100%)",
+    circleBg: "bg-blue-100",
+    iconBg: "bg-blue-100",
+    iconColor: "text-blue-700",
+  },
+  {
+    label: "Pending Review",
+    value: stats?.pending || 0,
+    icon: <FiClock size={24} />,
+    bgColor: "bg-[#FFFBF2]",
+    gradient: "linear-gradient(135deg, #B45309 0%, #F59E0B 100%)",
+    circleBg: "bg-orange-100",
+    iconBg: "bg-orange-100",
+    iconColor: "text-orange-700",
+  },
+  {
+    label: "Under Investigation",
+    value: stats?.underInvestigation || 0,
+    icon: <FiSearch size={24} />,
+    bgColor: "bg-[#F8FFFB]",
+    gradient: "linear-gradient(135deg, #1456C4 0%, #46C36F 100%)",
+    circleBg: "bg-cyan-100",
+    iconBg: "bg-cyan-100",
+    iconColor: "text-blue-700",
+  },
+  {
+    label: "Resolved",
+    value: stats?.resolved || 0,
+    icon: <FiCheckCircle size={24} />,
+    bgColor: "bg-[#F6FFF9]",
+    gradient: "linear-gradient(135deg, #00B86B 0%, #46C36F 100%)",
+    circleBg: "bg-green-100",
+    iconBg: "bg-green-100",
+    iconColor: "text-green-700",
+  },
+];
 
   // Compute data for charts from allComplaints
   const getStatusDistribution = () => {
@@ -192,22 +200,9 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Header */}
-      <div className="bg-white shadow-lg shadow-slate-950/10 rounded-3xl p-6 border border-slate-200">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-          <div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight">
-              Investigation Dashboard
-            </h1>
-            <p className="text-slate-500 mt-1">
-              Monitor complaints and investigation activities.
-            </p>
-          </div>
-        </div>
-      </div>
 
       {/* Primary Stats */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-6">
         {primaryStats.map((card, index) => {
           let statusFilter = "";
           if (card.label === "Pending Review") statusFilter = "Preliminary Review";
@@ -215,25 +210,56 @@ const Dashboard = () => {
           else if (card.label === "Resolved") statusFilter = "Resolved";
           return (
             <div
-              key={index}
-              className={`${card.bgColor} p-5 rounded-2xl border border-slate-200 shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-1 cursor-pointer`}
-              onClick={() => handleStatClick(statusFilter)}
-              tabIndex={0}
-              role="button"
-              aria-label={`Show ${card.label}`}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") handleStatClick(statusFilter);
-              }}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-500 font-medium">{card.label}</p>
-                  <h3 className="text-3xl font-bold text-slate-900 mt-3">{card.value}</h3>
-                </div>
-                <div className={`w-11 h-11 rounded-xl ${card.iconBg} ${card.iconColor} flex items-center justify-center`}>
-                  {card.icon}
-                </div>
-              </div>
+  key={index}
+  className={`${card.bgColor}
+  relative
+  overflow-hidden
+  h-[180px]
+  p-6
+  rounded-3xl
+  border
+  border-slate-200
+  shadow-lg
+  hover:shadow-xl
+  transition-all
+  duration-200
+  hover:-translate-y-1
+  cursor-pointer`}
+>
+
+  <div
+  className="absolute -top-10 -right-10 w-36 h-36 rounded-full opacity-10"
+  style={{
+    background: card.gradient,
+  }}
+/>
+             <div className="h-full flex flex-col justify-between">
+  <div className="flex justify-between items-start">
+    <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">
+      {card.label}
+    </p>
+
+    <div
+  className="w-14 h-14 rounded-2xl flex items-center justify-center"
+  style={{
+    background: card.gradient,
+    color: "#fff",
+  }}
+>
+      {card.icon}
+    </div>
+  </div>
+
+  <div className="mt-4">
+    <h3 className="text-5xl font-extrabold text-slate-900">
+      {card.value}
+    </h3>
+
+    <p className="text-sm text-slate-500 mt-2">
+      Dashboard statistic
+    </p>
+  </div>
+</div>
             </div>
           );
         })}
@@ -241,43 +267,120 @@ const Dashboard = () => {
 
       {/* Additional Statistics: Anonymous & Named Complaints */}
       <div>
-        <h2 className="text-xl font-bold text-slate-900 mb-5">Additional Statistics</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          <div className="bg-[#F5F3FF] border border-[#DDD6FE] rounded-2xl p-5 shadow-sm">
-            <p className="text-sm text-slate-600 font-medium">Anonymous Complaints</p>
-            <h3 className="text-3xl font-bold text-slate-900 mt-2">{anonymousCount}</h3>
-          </div>
-          <div className="bg-[#EEF2FF] border border-[#C7D2FE] rounded-2xl p-5 shadow-sm">
-            <p className="text-sm text-slate-600 font-medium">Named Complaints</p>
-            <h3 className="text-3xl font-bold text-slate-900 mt-2">{namedCount}</h3>
-          </div>
-        </div>
+        <div className="mb-6">
+  <h2 className="text-2xl font-bold text-slate-900">
+    Analytics Overview
+  </h2>
+
+  <p className="text-slate-500 mt-1">
+    Complaint trends and distribution
+  </p>
+</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+  <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-6">
+    <div className="flex items-center gap-4">
+      <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-700 text-2xl">
+        👤
+      </div>
+
+      <div>
+        <p className="text-slate-500 text-sm">
+          Anonymous Complaints
+        </p>
+
+        <h3 className="text-4xl font-bold text-slate-900">
+          {anonymousCount}
+        </h3>
+
+        <p className="text-sm text-slate-500">
+          {allComplaints.length > 0
+            ? Math.round(
+                (anonymousCount / allComplaints.length) * 100
+              )
+            : 0}
+          % of complaints
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-6">
+    <div className="flex items-center gap-4">
+      <div className="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center text-green-700 text-2xl">
+        📝
+      </div>
+
+      <div>
+        <p className="text-slate-500 text-sm">
+          Named Complaints
+        </p>
+
+        <h3 className="text-4xl font-bold text-slate-900">
+          {namedCount}
+        </h3>
+
+        <p className="text-sm text-slate-500">
+          {allComplaints.length > 0
+            ? Math.round(
+                (namedCount / allComplaints.length) * 100
+              )
+            : 0}
+          % of complaints
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
       </div>
 
       {/* Charts Section */}
       {!chartsLoading && allComplaints.length > 0 && (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           {/* Pie Chart: Status Distribution */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-xl font-bold text-slate-900">Complaint Status Distribution</h2>
-                <p className="text-sm text-slate-500 mt-1">Current workload by complaint status.</p>
-              </div>
-              <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold">Overview</span>
-            </div>
-            <ResponsiveContainer width="100%" height={isMobile ? 420 : 350}>
-              <PieChart>
-                <Pie data={chartStatusData} dataKey="value" nameKey="name" outerRadius={isMobile ? 70 : 120} label={!isMobile}>
-                  {chartStatusData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={statusColors[index % statusColors.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                {!isMobile && <Legend verticalAlign="bottom" align="center" wrapperStyle={{ fontSize: "14px", paddingTop: "10px" }} />}
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
+<div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6">
+  <div className="flex items-center justify-between mb-4">
+    <div>
+      <h2 className="text-xl font-bold text-slate-900">
+        Complaint Status Distribution
+      </h2>
+
+      <p className="text-sm text-slate-500 mt-1">
+        Current workload by complaint status
+      </p>
+    </div>
+
+    <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold">
+      Overview
+    </span>
+  </div>
+
+  <ResponsiveContainer
+    width="100%"
+    height={isMobile ? 320 : 350}
+  >
+    <PieChart>
+      <Pie
+        data={chartStatusData}
+        cx="50%"
+        cy="50%"
+        innerRadius={80}
+        outerRadius={130}
+        paddingAngle={3}
+        dataKey="value"
+      >
+        {chartStatusData.map((entry, index) => (
+          <Cell
+            key={`cell-${index}`}
+            fill={statusColors[index % statusColors.length]}
+          />
+        ))}
+      </Pie>
+
+      <Tooltip />
+      <Legend />
+    </PieChart>
+  </ResponsiveContainer>
+</div>
 
           {/* Bar Chart: Category Comparison */}
           <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6">
@@ -295,7 +398,30 @@ const Dashboard = () => {
                 <YAxis tick={{ fontSize: 12, fill: "#475569" }} allowDecimals={false} />
                 <Tooltip cursor={{ fill: "rgba(37, 99, 235, 0.08)" }} contentStyle={{ borderRadius: "12px", borderColor: "#CBD5E1", boxShadow: "0 10px 30px rgba(15, 23, 42, 0.12)" }} />
                 <Legend />
-                <Bar dataKey="value" fill="#2563EB" radius={[8, 8, 0, 0]} />
+                <defs>
+  <linearGradient
+    id="categoryGradient"
+    x1="0"
+    y1="0"
+    x2="0"
+    y2="1"
+  >
+    <stop
+      offset="0%"
+      stopColor="#1456C4"
+    />
+    <stop
+      offset="100%"
+      stopColor="#005E5E"
+    />
+  </linearGradient>
+</defs>
+
+<Bar
+  dataKey="value"
+  fill="url(#categoryGradient)"
+  radius={[12, 12, 0, 0]}
+/>
               </BarChart>
             </ResponsiveContainer>
           </div>
