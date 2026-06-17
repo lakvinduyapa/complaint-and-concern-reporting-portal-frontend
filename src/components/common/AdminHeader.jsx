@@ -5,6 +5,22 @@ const AdminHeader = () => {
     localStorage.getItem("adminUser") || "{}"
   );
 
+const getDashboardTitle = () => {
+  switch (currentUser?.role) {
+    case "admin":
+      return "Admin Dashboard";
+
+    case "senior_investigator":
+      return "Senior Investigator Dashboard";
+
+    case "officer":
+      return "Investigation Officer Dashboard";
+
+    default:
+      return "Dashboard";
+  }
+};
+
   return (
   <header
     className="
@@ -18,15 +34,15 @@ const AdminHeader = () => {
       rounded-2xl
       shadow-lg
     "
-    style={{
-      background:
-        "linear-gradient(90deg, #001A72 35%, #005E5E 100%)",
-    }}
+   style={{
+  background:
+    "linear-gradient(90deg, #001A72 0%, #005E5E 75%, #005E5E 100%)",
+}}
   >
       {/* Left */}
       <div>
        <h1 className="text-3xl font-bold text-white">
-          Admin Dashboard
+          {getDashboardTitle()}
         </h1>
 
         <p className="text-slate-200 mt-1">
@@ -36,16 +52,6 @@ const AdminHeader = () => {
 
       {/* Right */}
       <div className="flex items-center gap-4">
-        {/* Search */}
-        <div className="hidden lg:flex items-center bg-white rounded-full px-4 h-12 w-[380px] shadow-sm border border-slate-200">
-          <FiSearch className="text-slate-400" />
-
-          <input
-            type="text"
-            placeholder="Search complaints, investigators, IDs..."
-            className="flex-1 ml-3 outline-none text-sm bg-transparent"
-          />
-        </div>
 
         {/* Notification */}
         <button className="w-12 h-12 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center hover:bg-slate-50 transition-colors">
@@ -68,7 +74,6 @@ const AdminHeader = () => {
             </p>
           </div>
 
-          <FiChevronDown className="text-slate-500" />
         </div>
       </div>
     </header>
