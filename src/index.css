@@ -43,7 +43,6 @@ body {
   }
 
   p,
-  span,
   label {
     color: var(--text-secondary);
   }
