@@ -22,8 +22,6 @@ import {
   getAdminComplaintDetails,
   getStatusOptions,
   updateComplaintStatus,
-  getAssignableOfficers,
-  assignComplaintToOfficer,
 } from "../../services/adminComplaintService";
 
 import { getEvidenceByComplaintId } from "../../services/evidenceService";
@@ -36,6 +34,37 @@ const ComplaintDetails = () => {
   const normalizeComplaint = (complaintData) => {
     if (!complaintData) return null;
 
+    const reporter =
+      complaintData.reporter ||
+      (complaintData.reporter_submission_type ||
+      complaintData.reporter_category ||
+      complaintData.reporter_full_name_detail ||
+      complaintData.reporter_employee_id ||
+      complaintData.reporter_department ||
+      complaintData.reporter_designation ||
+      complaintData.reporter_email ||
+      complaintData.reporter_phone ||
+      complaintData.reporter_preferred_contact_method
+        ? {
+            submissionType:
+              complaintData.reporter_submission_type ||
+              (complaintData.is_anonymous ? "anonymous" : "named"),
+            reporterCategory: complaintData.reporter_category || "",
+            fullName:
+              complaintData.reporter_full_name_detail ||
+              complaintData.reporter_full_name ||
+              complaintData.reporterFullName ||
+              "",
+            employeeId: complaintData.reporter_employee_id || "",
+            department: complaintData.reporter_department || "",
+            designation: complaintData.reporter_designation || "",
+            email: complaintData.reporter_email || "",
+            phone: complaintData.reporter_phone || "",
+            preferredContactMethod:
+              complaintData.reporter_preferred_contact_method || "",
+          }
+        : null);
+
     return {
       ...complaintData,
       currentStatus:
@@ -44,19 +73,15 @@ const ComplaintDetails = () => {
         complaintData.escalationRequired ?? complaintData.escalation_required,
       isAnonymous:
         complaintData.isAnonymous ?? complaintData.is_anonymous,
+      reporter,
     };
   };
 
   const [complaint, setComplaint] = useState(null);
   const [evidenceList, setEvidenceList] = useState([]);
-  const [officers, setOfficers] = useState([]);
-  const [selectedOfficer, setSelectedOfficer] = useState("");
-  const [assigning, setAssigning] = useState(false);
   const [statusOptions, setStatusOptions] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [note, setNote] = useState("");
-  const [escalate, setEscalate] = useState(false);
-  const [escalationReason, setEscalationReason] = useState("");
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState("");
@@ -68,17 +93,23 @@ const ComplaintDetails = () => {
     localStorage.getItem("adminUser") || "{}"
   );
 
-  const currentUserName = String(
-    currentUser.fullName || currentUser.full_name || ""
-  )
-    .trim()
-    .toLowerCase();
+  const getDisplayStatus = (status) => {
+    if (status === "Resolved" || status === "Closed") {
+      return "Resolved / Closed";
+    }
 
-  const canAssignComplaint =
-    !["admin", "senior_investigator", "ciaboc"].includes(currentUser.role) &&
-    !["iau officer 1", "iau officer 2"].includes(currentUserName);
+    return status;
+  };
 
-    const canUpdateInvestigation =
+  const getSubmitStatus = (status) => {
+    if (status === "Resolved" || status === "Closed") {
+      return "Resolved";
+    }
+
+    return status;
+  };
+
+  const canUpdateInvestigation =
     currentUser.role === "admin" ||
     currentUser.role === "senior_investigator" ||
     currentUser.role === "officer";
@@ -104,17 +135,11 @@ const ComplaintDetails = () => {
         const normalizedComplaint = normalizeComplaint(complaintResult);
 
         setComplaint(normalizedComplaint);
-        setSelectedStatus(normalizedComplaint?.currentStatus || "Submitted");
+        setSelectedStatus(
+          getSubmitStatus(normalizedComplaint?.currentStatus || "Submitted")
+        );
         setStatusOptions(statusResult || []);
         setEvidenceList(evidenceResult?.data || []);
-        setSelectedOfficer(normalizedComplaint?.assigned_to || "");
-
-        if (canAssignComplaint) {
-  const officersResult = await getAssignableOfficers();
-  setOfficers(officersResult || []);
-}
-
-
 
       } catch (err) {
         setError(err?.message || "Failed to fetch complaint details");
@@ -125,7 +150,7 @@ const ComplaintDetails = () => {
 
 
   fetchDetails();
-}, [id, canAssignComplaint]);
+}, [id]);
 
   const handleStatusUpdate = async (event) => {
     event.preventDefault();
@@ -138,8 +163,6 @@ const ComplaintDetails = () => {
       await updateComplaintStatus(id, {
         status: selectedStatus,
         note,
-        escalate,
-        escalationReason,
       });
 
       const refreshed = await getAdminComplaintDetails(id);
@@ -147,36 +170,10 @@ const ComplaintDetails = () => {
 
       setSuccessMessage("Investigation status updated successfully.");
       setNote("");
-      setEscalate(false);
-      setEscalationReason("");
     } catch (err) {
       setError(err?.message || "Failed to update complaint");
     } finally {
       setUpdating(false);
-    }
-  };
-
-  const handleAssignOfficer = async () => {
-    if (!selectedOfficer) {
-      setError("Please select an officer to assign.");
-      return;
-    }
-
-    try {
-      setAssigning(true);
-      setError("");
-      setSuccessMessage("");
-
-      await assignComplaintToOfficer(id, selectedOfficer);
-
-      const refreshed = await getAdminComplaintDetails(id);
-      setComplaint(normalizeComplaint(refreshed));
-
-      setSuccessMessage("Complaint assigned successfully.");
-    } catch (err) {
-      setError(err?.message || "Failed to assign complaint.");
-    } finally {
-      setAssigning(false);
     }
   };
 
@@ -198,6 +195,14 @@ const ComplaintDetails = () => {
     }
 
     return `${BACKEND_URL}/${cleanedPath}`;
+  };
+
+  const renderNamedReporterValue = (value, fallback = "N/A") => {
+    if (value === null || value === undefined || value === "") {
+      return fallback;
+    }
+
+    return value;
   };
 
   if (loading) {
@@ -236,7 +241,7 @@ const ComplaintDetails = () => {
               className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg bg-white/10 hover:bg-white/20 text-white transition"
             >
               <FiArrowLeft />
-              Back to Queue
+              Back
             </button>
           </div>
         </div>
@@ -456,183 +461,214 @@ const ComplaintDetails = () => {
         </div>
 
         <div className="space-y-5 xl:sticky xl:top-6 self-start">
-          {canAssignComplaint && (
-            <div className="panel-surface p-5">
-              <div className="flex items-center gap-2 mb-5">
-                <FiUser className="text-slate-700" />
-                <h2 className="font-semibold text-slate-900">
-                  Assignment Control
-                </h2>
+          {canUpdateInvestigation && (
+            <div className="panel-surface overflow-hidden">
+              <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-5 py-4 border-b border-cyan-500/20">
+                <div className="flex items-center gap-2 text-white">
+                  <FiShield />
+                  <h2 className="font-semibold text-white">
+                    Investigation Control Center
+                  </h2>
+                </div>
               </div>
 
-              <div className="space-y-4">
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                  <p className="text-xs uppercase text-slate-500 font-medium mb-1">
-                    Currently Assigned To
-                  </p>
+              <form onSubmit={handleStatusUpdate} className="p-5 space-y-5">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Update Investigation Status
+                  </label>
 
-                  <p className="font-semibold text-slate-800">
-                    {complaint.assigned_officer_name || "Not Assigned"}
-                  </p>
+                  <select
+                    value={selectedStatus}
+                    onChange={(e) => setSelectedStatus(e.target.value)}
+                    className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  >
+                    {statusOptions.map((status) => {
+                      if (status === "Closed") {
+                        return null;
+                      }
+
+                      return (
+                        <option key={status} value={getSubmitStatus(status)}>
+                          {getDisplayStatus(status)}
+                        </option>
+                      );
+                    })}
+                  </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Select Officer
+                    Additional Note
                   </label>
 
-                  <select
-                    value={selectedOfficer}
-                    onChange={(e) => setSelectedOfficer(e.target.value)}
+                  <textarea
+                    rows={4}
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    placeholder="Enter status update note"
                     className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-                  >
-                    <option value="">-- Select Officer --</option>
-
-                    {officers.map((officer) => (
-                      <option key={officer.id} value={officer.id}>
-                        {officer.full_name} ({officer.role})
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </div>
 
                 <button
-                  type="button"
-                  onClick={handleAssignOfficer}
-                  disabled={assigning}
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition disabled:opacity-50"
+                  type="submit"
+                  disabled={updating}
+                  className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition disabled:opacity-50"
                 >
-                  {assigning ? "Assigning..." : "Assign Officer"}
+                  {updating ? "Updating Status..." : "Update Status"}
                 </button>
-              </div>
+              </form>
             </div>
           )}
 
-          {canUpdateInvestigation && (
-  <div className="panel-surface overflow-hidden">
-    <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-5 py-4 border-b border-cyan-500/20">
-      <div className="flex items-center gap-2 text-white">
-        <FiShield />
-        <h2 className="font-semibold text-white">
-          Investigation Control Center
-        </h2>
-      </div>
-    </div>
 
-    <form onSubmit={handleStatusUpdate} className="p-5 space-y-5">
-      <div>
-        <label className="block text-sm font-medium text-slate-700 mb-2">
-          Update Investigation Status
-        </label>
+          <div className="panel-surface overflow-hidden">
+            <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-5 py-4 border-b border-cyan-500/20">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                    <FiUser className="text-white" />
+                  </div>
 
-        <select
-          value={selectedStatus}
-          onChange={(e) => setSelectedStatus(e.target.value)}
-          className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-        >
-          {statusOptions.map((status) => (
-            <option key={status} value={status}>
-              {status}
-            </option>
-          ))}
-        </select>
-      </div>
+                  <div className="min-w-0">
+                    <h2 className="font-semibold text-white">
+                      Reporter Information
+                    </h2>
 
-      <div>
-        <label className="block text-sm font-medium text-slate-700 mb-2">
-          Investigation Note
-        </label>
+                    <p className="text-xs text-slate-300 mt-1">
+                      {complaint.isAnonymous
+                        ? "Anonymous complaint details remain restricted"
+                        : "Named reporter profile and contact details"}
+                    </p>
+                  </div>
+                </div>
 
-        <textarea
-          rows={4}
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          placeholder="Enter internal investigation note"
-          className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-        />
-      </div>
-
-      <div className="border border-red-100 bg-red-50 rounded-xl p-4">
-        <label className="flex items-center gap-2 text-sm font-medium text-red-700">
-          <input
-            type="checkbox"
-            checked={escalate}
-            onChange={(e) => setEscalate(e.target.checked)}
-          />
-          Escalate Investigation
-        </label>
-      </div>
-
-      {escalate && (
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
-            Escalation Reason
-          </label>
-
-          <textarea
-            rows={3}
-            value={escalationReason}
-            onChange={(e) => setEscalationReason(e.target.value)}
-            placeholder="Enter escalation details"
-            className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-        </div>
-      )}
-
-      <button
-        type="submit"
-        disabled={updating}
-        className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition disabled:opacity-50"
-      >
-        {updating ? "Updating Investigation..." : "Update Investigation"}
-      </button>
-    </form>
-  </div>
-)}
-
-
-          <div className="panel-surface p-5">
-            <div className="flex items-center gap-2 mb-5">
-              <FiUser className="text-slate-700" />
-              <h2 className="font-semibold text-slate-900">
-                Reporter Information
-              </h2>
+                <span
+                  className={`shrink-0 inline-flex items-center rounded-full px-3 py-1 text-xs font-medium border ${
+                    complaint.isAnonymous
+                      ? "bg-amber-50 text-amber-700 border-amber-200"
+                      : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                  }`}
+                >
+                  {complaint.isAnonymous ? "Anonymous" : "Named Reporter"}
+                </span>
+              </div>
             </div>
 
-            <div className="space-y-5 text-sm">
-              <div>
-                <p className="text-slate-500 mb-1">Submission Type</p>
-                <p className="font-medium text-slate-800">
-                  {complaint?.reporter?.submissionType || "N/A"}
-                </p>
-              </div>
+            <div className="p-5">
+              {complaint.isAnonymous ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <p className="text-slate-500 mb-1">Submission Type</p>
+                    <p className="font-medium text-slate-800">
+                      {complaint?.reporter?.submissionType || "Anonymous"}
+                    </p>
+                  </div>
 
-              <div>
-                <p className="text-slate-500 mb-1">Full Name</p>
-                <p className="font-medium text-slate-800">
-                  {complaint.isAnonymous
-                    ? "Anonymous"
-                    : complaint?.reporter?.fullName || "N/A"}
-                </p>
-              </div>
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <p className="text-slate-500 mb-1">Visibility</p>
+                    <p className="font-medium text-slate-800">Hidden</p>
+                  </div>
 
-              <div>
-                <p className="text-slate-500 mb-1">Email</p>
-                <p className="font-medium text-slate-800 break-all">
-                  {complaint.isAnonymous
-                    ? "Hidden"
-                    : complaint?.reporter?.email || "N/A"}
-                </p>
-              </div>
+                  <div className="sm:col-span-2 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <p className="text-slate-500 mb-1">Full Name</p>
+                    <p className="font-medium text-slate-800">Anonymous</p>
+                  </div>
 
-              <div>
-                <p className="text-slate-500 mb-1">Phone</p>
-                <p className="font-medium text-slate-800">
-                  {complaint.isAnonymous
-                    ? "Hidden"
-                    : complaint?.reporter?.phone || "N/A"}
-                </p>
-              </div>
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <p className="text-slate-500 mb-1">Email</p>
+                    <p className="font-medium text-slate-800">Hidden</p>
+                  </div>
+
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <p className="text-slate-500 mb-1">Phone</p>
+                    <p className="font-medium text-slate-800">Hidden</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 text-sm">
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
+                      Reporter Category
+                    </p>
+                    <p className="font-semibold text-slate-900 break-words">
+                      {renderNamedReporterValue(
+                        complaint?.reporter?.reporterCategory
+                      )}
+                    </p>
+                  </div>
+
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:col-span-2 xl:col-span-1">
+                    <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
+                      Full Name
+                    </p>
+                    <p className="font-semibold text-slate-900 break-words">
+                      {renderNamedReporterValue(complaint?.reporter?.fullName)}
+                    </p>
+                  </div>
+
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
+                      Staff ID
+                    </p>
+                    <p className="font-semibold text-slate-900 break-words">
+                      {renderNamedReporterValue(complaint?.reporter?.employeeId)}
+                    </p>
+                  </div>
+
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
+                      Department
+                    </p>
+                    <p className="font-semibold text-slate-900 break-words">
+                      {renderNamedReporterValue(complaint?.reporter?.department)}
+                    </p>
+                  </div>
+
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
+                      Designation
+                    </p>
+                    <p className="font-semibold text-slate-900 break-words">
+                      {renderNamedReporterValue(
+                        complaint?.reporter?.designation,
+                        "Not applicable"
+                      )}
+                    </p>
+                  </div>
+
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:col-span-2 xl:col-span-1">
+                    <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
+                      Contact Method
+                    </p>
+                    <p className="font-semibold text-slate-900 break-words">
+                      {renderNamedReporterValue(
+                        complaint?.reporter?.preferredContactMethod,
+                        "N/A"
+                      )}
+                    </p>
+                  </div>
+
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:col-span-2">
+                    <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
+                      Email
+                    </p>
+                    <p className="font-semibold text-slate-900 break-all">
+                      {renderNamedReporterValue(complaint?.reporter?.email)}
+                    </p>
+                  </div>
+
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:col-span-2">
+                    <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
+                      Phone Number
+                    </p>
+                    <p className="font-semibold text-slate-900 break-words">
+                      {renderNamedReporterValue(complaint?.reporter?.phone)}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
