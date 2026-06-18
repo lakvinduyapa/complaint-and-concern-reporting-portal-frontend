@@ -114,15 +114,15 @@ const AdminSidebar = ({
     flex
     flex-col
     transition-all
-    duration-300
-    ease-in-out
+    duration-500
+    ease-[cubic-bezier(0.22,1,0.36,1)]
     z-50
     md:z-30
     overflow-y-auto
     ${
-  sidebarCollapsed
-    ? "-translate-x-full"
-    : "translate-x-0"
+ sidebarCollapsed
+    ? "-translate-x-[240px] opacity-0"
+    : "translate-x-0 opacity-100"
 }
   `}
   style={{
