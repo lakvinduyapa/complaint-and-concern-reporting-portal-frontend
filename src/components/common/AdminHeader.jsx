@@ -1,6 +1,9 @@
-import { FiBell, FiSearch, FiChevronDown } from "react-icons/fi";
+import { FiBell, FiMenu } from "react-icons/fi";
 
-const AdminHeader = () => {
+const AdminHeader = ({
+  sidebarCollapsed,
+  setSidebarCollapsed,
+}) => {
   const currentUser = JSON.parse(
     localStorage.getItem("adminUser") || "{}"
   );
@@ -40,15 +43,41 @@ const getDashboardTitle = () => {
 }}
   >
       {/* Left */}
-      <div>
-       <h1 className="text-3xl font-bold text-white">
-          {getDashboardTitle()}
-        </h1>
+<div className="flex items-center gap-4">
 
-        <p className="text-slate-200 mt-1">
-          Monitor complaints and investigation activities
-        </p>
-      </div>
+  <button
+    onClick={() =>
+      setSidebarCollapsed(!sidebarCollapsed)
+    }
+    className="
+      w-10
+      h-10
+      rounded-xl
+      bg-white/10
+      border
+      border-white/20
+      text-white
+      flex
+      items-center
+      justify-center
+      hover:bg-white/20
+      transition-all
+    "
+  >
+    <FiMenu />
+  </button>
+
+  <div>
+    <h1 className="text-3xl font-bold text-white">
+      {getDashboardTitle()}
+    </h1>
+
+    <p className="text-slate-200 mt-1">
+      Monitor complaints and investigation activities
+    </p>
+  </div>
+
+</div>
 
       {/* Right */}
       <div className="flex items-center gap-4">
