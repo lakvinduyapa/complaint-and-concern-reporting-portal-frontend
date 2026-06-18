@@ -12,7 +12,10 @@ import {
   FiActivity,
 } from "react-icons/fi";
 
-const AdminSidebar = () => {
+const AdminSidebar = ({
+  sidebarCollapsed,
+  setSidebarCollapsed,
+}) => {
   const navigate = useNavigate();
   const { logout } = useAdminAuth();
 
@@ -117,11 +120,10 @@ const AdminSidebar = () => {
     md:z-30
     overflow-y-auto
     ${
-      isOpen
-        ? "translate-x-0"
-        : "-translate-x-full"
-    }
-    md:translate-x-0
+  sidebarCollapsed
+    ? "-translate-x-full"
+    : "translate-x-0"
+}
   `}
   style={{
   background:
