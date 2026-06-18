@@ -61,6 +61,7 @@ const getDashboardTitle = () => {
       items-center
       justify-center
       hover:bg-white/20
+      hover:scale-105
       transition-all
     "
   >
