@@ -21,9 +21,9 @@ const AdminLayout = () => {
     flex-1
     flex
     flex-col
-    transition-all
+    transition-[margin]
     duration-500
-    ease-[cubic-bezier(0.22,1,0.36,1)]
+    ease-[cubic-bezier(0.4,0,0.2,1)]
     ${sidebarCollapsed ? "ml-0" : "ml-[220px]"}
   `}
 >
