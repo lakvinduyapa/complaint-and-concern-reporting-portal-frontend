@@ -30,8 +30,12 @@ const getDashboardTitle = () => {
       h-24
       mt-4
       mx-4
+      transition-all
+      hover:shadow-2xl
+      duration-1000
+      ease-[cubic-bezier(0.22,1,0.36,1)]
       px-8
-      flex
+      hidden md:flex
       items-center
       justify-between
       rounded-2xl
@@ -43,7 +47,16 @@ const getDashboardTitle = () => {
 }}
   >
       {/* Left */}
-<div className="flex items-center gap-4">
+<div
+  className="
+    flex
+    items-center
+    gap-4
+    transition-all
+    duration-700
+    ease-[cubic-bezier(0.22,1,0.36,1)]
+  "
+>
 
   <button
     onClick={() =>
@@ -61,8 +74,10 @@ const getDashboardTitle = () => {
       items-center
       justify-center
       hover:bg-white/20
-      hover:scale-105
+      hover:scale-110
+      active:scale-95
       transition-all
+      duration-300
     "
   >
     <FiMenu />
@@ -81,7 +96,16 @@ const getDashboardTitle = () => {
 </div>
 
       {/* Right */}
-      <div className="flex items-center gap-4">
+      <div
+  className="
+    flex
+    items-center
+    gap-4
+    transition-all
+    duration-700
+    ease-[cubic-bezier(0.22,1,0.36,1)]
+  "
+>
 
         {/* Notification */}
         <button className="w-12 h-12 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center hover:bg-slate-50 transition-colors">
