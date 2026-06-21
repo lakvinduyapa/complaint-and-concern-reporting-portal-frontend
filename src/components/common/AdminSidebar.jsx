@@ -12,7 +12,10 @@ import {
   FiActivity,
 } from "react-icons/fi";
 
-const AdminSidebar = () => {
+const AdminSidebar = ({
+  sidebarCollapsed,
+  setSidebarCollapsed,
+}) => {
   const navigate = useNavigate();
   const { logout } = useAdminAuth();
 
@@ -37,7 +40,7 @@ const AdminSidebar = () => {
 
   const getNavItemClass = (isActive) => {
   const baseClass =
-    "flex items-center gap-3 px-5 py-3 text-base font-semibold rounded-2xl transition-all duration-200";
+  "flex items-center gap-3 px-6 py-3 text-base font-semibold rounded-2xl transition-all duration-200";
 
   return isActive
     ? `${baseClass} bg-white text-[#062B7D] shadow-lg`
@@ -107,21 +110,21 @@ const AdminSidebar = () => {
     w-[220px]
     border-r
     border-white/10
-    shadow-xl
+    shadow-lg
     flex
     flex-col
     transition-all
-    duration-300
+    duration-500
     ease-in-out
+    will-change-transform
     z-50
     md:z-30
     overflow-y-auto
-    ${
-      isOpen
-        ? "translate-x-0"
-        : "-translate-x-full"
-    }
-    md:translate-x-0
+   ${
+  sidebarCollapsed
+    ? "-translate-x-[220px] scale-95"
+    : "translate-x-0 scale-100"
+}
   `}
   style={{
   background:
@@ -129,16 +132,16 @@ const AdminSidebar = () => {
 }}
 >
         {/* Desktop Logo */}
-        <div className="hidden md:flex justify-center items-center py-8">
+        <div className="hidden md:flex items-center h-24 px-6">
   <img
     src={Logo}
     alt="SLTMobitel"
-    className="w-44 h-auto object-contain"
+    className="w-40 h-auto object-contain"
   />
 </div>
 
         {/* Navigation */}
-       <nav className="px-5 py-5 space-y-3">
+       <nav className="px-6 py-14 space-y-5">
           <NavLink
             to="/admin/dashboard"
             className={({ isActive }) => getNavItemClass(isActive)}

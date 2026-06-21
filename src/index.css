@@ -265,6 +265,7 @@ body {
   padding: 26px;
   margin-bottom: 28px;
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+  transition: all 0.3s ease;
 }
 
 .audit-filter-grid {
@@ -296,6 +297,12 @@ body {
   justify-content: center;
   gap: 10px;
   cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.audit-button-primary:hover,
+.audit-button-secondary:hover {
+  transform: translateY(-2px);
 }
 
 .audit-button-primary {
@@ -316,6 +323,12 @@ body {
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+  transition: all 0.3s ease;
+}
+
+.audit-filter-card:hover,
+.audit-table-card:hover {
+  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.12);
 }
 
 .audit-table-wrapper {
@@ -350,8 +363,13 @@ body {
   border-bottom: 1px solid #edf2f7;
 }
 
+.audit-row {
+  transition: all 0.25s ease;
+}
+
 .audit-row:hover {
   background: #f8fbff;
+  transform: translateY(-1px);
 }
 
 .audit-user {
@@ -410,6 +428,11 @@ body {
   font-size: 14px;
   font-weight: 800;
   cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.audit-pagination-button:hover:not(:disabled) {
+  transform: translateY(-2px);
 }
 
 .audit-pagination-button:disabled {
@@ -451,4 +474,21 @@ body {
   .audit-filter-grid {
     grid-template-columns: 1fr;
   }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.6s ease-out forwards;
+  opacity: 0;
 }

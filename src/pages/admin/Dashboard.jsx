@@ -209,7 +209,7 @@ const Dashboard = () => {
           else if (card.label === "Under Investigation") statusFilter = "Under Investigation";
           else if (card.label === "Resolved") statusFilter = "Resolved";
           return (
-            <div
+ <div
   key={index}
   className={`${card.bgColor}
   relative
@@ -222,9 +222,13 @@ const Dashboard = () => {
   shadow-lg
   hover:shadow-xl
   transition-all
-  duration-200
-  hover:-translate-y-1
-  cursor-pointer`}
+  duration-300
+  hover:-translate-y-2
+  cursor-pointer
+  animate-fade-up`}
+  style={{
+    animationDelay: `${index * 120}ms`,
+  }}
 >
 
   <div
@@ -277,7 +281,7 @@ const Dashboard = () => {
   </p>
 </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-  <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-6">
+  <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-6 animate-fade-up">
     <div className="flex items-center gap-4">
       <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-700 text-2xl">
         👤
@@ -304,7 +308,7 @@ const Dashboard = () => {
     </div>
   </div>
 
-  <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-6">
+  <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-6 animate-fade-up">
     <div className="flex items-center gap-4">
       <div className="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center text-green-700 text-2xl">
         📝
@@ -337,7 +341,7 @@ const Dashboard = () => {
       {!chartsLoading && allComplaints.length > 0 && (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           {/* Pie Chart: Status Distribution */}
-<div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6">
+<div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6 animate-fade-up">
   <div className="flex items-center justify-between mb-4">
     <div>
       <h2 className="text-xl font-bold text-slate-900">
@@ -360,14 +364,17 @@ const Dashboard = () => {
   >
     <PieChart>
       <Pie
-        data={chartStatusData}
-        cx="50%"
-        cy="50%"
-        innerRadius={80}
-        outerRadius={130}
-        paddingAngle={3}
-        dataKey="value"
-      >
+  data={chartStatusData}
+  cx="50%"
+  cy="50%"
+  innerRadius={80}
+  outerRadius={130}
+  paddingAngle={3}
+  dataKey="value"
+  isAnimationActive={true}
+  animationBegin={300}
+  animationDuration={1500}
+>
         {chartStatusData.map((entry, index) => (
           <Cell
             key={`cell-${index}`}
@@ -383,7 +390,7 @@ const Dashboard = () => {
 </div>
 
           {/* Bar Chart: Category Comparison */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6 animate-fade-up">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl font-bold text-slate-900">Complaint Type Comparison</h2>
@@ -421,6 +428,7 @@ const Dashboard = () => {
   dataKey="value"
   fill="url(#categoryGradient)"
   radius={[12, 12, 0, 0]}
+  animationDuration={1800}
 />
               </BarChart>
             </ResponsiveContainer>

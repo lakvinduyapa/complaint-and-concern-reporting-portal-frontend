@@ -1,9 +1,28 @@
-import { FiBell, FiSearch, FiChevronDown } from "react-icons/fi";
+import { FiBell, FiMenu } from "react-icons/fi";
 
-const AdminHeader = () => {
+const AdminHeader = ({
+  sidebarCollapsed,
+  setSidebarCollapsed,
+}) => {
   const currentUser = JSON.parse(
     localStorage.getItem("adminUser") || "{}"
   );
+
+const getDashboardTitle = () => {
+  switch (currentUser?.role) {
+    case "admin":
+      return "Admin Dashboard";
+
+    case "senior_investigator":
+      return "Senior Investigator Dashboard";
+
+    case "officer":
+      return "Investigation Officer Dashboard";
+
+    default:
+      return "Dashboard";
+  }
+};
 
   return (
   <header
@@ -11,41 +30,82 @@ const AdminHeader = () => {
       h-24
       mt-4
       mx-4
+      transition-all
+      hover:shadow-2xl
+      duration-1000
+      ease-[cubic-bezier(0.22,1,0.36,1)]
       px-8
-      flex
+      hidden md:flex
       items-center
       justify-between
       rounded-2xl
       shadow-lg
     "
-    style={{
-      background:
-        "linear-gradient(90deg, #001A72 35%, #005E5E 100%)",
-    }}
+   style={{
+  background:
+    "linear-gradient(90deg, #001A72 0%, #005E5E 75%, #005E5E 100%)",
+}}
   >
       {/* Left */}
-      <div>
-       <h1 className="text-3xl font-bold text-white">
-          Admin Dashboard
-        </h1>
+<div
+  className="
+    flex
+    items-center
+    gap-4
+    transition-all
+    duration-700
+    ease-[cubic-bezier(0.22,1,0.36,1)]
+  "
+>
 
-        <p className="text-slate-200 mt-1">
-          Monitor complaints and investigation activities
-        </p>
-      </div>
+  <button
+    onClick={() =>
+      setSidebarCollapsed(!sidebarCollapsed)
+    }
+    className="
+      w-10
+      h-10
+      rounded-xl
+      bg-white/10
+      border
+      border-white/20
+      text-white
+      flex
+      items-center
+      justify-center
+      hover:bg-white/20
+      hover:scale-110
+      active:scale-95
+      transition-all
+      duration-300
+    "
+  >
+    <FiMenu />
+  </button>
+
+  <div>
+    <h1 className="text-3xl font-bold text-white">
+      {getDashboardTitle()}
+    </h1>
+
+    <p className="text-slate-200 mt-1">
+      Monitor complaints and investigation activities
+    </p>
+  </div>
+
+</div>
 
       {/* Right */}
-      <div className="flex items-center gap-4">
-        {/* Search */}
-        <div className="hidden lg:flex items-center bg-white rounded-full px-4 h-12 w-[380px] shadow-sm border border-slate-200">
-          <FiSearch className="text-slate-400" />
-
-          <input
-            type="text"
-            placeholder="Search complaints, investigators, IDs..."
-            className="flex-1 ml-3 outline-none text-sm bg-transparent"
-          />
-        </div>
+      <div
+  className="
+    flex
+    items-center
+    gap-4
+    transition-all
+    duration-700
+    ease-[cubic-bezier(0.22,1,0.36,1)]
+  "
+>
 
         {/* Notification */}
         <button className="w-12 h-12 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center hover:bg-slate-50 transition-colors">
@@ -68,7 +128,6 @@ const AdminHeader = () => {
             </p>
           </div>
 
-          <FiChevronDown className="text-slate-500" />
         </div>
       </div>
     </header>
