@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react"; // Added useMemo
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAdminAuth } from "../../hooks/useAdminAuth";
 import Logo from "../../assets/SLT Logo.png";
@@ -21,9 +21,10 @@ const AdminSidebar = ({
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const currentUser = JSON.parse(
-    localStorage.getItem("adminUser") || "{}"
-  );
+  // Memoized user configuration parsing
+  const currentUser = useMemo(() => {
+    return JSON.parse(localStorage.getItem("adminUser") || "{}");
+  }, []);
 
   const canManageInvestigations =
     currentUser.role === "admin" ||
@@ -39,13 +40,13 @@ const AdminSidebar = ({
   };
 
   const getNavItemClass = (isActive) => {
-  const baseClass =
-  "flex items-center gap-3 px-6 py-3 text-base font-semibold rounded-2xl transition-all duration-200";
+    const baseClass =
+      "flex items-center gap-3 px-6 py-3 text-base font-semibold rounded-2xl transition-all duration-200";
 
-  return isActive
-    ? `${baseClass} bg-white text-[#062B7D] shadow-lg`
-    : `${baseClass} text-white hover:bg-white/10`;
-};
+    return isActive
+      ? `${baseClass} bg-white text-[#062B7D] shadow-lg`
+      : `${baseClass} text-white hover:bg-white/10`;
+  };
 
   return (
     <>
@@ -53,38 +54,24 @@ const AdminSidebar = ({
       <div
         className="fixed top-0 left-0 right-0 h-16 border-b border-cyan-400/30 shadow-lg z-50 md:hidden flex items-center justify-between px-4"
         style={{
-  background:
-    "linear-gradient(180deg, #001A72 0%, #005E5E 35%, #005E5E 70%, #001A72 100%)",
-}}
+          background: "linear-gradient(180deg, #001A72 0%, #005E5E 35%, #005E5E 70%, #001A72 100%)",
+        }}
       >
         <div className="flex items-center">
-  <img
-    src={Logo}
-    alt="SLTMobitel"
-    className="w-36 h-auto object-contain"
-  />
-</div>
+          <img src={Logo} alt="SLTMobitel" className="w-36 h-auto object-contain" />
+        </div>
 
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="p-2 hover:bg-white/10 rounded-lg transition-colors"
           aria-label="Toggle Sidebar"
         >
-          <svg
-            className="w-6 h-6 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d={
-                isOpen
-                  ? "M6 18L18 6M6 6l12 12"
-                  : "M4 6h16M4 12h16M4 18h16"
-              }
+              d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
             />
           </svg>
         </button>
@@ -92,118 +79,56 @@ const AdminSidebar = ({
 
       {/* Mobile Overlay */}
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-40 md:hidden"
-          onClick={() => setIsOpen(false)}
-        />
+        <div className="fixed inset-0 bg-black/40 z-40 md:hidden" onClick={() => setIsOpen(false)} />
       )}
 
       {/* Sidebar */}
- <aside
-  className={`
-    fixed
-    left-0
-    top-16
-    md:top-0
-    h-[calc(100vh-4rem)]
-    md:h-screen
-    w-[220px]
-    border-r
-    border-white/10
-    shadow-lg
-    flex
-    flex-col
-    transition-all
-    duration-500
-    ease-in-out
-    will-change-transform
-    z-50
-    md:z-30
-    overflow-y-auto
-   ${
-  sidebarCollapsed
-    ? "-translate-x-[220px] scale-95"
-    : "translate-x-0 scale-100"
-}
-  `}
-  style={{
-  background:
-    "linear-gradient(180deg, #001A72 0%, #005E5E 35%, #005E5E 70%, #001A72 100%)",
-}}
->
+      <aside
+        className={`fixed left-0 top-16 md:top-0 h-[calc(100vh-4rem)] md:h-screen w-[220px] border-r border-white/10 shadow-lg flex flex-col transition-all duration-500 ease-in-out will-change-transform z-50 md:z-30 overflow-y-auto ${
+          sidebarCollapsed ? "-translate-x-[220px] scale-95" : "translate-x-0 scale-100"
+        }`}
+        style={{
+          background: "linear-gradient(180deg, #001A72 0%, #005E5E 35%, #005E5E 70%, #001A72 100%)",
+        }}
+      >
         {/* Desktop Logo */}
         <div className="hidden md:flex items-center h-24 px-6">
-  <img
-    src={Logo}
-    alt="SLTMobitel"
-    className="w-40 h-auto object-contain"
-  />
-</div>
+          <img src={Logo} alt="SLTMobitel" className="w-40 h-auto object-contain" />
+        </div>
 
         {/* Navigation */}
-       <nav className="px-6 py-14 space-y-5">
-          <NavLink
-            to="/admin/dashboard"
-            className={({ isActive }) => getNavItemClass(isActive)}
-            onClick={() => setIsOpen(false)}
-          >
+        <nav className="px-6 py-14 space-y-5">
+          <NavLink to="/admin/dashboard" className={({ isActive }) => getNavItemClass(isActive)} onClick={() => setIsOpen(false)}>
             <FiHome className="w-5 h-5 flex-shrink-0" />
-            <span>
-              Dashboard
-            </span>
+            <span>Dashboard</span>
           </NavLink>
 
           {canManageInvestigations && (
-            <NavLink
-              to="/admin/investigations"
-              className={({ isActive }) => getNavItemClass(isActive)}
-              onClick={() => setIsOpen(false)}
-            >
+            <NavLink to="/admin/investigations" className={({ isActive }) => getNavItemClass(isActive)} onClick={() => setIsOpen(false)}>
               <FiSearch className="w-5 h-5 flex-shrink-0" />
-              <span>
-                  Investigation Management
-                </span>
+              <span>Investigation Management</span>
             </NavLink>
           )}
 
-          <NavLink
-            to="/admin/complaints"
-            className={({ isActive }) => getNavItemClass(isActive)}
-            onClick={() => setIsOpen(false)}
-          >
+          <NavLink to="/admin/complaints" className={({ isActive }) => getNavItemClass(isActive)} onClick={() => setIsOpen(false)}>
             <FiFileText className="w-5 h-5 flex-shrink-0" />
-            <span>
-  Complaint Management
-</span>
+            <span>Complaint Management</span>
           </NavLink>
 
-          <NavLink
-            to="/admin/reports"
-            className={({ isActive }) => getNavItemClass(isActive)}
-            onClick={() => setIsOpen(false)}
-          >
+          <NavLink to="/admin/reports" className={({ isActive }) => getNavItemClass(isActive)} onClick={() => setIsOpen(false)}>
             <FiBarChart2 className="w-5 h-5 flex-shrink-0" />
-            <span>
-  Reports
-</span>
+            <span>Reports</span>
           </NavLink>
 
           {canViewAuditLogs && (
-            <NavLink
-              to="/admin/audit-logs"
-              className={({ isActive }) => getNavItemClass(isActive)}
-              onClick={() => setIsOpen(false)}
-            >
+            <NavLink to="/admin/audit-logs" className={({ isActive }) => getNavItemClass(isActive)} onClick={() => setIsOpen(false)}>
               <FiActivity className="w-5 h-5 flex-shrink-0" />
-              <span>
-  Audit Logs
-</span>
+              <span>Audit Logs</span>
             </NavLink>
           )}
         </nav>
 
         <div className="flex-1" />
-
         <div className="mx-4 border-t border-cyan-300/35" />
 
         {/* Logout */}
@@ -213,29 +138,10 @@ const AdminSidebar = ({
               handleLogout();
               setIsOpen(false);
             }}
-            className="
-w-full
-px-4
-py-3
-bg-[#1E429F]
-hover:bg-[#1E429F]
-text-white
-text-sm
-font-medium
-rounded-2xl
-transition-all
-flex
-items-center
-justify-center
-gap-3
-border
-border-white/10
-"
+            className="w-full px-4 py-3 bg-[#1E429F] hover:bg-[#1E429F] text-white text-sm font-medium rounded-2xl transition-all flex items-center justify-center gap-3 border border-white/10"
           >
             <FiLogOut className="w-5 h-5 flex-shrink-0" />
-            <span className="font-semibold text-slate-50 drop-shadow-sm">
-  Logout
-</span>
+            <span className="font-semibold text-slate-50 drop-shadow-sm">Logout</span>
           </button>
         </div>
       </aside>
