@@ -12,10 +12,7 @@ import {
   FiActivity,
 } from "react-icons/fi";
 
-const AdminSidebar = ({
-  sidebarCollapsed,
-  setSidebarCollapsed,
-}) => {
+const AdminSidebar = () => {
   const navigate = useNavigate();
   const { logout } = useAdminAuth();
 
@@ -41,7 +38,7 @@ const AdminSidebar = ({
 
   const getNavItemClass = (isActive) => {
     const baseClass =
-      "flex items-center gap-3 px-6 py-3 text-base font-semibold rounded-2xl transition-all duration-200";
+"flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-2xl transition-all duration-300";
 
     return isActive
       ? `${baseClass} bg-white text-[#062B7D] shadow-lg`
@@ -84,46 +81,131 @@ const AdminSidebar = ({
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-16 md:top-0 h-[calc(100vh-4rem)] md:h-screen w-[220px] border-r border-white/10 shadow-lg flex flex-col transition-all duration-500 ease-in-out will-change-transform z-50 md:z-30 overflow-y-auto ${
-          sidebarCollapsed ? "-translate-x-[220px] scale-95" : "translate-x-0 scale-100"
-        }`}
-        style={{
-          background: "linear-gradient(180deg, #001A72 0%, #005E5E 35%, #005E5E 70%, #001A72 100%)",
-        }}
-      >
+  onMouseEnter={() => {
+    const content = document.getElementById("admin-content");
+    if (content) {
+      content.style.marginLeft = "240px";
+    }
+  }}
+  onMouseLeave={() => {
+    const content = document.getElementById("admin-content");
+    if (content) {
+      content.style.marginLeft = "80px";
+    }
+  }}
+  className="
+    fixed
+    left-0
+    top-24
+    h-[calc(100vh-6rem)]
+    w-[80px]
+    hover:w-[220px]
+    border-r
+    border-white/10
+    shadow-lg
+    flex
+    flex-col
+    transition-all
+    duration-300
+    ease-out
+    overflow-hidden
+    group
+    z-50
+  "
+  style={{
+    background:
+      'linear-gradient(180deg, #001A72 0%, #005E5E 35%, #005E5E 70%, #001A72 100%)',
+  }}
+>
         {/* Desktop Logo */}
-        <div className="hidden md:flex items-center h-24 px-6">
-          <img src={Logo} alt="SLTMobitel" className="w-40 h-auto object-contain" />
-        </div>
+        {/* <div className="hidden md:flex items-center justify-center h-20 border-b border-white/10">
+         <img
+  src={Logo}
+  alt="SLTMobitel"
+  className="
+  w-12
+  group-hover:w-40
+  transition-all
+  duration-300
+"
+/>
+        </div> */}
+
+        <div className="h-4" />
 
         {/* Navigation */}
-        <nav className="px-6 py-14 space-y-5">
-          <NavLink to="/admin/dashboard" className={({ isActive }) => getNavItemClass(isActive)} onClick={() => setIsOpen(false)}>
-            <FiHome className="w-5 h-5 flex-shrink-0" />
-            <span>Dashboard</span>
+        <nav className="px-3 py-6 space-y-3">
+          <NavLink to="/admin/dashboard" className={({ isActive }) =>
+  `${getNavItemClass(isActive)} relative`
+} onClick={() => setIsOpen(false)}>
+            <FiHome className="w-5 h-5 min-w-[20px]" />
+            <span
+  className="
+    opacity-0
+    group-hover:opacity-100
+    transition-opacity
+    duration-200
+    whitespace-normal
+    leading-5
+  "
+>
+  Dashboard
+</span>
           </NavLink>
 
           {canManageInvestigations && (
-            <NavLink to="/admin/investigations" className={({ isActive }) => getNavItemClass(isActive)} onClick={() => setIsOpen(false)}>
-              <FiSearch className="w-5 h-5 flex-shrink-0" />
-              <span>Investigation Management</span>
+            <NavLink to="/admin/investigations" className={({ isActive }) =>
+    `${getNavItemClass(isActive)} relative`} onClick={() => setIsOpen(false)}>
+              <FiSearch className="w-5 h-5 min-w-[20px]" />
+              <span  className="
+    opacity-0
+    group-hover:opacity-100
+    transition-all
+    duration-200
+    leading-5
+  ">
+    Investigation<br />Management</span>
             </NavLink>
           )}
 
-          <NavLink to="/admin/complaints" className={({ isActive }) => getNavItemClass(isActive)} onClick={() => setIsOpen(false)}>
-            <FiFileText className="w-5 h-5 flex-shrink-0" />
-            <span>Complaint Management</span>
+          <NavLink to="/admin/complaints" className={({ isActive }) =>
+    `${getNavItemClass(isActive)} relative`} onClick={() => setIsOpen(false)}>
+            <FiFileText className="w-5 h-5 min-w-[20px]" />
+            <span  className="
+    opacity-0
+    group-hover:opacity-100
+    transition-all
+    duration-200
+    leading-5
+  ">
+    Complaint<br /> Management</span>
           </NavLink>
 
-          <NavLink to="/admin/reports" className={({ isActive }) => getNavItemClass(isActive)} onClick={() => setIsOpen(false)}>
-            <FiBarChart2 className="w-5 h-5 flex-shrink-0" />
-            <span>Reports</span>
+          <NavLink to="/admin/reports" className={({ isActive }) =>
+    `${getNavItemClass(isActive)} relative`} onClick={() => setIsOpen(false)}>
+            <FiBarChart2 className="w-5 h-5 min-w-[20px]"/>
+            <span  className="
+    opacity-0
+    group-hover:opacity-100
+    transition-all
+    duration-200
+    leading-5
+  ">
+    Reports</span>
           </NavLink>
 
           {canViewAuditLogs && (
-            <NavLink to="/admin/audit-logs" className={({ isActive }) => getNavItemClass(isActive)} onClick={() => setIsOpen(false)}>
-              <FiActivity className="w-5 h-5 flex-shrink-0" />
-              <span>Audit Logs</span>
+            <NavLink to="/admin/audit-logs" className={({ isActive }) =>
+    `${getNavItemClass(isActive)} relative`} onClick={() => setIsOpen(false)}>
+              <FiActivity className="w-5 h-5 min-w-[20px]" />
+              <span className="
+    opacity-0
+    group-hover:opacity-100
+    transition-all
+    duration-200
+    leading-5
+  ">
+    Audit Logs</span>
             </NavLink>
           )}
         </nav>
@@ -132,17 +214,42 @@ const AdminSidebar = ({
         <div className="mx-4 border-t border-cyan-300/35" />
 
         {/* Logout */}
-        <div className="p-4">
-          <button
-            onClick={() => {
-              handleLogout();
-              setIsOpen(false);
-            }}
-            className="w-full px-4 py-3 bg-[#1E429F] hover:bg-[#1E429F] text-white text-sm font-medium rounded-2xl transition-all flex items-center justify-center gap-3 border border-white/10"
-          >
-            <FiLogOut className="w-5 h-5 flex-shrink-0" />
-            <span className="font-semibold text-slate-50 drop-shadow-sm">Logout</span>
-          </button>
+        <div className="p-3">
+<button
+  onClick={() => {
+    handleLogout();
+    setIsOpen(false);
+  }}
+  className="
+    flex
+    items-center
+    gap-4
+    px-4
+    py-3
+    text-base
+    font-semibold
+    rounded-2xl
+    text-white
+    hover:bg-white/10
+    transition-all
+    duration-300
+    w-full
+  "
+>
+  <FiLogOut className="w-5 h-5 min-w-[20px]" />
+
+  <span
+    className="
+      opacity-0
+      group-hover:opacity-100
+      transition-opacity
+      duration-200
+      whitespace-nowrap
+    "
+  >
+    Logout
+  </span>
+</button>
         </div>
       </aside>
 
