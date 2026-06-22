@@ -3,41 +3,34 @@ import { Outlet } from "react-router-dom";
 import AdminSidebar from "../components/common/AdminSidebar";
 import AdminHeader from "../components/common/AdminHeader";
 import SessionWarningModal from "../components/common/SessionWarningModal";
-import { useState } from "react";
 
 const AdminLayout = () => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  return (
-    <div className="min-h-screen bg-[#F5F7FA] flex">
-      <SessionWarningModal />
+ return (
+  <div className="min-h-screen bg-[#F5F7FA]">
+    <SessionWarningModal />
 
-      <AdminSidebar
-  sidebarCollapsed={sidebarCollapsed}
-  setSidebarCollapsed={setSidebarCollapsed}
-/>
+    <AdminHeader />
 
-      <div
-  className={`
+    <div className="flex pt-24">
+      <AdminSidebar />
+
+<main
+  id="admin-content"
+  className="
     flex-1
-    flex
-    flex-col
-    transition-[margin]
+    px-6
+    py-6
+    ml-[80px]
+    transition-all
     duration-300
-    ease-linear
-    ${sidebarCollapsed ? "ml-0" : "ml-[220px]"}
-  `}
+    ease-out
+  "
 >
-        <AdminHeader
-  sidebarCollapsed={sidebarCollapsed}
-  setSidebarCollapsed={setSidebarCollapsed}
-/>
-
-        <main className="flex-1 px-6 pt-8 pb-6">
-          <Outlet />
-        </main>
-      </div>
+        <Outlet />
+      </main>
     </div>
-  );
+  </div>
+);
 };
 
 export default AdminLayout;
