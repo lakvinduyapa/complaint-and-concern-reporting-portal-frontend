@@ -1,16 +1,6 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import PublicLayout from "../layouts/PublicLayout";
 import AdminLayout from "../layouts/AdminLayout";
-
-import LandingPage from "../pages/public/LandingPage";
-import ReporterStep from "../pages/public/ReporterStep";
-import ComplaintStep from "../pages/public/ComplaintStep";
-import SubjectStep from "../pages/public/SubjectStep";
-import EvidenceStep from "../pages/public/EvidenceStep";
-import DeclarationStep from "../pages/public/DeclarationStep";
-import ConfirmationStep from "../pages/public/ConfirmationStep";
-import TrackComplaint from "../pages/public/TrackComplaint";
 
 import AdminLogin from "../pages/admin/Login";
 import AdminDashboard from "../pages/admin/Dashboard";
@@ -26,45 +16,18 @@ const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* PUBLIC ROUTES */}
-        <Route path="/" element={<PublicLayout />}>
-          <Route index element={<LandingPage />} />
 
-          <Route path="report" element={<ReporterStep />} />
-
-          <Route
-            path="report/complaint-details"
-            element={<ComplaintStep />}
-          />
-
-          <Route
-            path="report/subject-information"
-            element={<SubjectStep />}
-          />
-
-          <Route
-            path="report/evidence-upload"
-            element={<EvidenceStep />}
-          />
-
-          <Route
-            path="report/declaration"
-            element={<DeclarationStep />}
-          />
-
-          <Route
-            path="report/confirmation"
-            element={<ConfirmationStep />}
-          />
-
-          <Route
-            path="track-complaint"
-            element={<TrackComplaint />}
-          />
-        </Route>
+        {/* DEFAULT ROUTE */}
+        <Route
+          path="/"
+          element={<Navigate to="/admin/login" replace />}
+        />
 
         {/* ADMIN LOGIN */}
-        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route
+          path="/admin/login"
+          element={<AdminLogin />}
+        />
 
         {/* ADMIN PROTECTED ROUTES */}
         <Route
@@ -75,21 +38,43 @@ const AppRoutes = () => {
             </AdminProtectedRoute>
           }
         >
-          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route
+            path="dashboard"
+            element={<AdminDashboard />}
+          />
 
           <Route
             path="investigations"
             element={<InvestigationManagement />}
           />
 
-          <Route path="complaints" element={<ComplaintList />} />
+          <Route
+            path="complaints"
+            element={<ComplaintList />}
+          />
 
-          <Route path="complaints/:id" element={<ComplaintDetails />} />
+          <Route
+            path="complaints/:id"
+            element={<ComplaintDetails />}
+          />
 
-          <Route path="reports" element={<Reports />} />
+          <Route
+            path="reports"
+            element={<Reports />}
+          />
 
-          <Route path="audit-logs" element={<AuditLogs />} />
+          <Route
+            path="audit-logs"
+            element={<AuditLogs />}
+          />
         </Route>
+
+        {/* FALLBACK */}
+        <Route
+          path="*"
+          element={<Navigate to="/admin/login" replace />}
+        />
+
       </Routes>
     </BrowserRouter>
   );

@@ -1,52 +1,73 @@
-import { FiBell, FiSearch, FiChevronDown } from "react-icons/fi";
+import { useMemo } from "react"; // Added useMemo
+import { FiBell, FiMenu } from "react-icons/fi";
+import Logo from "../../assets/SLT Logo.png";
 
 const AdminHeader = () => {
-  const currentUser = JSON.parse(
-    localStorage.getItem("adminUser") || "{}"
-  );
+  // Memoized JSON.parse to prevent localstorage parsing on every render frame
+  const currentUser = useMemo(() => {
+    return JSON.parse(localStorage.getItem("adminUser") || "{}");
+  }, []);
+
+  const getDashboardTitle = () => {
+    switch (currentUser?.role) {
+      case "admin":
+        return "Admin Dashboard";
+
+      case "senior_investigator":
+        return "Senior Investigator Dashboard";
+
+      case "officer":
+        return "Investigation Officer Dashboard";
+
+      default:
+        return "Dashboard";
+    }
+  };
 
   return (
-  <header
-    className="
-      h-24
-      mt-4
-      mx-4
-      px-8
-      flex
-      items-center
-      justify-between
-      rounded-2xl
-      shadow-lg
-    "
-    style={{
-      background:
-        "linear-gradient(90deg, #001A72 35%, #005E5E 100%)",
-    }}
-  >
+    <header
+  className="
+    fixed
+    top-0
+    left-0
+    right-0
+    z-50
+    h-24
+    px-8
+    hidden
+    md:flex
+    items-center
+    justify-between
+    shadow-md
+    transition-shadow
+    hover:shadow-2xl
+    duration-300
+  "
+      style={{
+        background: "linear-gradient(90deg, #001A72 0%, #005E5E 75%, #005E5E 100%)",
+      }}
+    >
       {/* Left */}
-      <div>
-       <h1 className="text-3xl font-bold text-white">
-          Admin Dashboard
-        </h1>
+      <div className="flex items-center gap-5">
+  <img
+    src={Logo}
+    alt="SLTMobitel"
+    className="w-32 h-auto object-contain"
+  />
 
-        <p className="text-slate-200 mt-1">
-          Monitor complaints and investigation activities
-        </p>
-      </div>
+ <div className="ml-[60px]">
+  <h1 className="text-3xl font-bold text-white">
+    {getDashboardTitle()}
+  </h1>
+
+  <p className="text-slate-200 mt-1">
+    Monitor complaints and investigation activities
+    </p>
+  </div>
+</div>
 
       {/* Right */}
       <div className="flex items-center gap-4">
-        {/* Search */}
-        <div className="hidden lg:flex items-center bg-white rounded-full px-4 h-12 w-[380px] shadow-sm border border-slate-200">
-          <FiSearch className="text-slate-400" />
-
-          <input
-            type="text"
-            placeholder="Search complaints, investigators, IDs..."
-            className="flex-1 ml-3 outline-none text-sm bg-transparent"
-          />
-        </div>
-
         {/* Notification */}
         <button className="w-12 h-12 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center hover:bg-slate-50 transition-colors">
           <FiBell className="text-slate-600 text-lg" />
@@ -57,18 +78,14 @@ const AdminHeader = () => {
           <div className="w-10 h-10 rounded-full bg-blue-700 text-white flex items-center justify-center text-sm font-bold">
             {currentUser?.fullName?.charAt(0) || "A"}
           </div>
-
           <div className="hidden md:block">
             <p className="text-sm font-semibold text-slate-900">
               {currentUser?.fullName || "Administrator"}
             </p>
-
             <p className="text-xs text-slate-500">
               {currentUser?.role || "Admin"}
             </p>
           </div>
-
-          <FiChevronDown className="text-slate-500" />
         </div>
       </div>
     </header>

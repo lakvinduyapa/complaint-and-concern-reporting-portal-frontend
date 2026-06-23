@@ -169,7 +169,7 @@ const AuditLogs = () => {
 
       {error && <div className="audit-error-box">{error}</div>}
 
-      <div className="audit-filter-card">
+      <div className="audit-filter-card animate-fade-up">
         <div className="audit-filter-grid">
           <select
             name="action"
@@ -245,7 +245,7 @@ const AuditLogs = () => {
         </div>
       </div>
 
-      <div className="audit-table-card">
+      <div className="audit-table-card animate-fade-up">
         <div className="audit-table-wrapper">
           <table className="audit-table">
             <thead>
@@ -317,7 +317,7 @@ const AuditLogs = () => {
         </div>
       </div>
 
-      <div className="audit-pagination">
+      <div className="audit-pagination animate-fade-up">
         <button
           disabled={pagination.page <= 1}
           onClick={() => handlePageChange(pagination.page - 1)}
