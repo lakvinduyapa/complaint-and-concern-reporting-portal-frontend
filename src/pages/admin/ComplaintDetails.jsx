@@ -1,3 +1,4 @@
+// src/pages/admin/ComplaintDetails.jsx
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -14,6 +15,8 @@ import {
   FiMessageSquare,
   FiEye,
   FiPaperclip,
+  FiUserCheck,
+  FiUserX,
 } from "react-icons/fi";
 
 import LoadingSpinner from "../../components/common/LoadingSpinner";
@@ -25,7 +28,6 @@ import {
 } from "../../services/adminComplaintService";
 
 import { getEvidenceByComplaintId } from "../../services/evidenceService";
-
 
 const ComplaintDetails = () => {
   const navigate = useNavigate();
@@ -97,7 +99,6 @@ const ComplaintDetails = () => {
     if (status === "Resolved" || status === "Closed") {
       return "Resolved / Closed";
     }
-
     return status;
   };
 
@@ -105,7 +106,6 @@ const ComplaintDetails = () => {
     if (status === "Resolved" || status === "Closed") {
       return "Resolved";
     }
-
     return status;
   };
 
@@ -114,11 +114,6 @@ const ComplaintDetails = () => {
     currentUser.role === "senior_investigator" ||
     currentUser.role === "officer";
 
-
-
-
-
-
   useEffect(() => {
     const fetchDetails = async () => {
       try {
@@ -126,11 +121,11 @@ const ComplaintDetails = () => {
         setError("");
 
         const [complaintResult, statusResult, evidenceResult] =
-  await Promise.all([
-    getAdminComplaintDetails(id),
-    getStatusOptions(),
-    getEvidenceByComplaintId(id),
-  ]);
+          await Promise.all([
+            getAdminComplaintDetails(id),
+            getStatusOptions(),
+            getEvidenceByComplaintId(id),
+          ]);
 
         const normalizedComplaint = normalizeComplaint(complaintResult);
 
@@ -140,7 +135,6 @@ const ComplaintDetails = () => {
         );
         setStatusOptions(statusResult || []);
         setEvidenceList(evidenceResult?.data || []);
-
       } catch (err) {
         setError(err?.message || "Failed to fetch complaint details");
       } finally {
@@ -148,9 +142,8 @@ const ComplaintDetails = () => {
       }
     };
 
-
-  fetchDetails();
-}, [id]);
+    fetchDetails();
+  }, [id]);
 
   const handleStatusUpdate = async (event) => {
     event.preventDefault();
@@ -187,13 +180,10 @@ const ComplaintDetails = () => {
 
   const getEvidenceUrl = (filePath) => {
     if (!filePath) return "#";
-
     const cleanedPath = filePath.replace(/\\/g, "/");
-
     if (cleanedPath.startsWith("http")) {
       return cleanedPath;
     }
-
     return `${BACKEND_URL}/${cleanedPath}`;
   };
 
@@ -201,7 +191,6 @@ const ComplaintDetails = () => {
     if (value === null || value === undefined || value === "") {
       return fallback;
     }
-
     return value;
   };
 
@@ -222,49 +211,56 @@ const ComplaintDetails = () => {
   }
 
   return (
-    <div className="space-y-6 overflow-x-hidden bg-white">
-      <div className="bg-white shadow-md rounded-2xl overflow-hidden border border-slate-200">
-        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-6 py-5">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
-              <h1 className="text-xl lg:text-2xl font-bold text-white tracking-wide">
-                Internal Affairs Investigation Record
-              </h1>
-
-              <p className="text-sm text-slate-300 mt-1">
-                Case management & investigation control dashboard
-              </p>
-            </div>
-
-            <button
-              onClick={() => navigate("/admin/complaints")}
-              className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg bg-white/10 hover:bg-white/20 text-white transition"
-            >
-              <FiArrowLeft />
-              Back
-            </button>
-          </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      {/* Header with Back button */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Report Details</h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Complete complaint record & investigation summary
+          </p>
         </div>
+        <button
+          onClick={() => navigate("/admin/complaints")}
+          className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
+        >
+          <FiArrowLeft />
+          Back to list
+        </button>
+      </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-5 bg-slate-50 border-t border-slate-200 divide-x divide-y lg:divide-y-0 divide-slate-200">
-          <div className="p-4 min-w-0 hover:bg-white transition duration-200">
+      {/* Error / Success messages */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 p-4 rounded-md text-sm text-red-700">
+          {error}
+        </div>
+      )}
+      {successMessage && (
+        <div className="bg-green-50 border border-green-200 p-4 rounded-md text-sm text-green-700">
+          {successMessage}
+        </div>
+      )}
+
+      {/* Main Card – all details in one box */}
+      <div className="bg-white shadow-md rounded-2xl border border-slate-200 overflow-hidden">
+        {/* Quick stats row (CRN, Status, Priority, Category, Submitted) */}
+        <div className="grid grid-cols-2 md:grid-cols-5 bg-slate-50 border-b border-slate-200 divide-x divide-y md:divide-y-0 divide-slate-200">
+          <div className="p-4 min-w-0">
             <div className="flex items-center gap-2 text-slate-500 text-xs uppercase font-medium">
               <FiFileText size={14} />
               CRN
             </div>
-
-            <p className="font-bold text-slate-900 mt-2 break-words">
+            <p className="font-bold text-slate-900 mt-1 break-words">
               {complaint.crn}
             </p>
           </div>
 
-          <div className="p-4 min-w-0 hover:bg-white transition duration-200">
+          <div className="p-4 min-w-0">
             <div className="flex items-center gap-2 text-slate-500 text-xs uppercase font-medium">
               <FiActivity size={14} />
               Status
             </div>
-
-            <div className="mt-2">
+            <div className="mt-1">
               <span
                 className={`px-3 py-1 rounded-md text-xs font-medium ${getStatusStyle(
                   complaint.currentStatus
@@ -275,13 +271,12 @@ const ComplaintDetails = () => {
             </div>
           </div>
 
-          <div className="p-4 min-w-0 hover:bg-white transition duration-200">
+          <div className="p-4 min-w-0">
             <div className="flex items-center gap-2 text-slate-500 text-xs uppercase font-medium">
               <FiShield size={14} />
               Priority
             </div>
-
-            <div className="mt-2">
+            <div className="mt-1">
               <span
                 className={`px-3 py-1 rounded-md text-xs font-medium ${getPriorityStyle()}`}
               >
@@ -290,24 +285,22 @@ const ComplaintDetails = () => {
             </div>
           </div>
 
-          <div className="p-4 min-w-0 hover:bg-white transition duration-200">
+          <div className="p-4 min-w-0">
             <div className="flex items-center gap-2 text-slate-500 text-xs uppercase font-medium">
               <FiClipboard size={14} />
               Category
             </div>
-
-            <p className="font-semibold text-slate-900 mt-2 break-words">
+            <p className="font-semibold text-slate-900 mt-1 break-words">
               {complaint.category}
             </p>
           </div>
 
-          <div className="p-4 min-w-0 hover:bg-white transition duration-200">
+          <div className="p-4 min-w-0">
             <div className="flex items-center gap-2 text-slate-500 text-xs uppercase font-medium">
               <FiCalendar size={14} />
               Submitted
             </div>
-
-            <p className="font-semibold text-slate-900 mt-2 text-sm break-words">
+            <p className="font-semibold text-slate-900 mt-1 text-sm break-words">
               {complaint.createdAt
                 ? new Date(complaint.createdAt).toLocaleDateString()
                 : complaint.created_at
@@ -316,34 +309,180 @@ const ComplaintDetails = () => {
             </p>
           </div>
         </div>
-      </div>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 p-4 rounded-md text-sm text-red-700">
-          {error}
-        </div>
-      )}
-
-      {successMessage && (
-        <div className="bg-green-50 border border-green-200 p-4 rounded-md text-sm text-green-700">
-          {successMessage}
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
-        <div className="xl:col-span-2 panel-surface overflow-hidden">
-          <section className="border-b border-slate-200 p-6">
-            <div className="flex items-center gap-2 mb-5">
-              <FiFileText className="text-slate-700" />
-              <h2 className="font-semibold text-slate-900">Case Summary</h2>
+        {/* === DETAILS BODY === */}
+        <div className="p-6 space-y-6">
+          {/* ---------- REPORTER INFORMATION ---------- */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <FiUser className="text-slate-700" />
+                <h2 className="font-semibold text-slate-900">
+                  Reporter Information
+                </h2>
+              </div>
+              {/* Badge: Named / Anonymous */}
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border ${
+                  complaint.isAnonymous
+                    ? "bg-amber-50 text-amber-700 border-amber-200"
+                    : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                }`}
+              >
+                {complaint.isAnonymous ? (
+                  <>
+                    <FiUserX size={12} />
+                    Anonymous
+                  </>
+                ) : (
+                  <>
+                    <FiUserCheck size={12} />
+                    Named Reporter
+                  </>
+                )}
+              </span>
             </div>
 
+            {complaint.isAnonymous ? (
+              // ---- Anonymous view ----
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <p className="text-slate-500 mb-1">Submission Type</p>
+                  <p className="font-medium text-slate-800">
+                    {complaint?.reporter?.submissionType || "Anonymous"}
+                  </p>
+                </div>
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <p className="text-slate-500 mb-1">Visibility</p>
+                  <p className="font-medium text-slate-800">Hidden</p>
+                </div>
+                <div className="sm:col-span-2 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <p className="text-slate-500 mb-1">Full Name</p>
+                  <p className="font-medium text-slate-800">Anonymous</p>
+                </div>
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <p className="text-slate-500 mb-1">Email</p>
+                  <p className="font-medium text-slate-800">Hidden</p>
+                </div>
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <p className="text-slate-500 mb-1">Phone</p>
+                  <p className="font-medium text-slate-800">Hidden</p>
+                </div>
+              </div>
+            ) : (
+              // ---- Named reporter – all fields in the requested order ----
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
+                    Reporter Category
+                  </p>
+                  <p className="font-semibold text-slate-900 break-words">
+                    {renderNamedReporterValue(
+                      complaint?.reporter?.reporterCategory
+                    )}
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
+                    Full Name
+                  </p>
+                  <p className="font-semibold text-slate-900 break-words">
+                    {renderNamedReporterValue(complaint?.reporter?.fullName)}
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
+                    Staff ID
+                  </p>
+                  <p className="font-semibold text-slate-900 break-words">
+                    {renderNamedReporterValue(complaint?.reporter?.employeeId)}
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
+                    Department
+                  </p>
+                  <p className="font-semibold text-slate-900 break-words">
+                    {renderNamedReporterValue(complaint?.reporter?.department)}
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
+                    Designation
+                  </p>
+                  <p className="font-semibold text-slate-900 break-words">
+                    {renderNamedReporterValue(
+                      complaint?.reporter?.designation,
+                      "Not applicable"
+                    )}
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
+                    Contact Method
+                  </p>
+                  <p className="font-semibold text-slate-900 break-words">
+                    {renderNamedReporterValue(
+                      complaint?.reporter?.preferredContactMethod,
+                      "N/A"
+                    )}
+                  </p>
+                </div>
+
+                <div className="sm:col-span-2 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
+                    Email
+                  </p>
+                  <p className="font-semibold text-slate-900 break-all">
+                    {renderNamedReporterValue(complaint?.reporter?.email)}
+                  </p>
+                </div>
+
+                <div className="sm:col-span-2 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
+                    Phone Number
+                  </p>
+                  <p className="font-semibold text-slate-900 break-words">
+                    {renderNamedReporterValue(complaint?.reporter?.phone)}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* ---------- COMPLAINT CATEGORIES ---------- */}
+          <div className="border-t border-slate-200 pt-6">
+            <div className="flex items-center gap-2 mb-4">
+              <FiClipboard className="text-slate-700" />
+              <h2 className="font-semibold text-slate-900">
+                Complaint Category
+              </h2>
+            </div>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+              <p className="font-semibold text-slate-900">
+                {complaint.category || "N/A"}
+              </p>
+            </div>
+          </div>
+
+          {/* ---------- INCIDENT DETAILS ---------- */}
+          <div className="border-t border-slate-200 pt-6">
+            <div className="flex items-center gap-2 mb-4">
+              <FiMapPin className="text-slate-700" />
+              <h2 className="font-semibold text-slate-900">
+                Incident Details
+              </h2>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                <p className="text-xs uppercase text-slate-500 font-medium mb-2">
+                <p className="text-xs uppercase text-slate-500 font-medium mb-1">
                   Incident Date
                 </p>
-
                 <p className="font-medium text-slate-800 flex items-center gap-2">
                   <FiCalendar size={16} />
                   {complaint.incidentDate
@@ -353,59 +492,44 @@ const ComplaintDetails = () => {
               </div>
 
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                <p className="text-xs uppercase text-slate-500 font-medium mb-2">
-                  Incident Location
+                <p className="text-xs uppercase text-slate-500 font-medium mb-1">
+                  Location
                 </p>
-
                 <p className="font-medium text-slate-800 flex items-center gap-2 break-words">
                   <FiMapPin size={16} />
                   {complaint.incidentLocation || "N/A"}
                 </p>
               </div>
 
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                <p className="text-xs uppercase text-slate-500 font-medium mb-2">
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:col-span-2">
+                <p className="text-xs uppercase text-slate-500 font-medium mb-1">
                   Frequency
                 </p>
-
                 <p className="font-medium text-slate-800">
                   {complaint.frequency || "N/A"}
                 </p>
               </div>
-
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                <p className="text-xs uppercase text-slate-500 font-medium mb-2">
-                  Awareness Method
-                </p>
-
-                <p className="font-medium text-slate-800">
-                  {complaint.awarenessMethod || "N/A"}
-                </p>
-              </div>
             </div>
-          </section>
+          </div>
 
-          <section className="border-b border-slate-200 p-6">
-            <div className="flex items-center gap-2 mb-5">
-              <FiClipboard className="text-slate-700" />
-              <h2 className="font-semibold text-slate-900">
-                Description of Complaint
-              </h2>
+          {/* ---------- DESCRIPTION ---------- */}
+          <div className="border-t border-slate-200 pt-6">
+            <div className="flex items-center gap-2 mb-4">
+              <FiFileText className="text-slate-700" />
+              <h2 className="font-semibold text-slate-900">Description</h2>
             </div>
-
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
               <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap break-words">
                 {complaint.description || "No narrative available."}
               </p>
             </div>
-          </section>
+          </div>
 
-          <section className="border-b border-slate-200 p-6">
-            <div className="flex items-center gap-2 mb-5">
+          {/* ---------- EVIDENCE ---------- */}
+          <div className="border-t border-slate-200 pt-6">
+            <div className="flex items-center gap-2 mb-4">
               <FiPaperclip className="text-slate-700" />
-              <h2 className="font-semibold text-slate-900">
-                Submitted Evidence
-              </h2>
+              <h2 className="font-semibold text-slate-900">Evidence</h2>
             </div>
 
             {evidenceList.length > 0 ? (
@@ -419,15 +543,12 @@ const ComplaintDetails = () => {
                       <p className="font-medium text-slate-800 break-words">
                         {evidence.original_file_name || "Evidence File"}
                       </p>
-
                       <p className="text-xs text-slate-500 mt-1 break-words">
                         Type: {evidence.evidence_type || "Document"}
                       </p>
-
                       <p className="text-xs text-slate-500 mt-1 break-words">
                         MIME: {evidence.mime_type || "N/A"}
                       </p>
-
                       <p className="text-xs text-slate-500 mt-1">
                         Size:{" "}
                         {evidence.file_size
@@ -437,7 +558,6 @@ const ComplaintDetails = () => {
                           : "N/A"}
                       </p>
                     </div>
-
                     <a
                       href={getEvidenceUrl(evidence.file_path)}
                       target="_blank"
@@ -457,37 +577,30 @@ const ComplaintDetails = () => {
                 </p>
               </div>
             )}
-          </section>
-        </div>
+          </div>
 
-        <div className="space-y-5 xl:sticky xl:top-6 self-start">
+          {/* ---------- INVESTIGATION CONTROL CENTER ---------- */}
           {canUpdateInvestigation && (
-            <div className="panel-surface overflow-hidden">
-              <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-5 py-4 border-b border-cyan-500/20">
-                <div className="flex items-center gap-2 text-white">
-                  <FiShield />
-                  <h2 className="font-semibold text-white">
-                    Investigation Control Center
-                  </h2>
-                </div>
+            <div className="border-t border-slate-200 pt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <FiShield className="text-slate-700" />
+                <h2 className="font-semibold text-slate-900">
+                  Investigation Control Center
+                </h2>
               </div>
 
-              <form onSubmit={handleStatusUpdate} className="p-5 space-y-5">
+              <form onSubmit={handleStatusUpdate} className="space-y-5">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     Update Investigation Status
                   </label>
-
                   <select
                     value={selectedStatus}
                     onChange={(e) => setSelectedStatus(e.target.value)}
                     className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
                   >
                     {statusOptions.map((status) => {
-                      if (status === "Closed") {
-                        return null;
-                      }
-
+                      if (status === "Closed") return null;
                       return (
                         <option key={status} value={getSubmitStatus(status)}>
                           {getDisplayStatus(status)}
@@ -501,7 +614,6 @@ const ComplaintDetails = () => {
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     Additional Note
                   </label>
-
                   <textarea
                     rows={4}
                     value={note}
@@ -522,172 +634,9 @@ const ComplaintDetails = () => {
             </div>
           )}
 
-
-          <div className="panel-surface overflow-hidden">
-            <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-5 py-4 border-b border-cyan-500/20">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                    <FiUser className="text-white" />
-                  </div>
-
-                  <div className="min-w-0">
-                    <h2 className="font-semibold text-white">
-                      Reporter Information
-                    </h2>
-
-                    <p className="text-xs text-slate-300 mt-1">
-                      {complaint.isAnonymous
-                        ? "Anonymous complaint details remain restricted"
-                        : "Named reporter profile and contact details"}
-                    </p>
-                  </div>
-                </div>
-
-                <span
-                  className={`shrink-0 inline-flex items-center rounded-full px-3 py-1 text-xs font-medium border ${
-                    complaint.isAnonymous
-                      ? "bg-amber-50 text-amber-700 border-amber-200"
-                      : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                  }`}
-                >
-                  {complaint.isAnonymous ? "Anonymous" : "Named Reporter"}
-                </span>
-              </div>
-            </div>
-
-            <div className="p-5">
-              {complaint.isAnonymous ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                    <p className="text-slate-500 mb-1">Submission Type</p>
-                    <p className="font-medium text-slate-800">
-                      {complaint?.reporter?.submissionType || "Anonymous"}
-                    </p>
-                  </div>
-
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                    <p className="text-slate-500 mb-1">Visibility</p>
-                    <p className="font-medium text-slate-800">Hidden</p>
-                  </div>
-
-                  <div className="sm:col-span-2 bg-slate-50 border border-slate-200 rounded-xl p-4">
-                    <p className="text-slate-500 mb-1">Full Name</p>
-                    <p className="font-medium text-slate-800">Anonymous</p>
-                  </div>
-
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                    <p className="text-slate-500 mb-1">Email</p>
-                    <p className="font-medium text-slate-800">Hidden</p>
-                  </div>
-
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                    <p className="text-slate-500 mb-1">Phone</p>
-                    <p className="font-medium text-slate-800">Hidden</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 text-sm">
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                    <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
-                      Reporter Category
-                    </p>
-                    <p className="font-semibold text-slate-900 break-words">
-                      {renderNamedReporterValue(
-                        complaint?.reporter?.reporterCategory
-                      )}
-                    </p>
-                  </div>
-
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:col-span-2 xl:col-span-1">
-                    <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
-                      Full Name
-                    </p>
-                    <p className="font-semibold text-slate-900 break-words">
-                      {renderNamedReporterValue(complaint?.reporter?.fullName)}
-                    </p>
-                  </div>
-
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                    <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
-                      Staff ID
-                    </p>
-                    <p className="font-semibold text-slate-900 break-words">
-                      {renderNamedReporterValue(complaint?.reporter?.employeeId)}
-                    </p>
-                  </div>
-
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                    <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
-                      Department
-                    </p>
-                    <p className="font-semibold text-slate-900 break-words">
-                      {renderNamedReporterValue(complaint?.reporter?.department)}
-                    </p>
-                  </div>
-
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                    <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
-                      Designation
-                    </p>
-                    <p className="font-semibold text-slate-900 break-words">
-                      {renderNamedReporterValue(
-                        complaint?.reporter?.designation,
-                        "Not applicable"
-                      )}
-                    </p>
-                  </div>
-
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:col-span-2 xl:col-span-1">
-                    <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
-                      Contact Method
-                    </p>
-                    <p className="font-semibold text-slate-900 break-words">
-                      {renderNamedReporterValue(
-                        complaint?.reporter?.preferredContactMethod,
-                        "N/A"
-                      )}
-                    </p>
-                  </div>
-
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:col-span-2">
-                    <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
-                      Email
-                    </p>
-                    <p className="font-semibold text-slate-900 break-all">
-                      {renderNamedReporterValue(complaint?.reporter?.email)}
-                    </p>
-                  </div>
-
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:col-span-2">
-                    <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
-                      Phone Number
-                    </p>
-                    <p className="font-semibold text-slate-900 break-words">
-                      {renderNamedReporterValue(complaint?.reporter?.phone)}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-5 text-white shadow-sm">
+          {/* ---------- INTERNAL NOTES (optional) ---------- */}
+          <div className="border-t border-slate-200 pt-6">
             <div className="flex items-center gap-2 mb-4">
-              <FiLock />
-              <h2 className="font-semibold text-white">
-                Restricted Governance Record
-              </h2>
-            </div>
-
-            <p className="text-sm text-cyan-100 leading-relaxed">
-              Access to this investigation file is restricted to authorized
-              Internal Affairs Unit officers and governance investigators.
-            </p>
-          </div>
-
-          <div className="panel-surface p-5">
-            <div className="flex items-center gap-2 mb-5">
               <FiMessageSquare className="text-slate-700" />
               <h2 className="font-semibold text-slate-900">
                 Internal Investigation Notes
@@ -704,7 +653,6 @@ const ComplaintDetails = () => {
                     <p className="font-medium text-sm text-slate-800">
                       {noteEntry.addedBy}
                     </p>
-
                     <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed break-words mt-2">
                       {noteEntry.note}
                     </p>
