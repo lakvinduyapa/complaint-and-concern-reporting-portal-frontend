@@ -6,6 +6,14 @@ import {
 } from "../../services/adminComplaintService";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 
+import {
+  FiShield,
+  FiFileText,
+  FiClock,
+  FiFilter,
+  FiUsers,
+} from "react-icons/fi";
+
 const InvestigationManagement = () => {
   const [complaints, setComplaints] = useState([]);
   const [officers, setOfficers] = useState([]);
@@ -79,84 +87,76 @@ const InvestigationManagement = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-  <h1 className="text-4xl font-bold text-slate-900">
-    Investigation Management
-  </h1>
+      <section className="complaints-hero animate-fade-up">
+  <div className="complaints-hero-content">
+    <div>
+      <div className="complaints-eyebrow">
+        <FiShield />
+        Internal Affairs Unit
+      </div>
 
-  <p className="text-slate-500 mt-2">
-    Review unassigned complaints and assign them to investigators.
-  </p>
-</div>
+      <h1>Investigation Management</h1>
+
+      <p>
+        Review unassigned complaints and assign them to investigators from a
+        centralized investigation workspace.
+      </p>
+    </div>
+
+    <div className="complaints-hero-card">
+      <span>Pending Cases</span>
+      <strong>{complaints.length}</strong>
+      <small>Awaiting Assignment</small>
+    </div>
+  </div>
+</section>
 
 {/* Overview Cards */}
-<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-  <div className="
-bg-white
-rounded-3xl
-border
-border-slate-200
-shadow-lg
-p-5
-hover:-translate-y-1
-hover:shadow-xl
-transition-all
-duration-300
-animate-fade-up
-">
-    <p className="text-xs uppercase tracking-wider text-slate-500">
-      Unassigned Cases
-    </p>
-
-    <h2 className="text-4xl font-bold text-[#1456C4] mt-2">
-      {complaints.length}
-    </h2>
+<section
+  className="complaints-kpi-grid animate-fade-up"
+  style={{ animationDelay: "0.1s" }}
+>
+  <div className="complaints-kpi-card">
+    <div className="complaints-kpi-icon blue">
+      <FiFileText />
+    </div>
+    <div>
+      <p>Unassigned Cases</p>
+      <h3>{complaints.length}</h3>
+    </div>
   </div>
 
-  <div className="
-bg-white
-rounded-3xl
-border
-border-slate-200
-shadow-lg
-p-5
-hover:-translate-y-1
-hover:shadow-xl
-transition-all
-duration-300
-animate-fade-up
-">
-    <p className="text-xs uppercase tracking-wider text-slate-500">
-      Available Officers
-    </p>
-
-    <h2 className="text-4xl font-bold text-[#005E5E] mt-2">
-      {officers.length}
-    </h2>
+  <div className="complaints-kpi-card">
+    <div className="complaints-kpi-icon green">
+      <FiShield />
+    </div>
+    <div>
+      <p>Available Officers</p>
+      <h3>{officers.length}</h3>
+    </div>
   </div>
 
-  <div className="
-bg-white
-rounded-3xl
-border
-border-slate-200
-shadow-lg
-p-5
-hover:-translate-y-1
-hover:shadow-xl
-transition-all
-duration-300
-animate-fade-up
-">
-    <p className="text-xs uppercase tracking-wider text-slate-500">
-      Pending Assignment
-    </p>
+  <div className="complaints-kpi-card">
+    <div className="complaints-kpi-icon amber">
+      <FiClock />
+    </div>
+    <div>
+      <p>Pending Assignment</p>
+      <h3>{complaints.length}</h3>
+    </div>
+  </div>
 
-    <h2 className="text-4xl font-bold text-[#F59E0B] mt-2">
-      {complaints.length}
-    </h2>
+  <div className="complaints-kpi-card">
+  <div className="complaints-kpi-icon purple">
+    <FiUsers />
+  </div>
+
+  <div>
+    <p>Assigned Cases</p>
+    <h3>--</h3>
   </div>
 </div>
+</section>
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl">
@@ -170,18 +170,27 @@ animate-fade-up
         </div>
       )}
 
-      <div
-  className="
-  bg-white
-  border
-  border-slate-200
-  rounded-3xl
-  shadow-lg
-  overflow-hidden
-  animate-fade-up
-  "
+      <section
+  className="complaints-filter-card animate-fade-up"
+  style={{ animationDelay: "0.2s" }}
 >
-        <div className="p-4 border-b bg-white flex items-center justify-between">
+  <div className="complaints-section-heading">
+    <div>
+      <h2>Investigation Assignment Queue</h2>
+      <p>
+        Assign pending complaints to available investigation officers.
+      </p>
+    </div>
+
+    <FiFilter className="complaints-section-icon" />
+  </div>
+</section>
+
+      <section
+  className="complaints-table-card animate-fade-up"
+  style={{ animationDelay: "0.3s" }}
+>
+        <div className="complaints-table-header">
           <p className="text-sm font-medium text-slate-700">
             Unassigned Complaints
           </p>
@@ -191,8 +200,8 @@ animate-fade-up
           </p>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px]">
+        <div className="complaints-table-wrapper">
+          <table className="complaints-table">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">CRN</th>
@@ -299,24 +308,9 @@ duration-200
                         type="button"
                         onClick={() => handleAssign(item.id)}
                         disabled={assigningId === item.id}
-                        className="
-px-5
-py-2.5
-bg-[#1456C4]
-hover:bg-[#001A72]
-hover:scale-105
-text-white
-rounded-xl
-text-sm
-font-semibold
-transition-all
-duration-200
-shadow-md
-hover:shadow-lg
-disabled:opacity-50
-"
+                        className="complaints-action-button"
                       >
-                        {assigningId === item.id ? "Assigning..." : "Assign"}
+                        {assigningId === item.id ? "Assigning..." : "Assign Case"}
                       </button>
                     </td>
                   </tr>
@@ -334,7 +328,7 @@ disabled:opacity-50
             </tbody>
           </table>
         </div>
-      </div>
+      </section>
     </div>
   );
 };

@@ -1,6 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
+import {
+  FiAlertCircle,
+  FiArrowRight,
+  FiCheckCircle,
+  FiClock,
+  FiFileText,
+  FiFilter,
+  FiRefreshCw,
+  FiSearch,
+  FiShield,
+  FiUserX,
+} from "react-icons/fi";
+
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import { getAdminComplaints } from "../../services/adminComplaintService";
 
@@ -44,6 +57,15 @@ const ComplaintList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const complaints = data?.items || [];
+  const pagination = data?.pagination || {
+    page: 1,
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+    totalItems: 0,
+  };
+
   useEffect(() => {
     const fetchComplaints = async () => {
       try {
@@ -69,11 +91,37 @@ const ComplaintList = () => {
   }, [filters, page]);
 
   const totalItemsLabel = useMemo(() => {
-    const totalItems = data?.pagination?.totalItems || 0;
+    const totalItems = pagination.totalItems || 0;
     return `${totalItems} complaint${totalItems === 1 ? "" : "s"}`;
-  }, [data]);
+  }, [pagination.totalItems]);
 
-  const handleApplySearch = () => {
+  const pageStats = useMemo(() => {
+    const openOnPage = complaints.filter(
+      (item) =>
+        item.current_status !== "Resolved" && item.current_status !== "Closed"
+    ).length;
+
+    const resolvedOnPage = complaints.filter(
+      (item) => item.current_status === "Resolved"
+    ).length;
+
+    const unassignedOnPage = complaints.filter(
+      (item) => !item.assigned_officer_name
+    ).length;
+
+    return {
+      total: pagination.totalItems || 0,
+      displayed: complaints.length,
+      openOnPage,
+      resolvedOnPage,
+      unassignedOnPage,
+      activeStatus: filters.status || "All Statuses",
+    };
+  }, [complaints, pagination.totalItems, filters.status]);
+
+  const handleApplySearch = (event) => {
+    event?.preventDefault();
+
     setPage(1);
     setFilters((prev) => ({
       ...prev,
@@ -101,88 +149,139 @@ const ComplaintList = () => {
   const getStatusClassName = (status) => {
     switch (status) {
       case "Submitted":
-        return "bg-cyan-50 text-cyan-700 border border-cyan-200";
+        return "status-pill status-submitted";
       case "Preliminary Review":
-        return "bg-purple-50 text-purple-700 border border-purple-200";
+        return "status-pill status-review";
       case "Under Investigation":
-        return "bg-yellow-50 text-yellow-700 border border-yellow-200";
+        return "status-pill status-investigation";
       case "Awaiting Evidence":
-        return "bg-orange-50 text-orange-700 border border-orange-200";
+        return "status-pill status-evidence";
       case "Escalated to CIABOC":
-        return "bg-red-50 text-red-700 border border-red-200";
+        return "status-pill status-escalated";
       case "Resolved":
-        return "bg-green-50 text-green-700 border border-green-200";
+        return "status-pill status-resolved";
       case "Closed":
-        return "bg-gray-50 text-gray-700 border border-gray-200";
+        return "status-pill status-closed";
       default:
-        return "bg-slate-50 text-slate-700 border border-slate-200";
+        return "status-pill status-default";
     }
+  };
+
+  const formatDate = (dateValue) => {
+    if (!dateValue) return "N/A";
+
+    return new Date(dateValue).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+    });
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="complaints-loading">
         <LoadingSpinner />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8 gap-4">
-        <div>
-          <h1 className="text-4xl font-bold text-slate-900">
-            Complaint Management
-          </h1>
+    <div className="complaints-page animate-fade-up">
+      <section className="complaints-hero">
+        <div className="complaints-hero-content">
+          <div>
+            <div className="complaints-eyebrow">
+              <FiShield />
+              Internal Affairs Unit
+            </div>
 
-          <p className="text-slate-500 mt-2">
-            Search, filter, review and manage complaint records.
-          </p>
+            <h1>Complaint Management</h1>
+
+            <p>
+              Search, filter, review and manage complaint records from one
+              professional investigation workspace.
+            </p>
+          </div>
+
+          <div className="complaints-hero-card">
+            <span>Total Complaints</span>
+            <strong>{pageStats.total}</strong>
+            <small>{pageStats.activeStatus}</small>
+          </div>
+        </div>
+      </section>
+
+      <section className="complaints-kpi-grid">
+        <div className="complaints-kpi-card">
+          <div className="complaints-kpi-icon blue">
+            <FiFileText />
+          </div>
+          <div>
+            <p>Total Records</p>
+            <h3>{pageStats.total}</h3>
+          </div>
         </div>
 
-        <div className="bg-green-50 border border-green-100 px-5 py-3 rounded-2xl">
-          <p className="text-sm text-slate-500">Total Complaints</p>
-          <p className="text-2xl font-bold text-slate-900">
-            {data.pagination.totalItems}
-          </p>
+        <div className="complaints-kpi-card">
+          <div className="complaints-kpi-icon amber">
+            <FiClock />
+          </div>
+          <div>
+            <p>Open on Page</p>
+            <h3>{pageStats.openOnPage}</h3>
+          </div>
         </div>
-      </div>
 
-      <div className="bg-white border border-slate-200 rounded-3xl shadow-lg p-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="md:col-span-2">
-            <label className="block text-sm font-semibold mb-2">
-              Search by CRN or Category
-            </label>
+        <div className="complaints-kpi-card">
+          <div className="complaints-kpi-icon green">
+            <FiCheckCircle />
+          </div>
+          <div>
+            <p>Resolved on Page</p>
+            <h3>{pageStats.resolvedOnPage}</h3>
+          </div>
+        </div>
 
-            <div className="flex gap-2">
+        <div className="complaints-kpi-card">
+          <div className="complaints-kpi-icon red">
+            <FiUserX />
+          </div>
+          <div>
+            <p>Unassigned on Page</p>
+            <h3>{pageStats.unassignedOnPage}</h3>
+          </div>
+        </div>
+      </section>
+
+      <section className="complaints-filter-card">
+        <div className="complaints-section-heading">
+          <div>
+            <h2>Find Complaint Records</h2>
+            <p>Use CRN, category or status to narrow down the complaint queue.</p>
+          </div>
+
+          <FiFilter className="complaints-section-icon" />
+        </div>
+
+        <form onSubmit={handleApplySearch} className="complaints-filter-grid">
+          <div className="complaints-field complaints-search-field">
+            <label>Search by CRN or Category</label>
+
+            <div className="complaints-search-box">
+              <FiSearch />
               <input
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                className="ui-input w-full"
+                placeholder="Example: IAU-2026-00001 or Fraud"
               />
-
-              <button
-                type="button"
-                onClick={handleApplySearch}
-                className="px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium"
-              >
-                Search
-              </button>
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold mb-2">
-              Filter by Status
-            </label>
+          <div className="complaints-field">
+            <label>Filter by Status</label>
 
-            <select
-              value={filters.status}
-              onChange={handleStatusChange}
-              className="ui-select w-full"
-            >
+            <select value={filters.status} onChange={handleStatusChange}>
               {STATUS_OPTIONS.map((status) => (
                 <option key={status || "all"} value={status}>
                   {status || "All Statuses"}
@@ -191,116 +290,118 @@ const ComplaintList = () => {
             </select>
           </div>
 
-          <div className="flex items-end">
+          <div className="complaints-filter-actions">
+            <button type="submit" className="complaints-primary-button">
+              <FiSearch />
+              Search
+            </button>
+
             <button
               type="button"
               onClick={handleResetFilters}
-              className="px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg w-full text-sm font-medium"
+              className="complaints-secondary-button"
             >
+              <FiRefreshCw />
               Reset
             </button>
           </div>
-        </div>
-      </div>
+        </form>
+      </section>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl mb-4">
-          {error}
+        <div className="complaints-error-box">
+          <FiAlertCircle />
+          <span>{error}</span>
         </div>
       )}
 
-      <div className="bg-white border border-slate-200 rounded-3xl shadow-lg overflow-hidden">
-        <div className="p-4 border-b flex justify-between bg-white">
-          <p className="text-sm font-medium text-slate-700">
-            {totalItemsLabel}
-          </p>
+      <section className="complaints-table-card">
+        <div className="complaints-table-header">
+          <div>
+            <h2>Complaint Queue</h2>
+            <p>{totalItemsLabel}</p>
+          </div>
 
-          <p className="text-sm text-slate-500">
-            Page {data.pagination.page} of {data.pagination.totalPages}
-          </p>
+          <div className="complaints-page-badge">
+            Page {pagination.page} of {pagination.totalPages}
+          </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px]">
+        <div className="complaints-table-wrapper">
+          <table className="complaints-table">
             <thead>
-              <tr className="bg-slate-50 border-b">
-                <th className="px-4 py-3 text-left">CRN</th>
-                <th className="px-4 py-3 text-left">Category</th>
-                <th className="px-4 py-3 text-left">Status</th>
-                <th className="px-4 py-3 text-left">Reporter</th>
-                <th className="px-4 py-3 text-left">Assigned Officer</th>
-                <th className="px-4 py-3 text-left">Date</th>
-    
-                <th className="px-4 py-3 text-left">Action</th>
+              <tr>
+                <th>CRN</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Reporter</th>
+                <th>Assigned Officer</th>
+                <th>Date</th>
+                <th>Action</th>
               </tr>
             </thead>
 
             <tbody>
-              {data.items.length > 0 ? (
-                data.items.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
-                  >
-                    <td className="px-4 py-3 font-mono text-cyan-600">
-                      {item.crn}
+              {complaints.length > 0 ? (
+                complaints.map((item) => (
+                  <tr key={item.id}>
+                    <td>
+                      <span className="complaints-crn">{item.crn}</span>
                     </td>
 
-                    <td className="px-4 py-3">{item.category}</td>
-
-                    <td className="px-4 py-3">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusClassName(
-                          item.current_status
-                        )}`}
-                      >
-                        {item.current_status}
+                    <td>
+                      <span className="complaints-category">
+                        {item.category || "N/A"}
                       </span>
                     </td>
 
-                    <td className="px-4 py-3">
-  {item.is_anonymous
-    ? "Anonymous"
-    : item.reporter_full_name || "N/A"}
-</td>
-
-<td className="px-4 py-3">
-  {item.assigned_officer_name || (
-    <span className="text-red-500 font-medium">
-      Unassigned
-    </span>
-  )}
-</td>
-
-<td className="px-4 py-3">
-
-                    
-
-
-                      {item.created_at
-                        ? new Date(item.created_at).toLocaleDateString()
-                        : "N/A"}
+                    <td>
+                      <span className={getStatusClassName(item.current_status)}>
+                        {item.current_status || "N/A"}
+                      </span>
                     </td>
 
-                    <td className="px-4 py-3">
+                    <td>
+                      {item.is_anonymous ? (
+                        <span className="complaints-muted">Anonymous</span>
+                      ) : (
+                        item.reporter_full_name || "N/A"
+                      )}
+                    </td>
+
+                    <td>
+                      {item.assigned_officer_name || (
+                        <span className="complaints-unassigned">
+                          Unassigned
+                        </span>
+                      )}
+                    </td>
+
+                    <td>{formatDate(item.created_at)}</td>
+
+                    <td>
                       <button
+                        type="button"
                         onClick={() =>
                           navigate(`/admin/complaints/${item.id}`)
                         }
-                        className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs"
+                        className="complaints-action-button"
                       >
-                        Open Details
+                        View Case
+                        <FiArrowRight />
                       </button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td
-                    colSpan="7"
-                    className="px-4 py-8 text-center text-slate-500"
-                  >
-                    No complaints found.
+                  <td colSpan="7" className="complaints-empty-state">
+                    <FiFileText />
+                    <h3>No complaints found</h3>
+                    <p>
+                      Try changing the search keyword or clearing the selected
+                      status filter.
+                    </p>
                   </td>
                 </tr>
               )}
@@ -308,30 +409,30 @@ const ComplaintList = () => {
           </table>
         </div>
 
-        <div className="p-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50">
-          <span className="text-sm text-slate-600">
-            Page {data.pagination.page} of {data.pagination.totalPages}
+        <div className="complaints-pagination">
+          <span>
+            Showing {pageStats.displayed} of {pagination.totalItems || 0} records
           </span>
 
-          <div className="flex gap-3">
+          <div className="complaints-pagination-actions">
             <button
-              disabled={!data.pagination.hasPrevPage}
+              type="button"
+              disabled={!pagination.hasPrevPage}
               onClick={() => setPage((p) => Math.max(p - 1, 1))}
-              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm disabled:opacity-50"
             >
               Previous
             </button>
 
             <button
-              disabled={!data.pagination.hasNextPage}
+              type="button"
+              disabled={!pagination.hasNextPage}
               onClick={() => setPage((p) => p + 1)}
-              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm disabled:opacity-50"
             >
               Next
             </button>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 };
