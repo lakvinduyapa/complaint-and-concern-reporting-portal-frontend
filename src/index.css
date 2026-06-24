@@ -659,6 +659,11 @@ body {
   background: rgba(244, 63, 94, 0.1);
 }
 
+.complaints-kpi-icon.purple {
+  background: rgba(124, 58, 237, 0.12);
+  color: #7c3aed;
+}
+
 .complaints-kpi-card p {
   margin: 0;
   color: #64748b;
