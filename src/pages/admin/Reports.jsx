@@ -95,21 +95,31 @@ const Reports = () => {
       format: "a4",
     });
 
-    doc.addImage(pdflogo, "PNG", 10, 8, 70, 30);
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    doc.addImage(pdflogo, "PNG", -1, -10, 60, 60);
 
     doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
-    doc.text("SLTMobitel Internal Audit Unit (IAU)", 70, 20);
+
+    doc.text("SLTMobitel Internal Audit Unit (IAU)", pageWidth / 2, 20, {
+      align: "center",
+    });
 
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
-    doc.text("Complaint Management Portal - Operational Report", 70, 28);
+
+    doc.text(
+      "Complaint Management Portal - Operational Report",
+      pageWidth / 2,
+      28,
+      { align: "center" }
+    );
 
     doc.setDrawColor(0, 102, 179);
     doc.setLineWidth(0.5);
     doc.line(14, 38, 196, 38);
 
-    const pageWidth = doc.internal.pageSize.getWidth();
     const today = new Date().toLocaleDateString();
 
     doc.setFontSize(10);
