@@ -67,12 +67,34 @@ const ComplaintDetails = () => {
 
     return {
       ...complaintData,
+
       currentStatus:
         complaintData.currentStatus || complaintData.current_status,
+
       escalationRequired:
-        complaintData.escalationRequired ?? complaintData.escalation_required,
+        complaintData.escalationRequired ??
+        complaintData.escalation_required,
+
       isAnonymous:
-        complaintData.isAnonymous ?? complaintData.is_anonymous,
+        complaintData.isAnonymous ??
+        complaintData.is_anonymous,
+
+      incidentDate:
+        complaintData.incidentDate ||
+        complaintData.incident_date,
+
+      incidentEndDate:
+        complaintData.incidentEndDate ||
+        complaintData.incident_end_date,
+
+      incidentLocation:
+        complaintData.incidentLocation ||
+        complaintData.incident_location,
+
+      awarenessMethod:
+        complaintData.awarenessMethod ||
+        complaintData.awareness_method,
+
       reporter,
     };
   };
@@ -87,7 +109,7 @@ const ComplaintDetails = () => {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  const BACKEND_URL = "http://localhost:5000";
+  const BACKEND_URL = "http://localhost:5001";
 
   const currentUser = JSON.parse(
     localStorage.getItem("adminUser") || "{}"
