@@ -198,7 +198,6 @@ animate-fade-up
                 <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">CRN</th>
                 <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Category</th>
                 <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Status</th>
-                <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Reporter</th>
                 <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Submitted</th>
                 <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Assign To</th>
                 <th className="px-4 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Action</th>
@@ -249,12 +248,6 @@ duration-200
 </td>
 
                     <td className="px-4 py-5">
-                      {item.is_anonymous
-                        ? "Anonymous"
-                        : item.reporter_full_name || "N/A"}
-                    </td>
-
-                    <td className="px-4 py-5">
                       {item.created_at
                         ? new Date(item.created_at).toLocaleDateString()
                         : "N/A"}
@@ -262,7 +255,6 @@ duration-200
 
                     <td className="px-4 py-5">
                       <select
-                        value={selectedOfficers[item.id] || ""}
                         onChange={(e) =>
                           handleOfficerChange(item.id, e.target.value)
                         }
@@ -324,7 +316,7 @@ disabled:opacity-50
               ) : (
                 <tr>
                   <td
-                    colSpan="7"
+                    colSpan="6"
                     className="px-4 py-8 text-center text-slate-500"
                   >
                     No unassigned complaints found.

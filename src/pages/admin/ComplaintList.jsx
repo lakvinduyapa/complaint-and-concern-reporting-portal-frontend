@@ -227,7 +227,6 @@ const ComplaintList = () => {
                 <th className="px-4 py-3 text-left">CRN</th>
                 <th className="px-4 py-3 text-left">Category</th>
                 <th className="px-4 py-3 text-left">Status</th>
-                <th className="px-4 py-3 text-left">Reporter</th>
                 <th className="px-4 py-3 text-left">Assigned Officer</th>
                 <th className="px-4 py-3 text-left">Date</th>
     
@@ -257,12 +256,6 @@ const ComplaintList = () => {
                         {item.current_status}
                       </span>
                     </td>
-
-                    <td className="px-4 py-3">
-  {item.is_anonymous
-    ? "Anonymous"
-    : item.reporter_full_name || "N/A"}
-</td>
 
 <td className="px-4 py-3">
   {item.assigned_officer_name || (
@@ -297,7 +290,7 @@ const ComplaintList = () => {
               ) : (
                 <tr>
                   <td
-                    colSpan="7"
+                    colSpan="6"
                     className="px-4 py-8 text-center text-slate-500"
                   >
                     No complaints found.
