@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { adminLogin } from "../../services/adminAuthService";
 import { useAdminAuth } from "../../hooks/useAdminAuth";
+import { FaEnvelope, FaLock } from "react-icons/fa";
+import { FaUserShield } from "react-icons/fa6";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -39,7 +41,7 @@ const AdminLogin = () => {
     } catch (err) {
       setError(
         err?.message ||
-        "Login failed. Please try again."
+          "Login failed. Please try again."
       );
     } finally {
       setLoading(false);
@@ -47,120 +49,150 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+    <div className="h-screen overflow-hidden bg-slate-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-5xl min-h-[78vh] bg-white rounded-[36px] shadow-2xl overflow-hidden grid lg:grid-cols-2">
 
-      <div className="w-full max-w-lg">
+        {/* Left Side */}
+        <div className="hidden lg:flex relative overflow-hidden p-12 bg-gradient-to-br from-[#32B44A] via-[#1F5EA8] to-[#032B88]">
 
-        {/* Login Card */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-xl p-8 md:p-10">
+          {/* Shapes */}
+          <div className="absolute top-[-120px] right-[-80px] w-[350px] h-[350px] rounded-full bg-white/10"></div>
 
-          {/* Header */}
-          <div className="text-center mb-8">
+          <div className="absolute bottom-[-100px] left-[-100px] w-[250px] h-[250px] rounded-full bg-white/10"></div>
 
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-50 border border-green-100 mb-4">
-              <span className="text-sm font-medium text-green-700">
-                Internal Access
-              </span>
-            </div>
+          <div className="relative z-10 flex flex-col justify-center text-white">
 
-            <h1 className="text-4xl font-bold text-slate-900 mb-3">
-              Admin Portal
+            <img
+              src="/slt-logo.png"
+              alt="SLTMobitel"
+              className="w-52 mb-8"
+            />
+
+            <div className="w-20 h-1 bg-teal-300 rounded-full mb-10"></div>
+
+            <h1 className="text-4xl font-bold leading-tight mb-6">
+              Internal Affairs Unit (IAU)
             </h1>
 
-            <p className="text-slate-500">
-              Internal Affairs Unit Complaint Management System
+            <p className="text-xl text-slate-100 mb-20">
+              Complaint & Concern Reporting System
             </p>
 
+            <div className="flex items-center gap-6">
+
+              <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
+                <FaUserShield className="text-4xl text-green-200" />
+              </div>
+
+              <div>
+                <p className="text-2xl font-semibold text-white">
+                  Secure. Confidential. Responsible.
+                </p>
+              </div>
+
+            </div>
           </div>
-
-          {/* Error Message */}
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
-              <p className="text-red-700 text-sm font-medium">
-                {error}
-              </p>
-            </div>
-          )}
-
-          {/* Login Form */}
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-5"
-          >
-
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Email Address
-              </label>
-
-              <input
-                type="email"
-                value={email}
-                onChange={(e) =>
-                  setEmail(e.target.value)
-                }
-                placeholder="admin@iau.com"
-                disabled={loading}
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              />
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Password
-              </label>
-
-              <input
-                type="password"
-                value={password}
-                onChange={(e) =>
-                  setPassword(e.target.value)
-                }
-                placeholder="••••••••"
-                disabled={loading}
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              />
-            </div>
-
-            {/* Login Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading
-                ? "Signing In..."
-                : "Sign In"}
-            </button>
-
-          </form>
-
-          {/* Footer */}
-          <div className="mt-8 pt-6 border-t border-slate-100 text-center">
-            <p className="text-xs text-slate-500">
-              Authorized personnel only.
-              All activity is monitored and logged.
-            </p>
-          </div>
-
         </div>
 
-        {/* Back Link */}
-        <div className="text-center mt-6">
-          <Link
-            to="/"
-            className="text-green-600 hover:text-green-700 font-medium text-sm"
-          >
-            ← Back to Public Portal
-          </Link>
+        {/* Right Side */}
+        <div className="bg-white flex items-center justify-center p-8 md:p-10">
+
+          <div className="w-full max-w-lg">
+
+            <div className="flex justify-center mb-8">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-r from-[#032B88] via-[#1F5EA8] to-[#32B44A] flex items-center justify-center shadow-xl">
+                <FaUserShield className="text-white text-4xl" />
+              </div>
+            </div>
+
+            <div className="text-center mb-10">
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-[#032B88] via-[#1F5EA8] to-[#32B44A] bg-clip-text text-transparent">
+                Welcome
+              </h1>
+
+              <p className="text-slate-500 text-lg mt-3">
+                Sign in to continue to your account
+              </p>
+            </div>
+
+            {error && (
+              <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+
+              {/* Email */}
+              <div>
+                <label className="block font-semibold text-slate-700 mb-3">
+                  Email Address
+                </label>
+
+                <div className="relative">
+                  <FaEnvelope className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" />
+
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) =>
+                      setEmail(e.target.value)
+                    }
+                    placeholder="Enter your email"
+                    disabled={loading}
+                    className="w-full h-14 rounded-3xl border-2 border-slate-200 bg-white shadow-sm pl-14 pr-5 text-lg focus:outline-none focus:ring-2 focus:ring-[#1F5EA8]"
+                  />
+                </div>
+              </div>
+
+              {/* Password */}
+              <div>
+                <label className="block font-semibold text-slate-700 mb-3">
+                  Password
+                </label>
+
+                <div className="relative">
+                  <FaLock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" />
+
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) =>
+                      setPassword(e.target.value)
+                    }
+                    placeholder="Enter your password"
+                    disabled={loading}
+                    className="w-full h-14 rounded-3xl border border-slate-200 bg-slate-50 pl-14 pr-5 text-lg focus:outline-none focus:ring-2 focus:ring-[#1F5EA8]"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full h-14 rounded-3xl text-white text-2xl font-bold shadow-xl bg-gradient-to-r from-[#032B88] via-[#1F5EA8] to-[#32B44A] hover:scale-[1.02] transition-all duration-300 disabled:opacity-50"
+              >
+                {loading ? "Signing In..." : "Sign In"}
+              </button>
+
+            </form>
+
+            <div className="text-center mt-6">
+              <Link
+                to="/"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-full bg-slate-100 text-[#1F5EA8] font-semibold hover:bg-slate-200 transition-all"
+              >
+                ← Back to Public Portal
+              </Link>
+            </div>
+
+          </div>
         </div>
 
       </div>
-
     </div>
   );
 };
 
 export default AdminLogin;
+
