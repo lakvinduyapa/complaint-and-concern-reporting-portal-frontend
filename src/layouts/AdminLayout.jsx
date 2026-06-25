@@ -17,13 +17,18 @@ const AdminLayout = () => {
 <main
   id="admin-content"
   className="
-    flex-1
-    px-6
+    min-w-0
+    w-[calc(100%-80px)]
+    px-4
+    sm:px-5
+    lg:px-6
+    xl:px-8
     py-6
     ml-[80px]
     transition-all
     duration-300
     ease-out
+    overflow-x-hidden
   "
 >
         <Outlet />
