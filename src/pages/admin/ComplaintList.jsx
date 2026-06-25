@@ -334,7 +334,6 @@ const ComplaintList = () => {
                 <th>CRN</th>
                 <th>Category</th>
                 <th>Status</th>
-                <th>Reporter</th>
                 <th>Assigned Officer</th>
                 <th>Date</th>
                 <th>Action</th>
@@ -361,13 +360,7 @@ const ComplaintList = () => {
                       </span>
                     </td>
 
-                    <td>
-                      {item.is_anonymous ? (
-                        <span className="complaints-muted">Anonymous</span>
-                      ) : (
-                        item.reporter_full_name || "N/A"
-                      )}
-                    </td>
+                    
 
                     <td>
                       {item.assigned_officer_name || (
@@ -395,7 +388,7 @@ const ComplaintList = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="7" className="complaints-empty-state">
+                  <td colSpan="6" className="complaints-empty-state">
                     <FiFileText />
                     <h3>No complaints found</h3>
                     <p>
