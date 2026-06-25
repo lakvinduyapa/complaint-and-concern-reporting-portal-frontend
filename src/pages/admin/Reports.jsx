@@ -6,18 +6,11 @@ import { saveAs } from "file-saver";
 
 import {
   FiAlertCircle,
-  FiBarChart2,
   FiCalendar,
-  FiCheckCircle,
-  FiClock,
-  FiDatabase,
   FiDownload,
   FiFileText,
-  FiFilter,
   FiRefreshCw,
   FiShield,
-  FiUserX,
-  FiUsers,
 } from "react-icons/fi";
 
 import LoadingSpinner from "../../components/common/LoadingSpinner";
@@ -475,11 +468,7 @@ const Reports = () => {
             </p>
           </div>
 
-          <div className="reports-hero-card">
-            <span>Current Report Scope</span>
-            <strong>{reportStats.total}</strong>
-            <small>{getDateRangeLabel()}</small>
-          </div>
+          
         </div>
       </section>
 
@@ -490,82 +479,7 @@ const Reports = () => {
         </div>
       )}
 
-      <section className="reports-kpi-grid">
-        <div className="reports-kpi-card">
-          <div className="reports-kpi-icon blue">
-            <FiFileText />
-          </div>
-          <div>
-            <p>Total Complaints</p>
-            <h3>{reportStats.total}</h3>
-          </div>
-        </div>
-
-        <div className="reports-kpi-card">
-          <div className="reports-kpi-icon amber">
-            <FiClock />
-          </div>
-          <div>
-            <p>Active Cases</p>
-            <h3>{reportStats.active}</h3>
-          </div>
-        </div>
-
-        <div className="reports-kpi-card">
-          <div className="reports-kpi-icon green">
-            <FiCheckCircle />
-          </div>
-          <div>
-            <p>Resolved</p>
-            <h3>{reportStats.resolved}</h3>
-          </div>
-        </div>
-
-        <div className="reports-kpi-card">
-          <div className="reports-kpi-icon red">
-            <FiUserX />
-          </div>
-          <div>
-            <p>Anonymous</p>
-            <h3>{reportStats.anonymous}</h3>
-          </div>
-        </div>
-      </section>
-
-      <section className="reports-summary-grid">
-        <div className="reports-mini-card">
-          <div>
-            <span>Submitted</span>
-            <strong>{reportStats.submitted}</strong>
-          </div>
-          <FiDatabase />
-        </div>
-
-        <div className="reports-mini-card">
-          <div>
-            <span>Under Investigation</span>
-            <strong>{reportStats.underInvestigation}</strong>
-          </div>
-          <FiBarChart2 />
-        </div>
-
-        <div className="reports-mini-card">
-          <div>
-            <span>Awaiting Evidence</span>
-            <strong>{reportStats.awaitingEvidence}</strong>
-          </div>
-          <FiFilter />
-        </div>
-
-        <div className="reports-mini-card">
-          <div>
-            <span>Named Reports</span>
-            <strong>{reportStats.named}</strong>
-          </div>
-          <FiUsers />
-        </div>
-      </section>
-
+      
       <section className="reports-control-card">
         <div className="reports-section-heading">
           <div>
