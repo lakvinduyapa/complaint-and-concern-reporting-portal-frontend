@@ -34,6 +34,9 @@ const Reports = () => {
   const [filterFrom, setFilterFrom] = useState("");
   const [filterTo, setFilterTo] = useState("");
 
+  // ---------- NEW: today's date for max/min ----------
+  const today = new Date().toISOString().split("T")[0];
+
   const fetchAllComplaints = useCallback(async () => {
     try {
       setLoading(true);
@@ -209,13 +212,29 @@ const Reports = () => {
     }
   };
 
+  // ---------- UPDATED: From Date handler with validation ----------
   const handleFilterFromChange = (event) => {
-    setFilterFrom(event.target.value);
+    const value = event.target.value;
+
+    if (filterTo && value > filterTo) {
+      alert("From date cannot be after To date");
+      return;
+    }
+
+    setFilterFrom(value);
     setCurrentPage(1);
   };
 
+  // ---------- UPDATED: To Date handler with validation ----------
   const handleFilterToChange = (event) => {
-    setFilterTo(event.target.value);
+    const value = event.target.value;
+
+    if (filterFrom && value < filterFrom) {
+      alert("To date cannot be before From date");
+      return;
+    }
+
+    setFilterTo(value);
     setCurrentPage(1);
   };
 
@@ -583,6 +602,7 @@ const Reports = () => {
               type="date"
               value={filterFrom}
               onChange={handleFilterFromChange}
+              max={today}               // ✅ future dates disabled
             />
           </div>
 
@@ -592,6 +612,8 @@ const Reports = () => {
               type="date"
               value={filterTo}
               onChange={handleFilterToChange}
+              min={filterFrom}          // ✅ cannot go before From
+              max={today}               // ✅ future dates disabled
             />
           </div>
 
