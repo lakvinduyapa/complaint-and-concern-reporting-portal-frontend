@@ -38,7 +38,7 @@ const AdminSidebar = () => {
 
   const getNavItemClass = (isActive) => {
     const baseClass =
-"flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-2xl transition-all duration-300";
+"flex items-center gap-3 lg:gap-4 px-3 lg:px-4 py-3 text-sm lg:text-base font-semibold rounded-2xl transition-all duration-300";
 
     return isActive
       ? `${baseClass} bg-white text-[#062B7D] shadow-lg`
@@ -82,22 +82,27 @@ const AdminSidebar = () => {
       {/* Sidebar */}
       <aside
   onMouseEnter={() => {
-    const content = document.getElementById("admin-content");
-    if (content) {
-      content.style.marginLeft = "240px";
-    }
-  }}
-  onMouseLeave={() => {
-    const content = document.getElementById("admin-content");
-    if (content) {
-      content.style.marginLeft = "80px";
-    }
-  }}
+  const content = document.getElementById("admin-content");
+
+  if (content) {
+    content.style.marginLeft = "220px";
+    content.style.width = "calc(100% - 220px)";
+  }
+}}
+onMouseLeave={() => {
+  const content = document.getElementById("admin-content");
+
+  if (content) {
+    content.style.marginLeft = "80px";
+    content.style.width = "calc(100% - 80px)";
+  }
+}}
   className="
     fixed
     left-0
     top-24
-    h-[calc(100vh-6rem)]
+    h-[calc(100vh-5rem)]
+    xl:h-[calc(100vh-6rem)]
     w-[80px]
     hover:w-[220px]
     border-r
@@ -134,7 +139,16 @@ const AdminSidebar = () => {
         <div className="h-4" />
 
         {/* Navigation */}
-        <nav className="px-3 py-6 space-y-3">
+        <nav
+  className="
+    px-2
+    md:px-3
+    py-5
+    lg:py-6
+    space-y-2
+    lg:space-y-3
+  "
+>
           <NavLink to="/admin/dashboard" className={({ isActive }) =>
   `${getNavItemClass(isActive)} relative`
 } onClick={() => setIsOpen(false)}>
@@ -223,8 +237,10 @@ const AdminSidebar = () => {
   className="
     flex
     items-center
-    gap-4
-    px-4
+    gap-3
+    lg:gap-4
+    px-3
+    lg:px-4
     py-3
     text-base
     font-semibold
