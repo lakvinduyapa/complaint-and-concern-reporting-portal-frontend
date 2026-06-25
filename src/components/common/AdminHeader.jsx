@@ -27,22 +27,25 @@ const AdminHeader = () => {
   return (
     <header
   className="
-    fixed
-    top-0
-    left-0
-    right-0
-    z-50
-    h-24
-    px-8
-    hidden
-    md:flex
-    items-center
-    justify-between
-    shadow-md
-    transition-shadow
-    hover:shadow-2xl
-    duration-300
-  "
+fixed
+top-0
+left-0
+right-0
+z-50
+h-20
+xl:h-24
+px-4
+sm:px-6
+lg:px-8
+hidden
+md:flex
+items-center
+justify-between
+shadow-md
+transition-shadow
+hover:shadow-2xl
+duration-300
+"
       style={{
         background: "linear-gradient(90deg, #001A72 0%, #005E5E 75%, #005E5E 100%)",
       }}
@@ -52,15 +55,15 @@ const AdminHeader = () => {
   <img
     src={Logo}
     alt="SLTMobitel"
-    className="w-32 h-auto object-contain"
+    className="w-20 sm:w-24 lg:w-28 xl:w-32 h-auto object-contain"
   />
 
- <div className="ml-[60px]">
-  <h1 className="text-3xl font-bold text-white">
+ <div className="ml-4 lg:ml-8 xl:ml-[60px]">
+  <h1 className="text-xl lg:text-2xl xl:text-3xl font-bold text-white">
     {getDashboardTitle()}
   </h1>
 
-  <p className="text-slate-200 mt-1">
+  <p className="hidden lg:block text-slate-200 mt-1 text-sm xl:text-base">
     Monitor complaints and investigation activities
     </p>
   </div>
