@@ -254,15 +254,15 @@ const Reports = () => {
       format: "a4",
     });
 
-    doc.addImage(pdflogo, "JPEG", 10, 8, 70, 30);
+    doc.addImage(pdflogo, "JPEG", -1, -10, 60, 60);
 
     doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
-    doc.text("SLTMobitel Internal Audit Unit (IAU)", 70, 20);
+    doc.text("SLTMobitel Internal Audit Unit (IAU)", 60, 20);
 
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
-    doc.text("Complaint Management Portal - Operational Report", 70, 28);
+    doc.text("Complaint Management Portal - Operational Report", 60, 28);
 
     doc.setDrawColor(0, 102, 179);
     doc.setLineWidth(0.5);
