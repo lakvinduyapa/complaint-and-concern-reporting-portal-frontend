@@ -34,8 +34,13 @@ const Reports = () => {
   const [filterFrom, setFilterFrom] = useState("");
   const [filterTo, setFilterTo] = useState("");
 
-  // ---------- NEW: today's date for max/min ----------
-  const today = new Date().toISOString().split("T")[0];
+  // ------------------- DATE VALIDATION -------------------
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  const todayStr = `${year}-${month}-${day}`;
+  // ------------------------------------------------------
 
   const fetchAllComplaints = useCallback(async () => {
     try {
@@ -212,31 +217,27 @@ const Reports = () => {
     }
   };
 
-  // ---------- UPDATED: From Date handler with validation ----------
+  // ------------------- UPDATED HANDLERS WITH VALIDATION -------------------
   const handleFilterFromChange = (event) => {
-    const value = event.target.value;
-
-    if (filterTo && value > filterTo) {
-      alert("From date cannot be after To date");
-      return;
+    const newFrom = event.target.value;
+    setFilterFrom(newFrom);
+    // If To date is set and becomes earlier than the new From, adjust it
+    if (filterTo && newFrom && filterTo < newFrom) {
+      setFilterTo(newFrom);
     }
-
-    setFilterFrom(value);
     setCurrentPage(1);
   };
 
-  // ---------- UPDATED: To Date handler with validation ----------
   const handleFilterToChange = (event) => {
-    const value = event.target.value;
-
-    if (filterFrom && value < filterFrom) {
-      alert("To date cannot be before From date");
-      return;
+    const newTo = event.target.value;
+    setFilterTo(newTo);
+    // If From date is set and the new To is before it, adjust to From
+    if (filterFrom && newTo && newTo < filterFrom) {
+      setFilterTo(filterFrom);
     }
-
-    setFilterTo(value);
     setCurrentPage(1);
   };
+  // -----------------------------------------------------------------------
 
   const handleClearFilters = () => {
     setFilterFrom("");
@@ -602,7 +603,7 @@ const Reports = () => {
               type="date"
               value={filterFrom}
               onChange={handleFilterFromChange}
-              max={today}               // ✅ future dates disabled
+              max={todayStr}          // ← Prevents future dates
             />
           </div>
 
@@ -612,8 +613,8 @@ const Reports = () => {
               type="date"
               value={filterTo}
               onChange={handleFilterToChange}
-              min={filterFrom}          // ✅ cannot go before From
-              max={today}               // ✅ future dates disabled
+              min={filterFrom || ""}  // ← Cannot be before From date
+              max={todayStr}          // ← Prevents future dates
             />
           </div>
 
