@@ -27,6 +27,14 @@ const Reports = () => {
   const [filterFrom, setFilterFrom] = useState("");
   const [filterTo, setFilterTo] = useState("");
 
+  // ------------------- DATE VALIDATION -------------------
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  const todayStr = `${year}-${month}-${day}`;
+  // ------------------------------------------------------
+
   const fetchAllComplaints = useCallback(async () => {
     try {
       setLoading(true);
@@ -202,15 +210,27 @@ const Reports = () => {
     }
   };
 
+  // ------------------- UPDATED HANDLERS WITH VALIDATION -------------------
   const handleFilterFromChange = (event) => {
-    setFilterFrom(event.target.value);
+    const newFrom = event.target.value;
+    setFilterFrom(newFrom);
+    // If To date is set and becomes earlier than the new From, adjust it
+    if (filterTo && newFrom && filterTo < newFrom) {
+      setFilterTo(newFrom);
+    }
     setCurrentPage(1);
   };
 
   const handleFilterToChange = (event) => {
-    setFilterTo(event.target.value);
+    const newTo = event.target.value;
+    setFilterTo(newTo);
+    // If From date is set and the new To is before it, adjust to From
+    if (filterFrom && newTo && newTo < filterFrom) {
+      setFilterTo(filterFrom);
+    }
     setCurrentPage(1);
   };
+  // -----------------------------------------------------------------------
 
   const handleClearFilters = () => {
     setFilterFrom("");
@@ -227,15 +247,15 @@ const Reports = () => {
       format: "a4",
     });
 
-    doc.addImage(pdflogo, "JPEG", 10, 8, 70, 30);
+    doc.addImage(pdflogo, "JPEG", -1, -10, 60, 60);
 
     doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
-    doc.text("SLTMobitel Internal Audit Unit (IAU)", 70, 20);
+    doc.text("SLTMobitel Internal Audit Unit (IAU)", 60, 20);
 
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
-    doc.text("Complaint Management Portal - Operational Report", 70, 28);
+    doc.text("Complaint Management Portal - Operational Report", 60, 28);
 
     doc.setDrawColor(0, 102, 179);
     doc.setLineWidth(0.5);
@@ -497,6 +517,7 @@ const Reports = () => {
               type="date"
               value={filterFrom}
               onChange={handleFilterFromChange}
+              max={todayStr}          // ← Prevents future dates
             />
           </div>
 
@@ -506,6 +527,8 @@ const Reports = () => {
               type="date"
               value={filterTo}
               onChange={handleFilterToChange}
+              min={filterFrom || ""}  // ← Cannot be before From date
+              max={todayStr}          // ← Prevents future dates
             />
           </div>
 
