@@ -99,25 +99,32 @@ const ComplaintList = () => {
   };
 
   const getStatusClassName = (status) => {
-    switch (status) {
-      case "Submitted":
-        return "bg-cyan-50 text-cyan-700 border border-cyan-200";
-      case "Preliminary Review":
-        return "bg-purple-50 text-purple-700 border border-purple-200";
-      case "Under Investigation":
-        return "bg-yellow-50 text-yellow-700 border border-yellow-200";
-      case "Awaiting Evidence":
-        return "bg-orange-50 text-orange-700 border border-orange-200";
-      case "Escalated to CIABOC":
-        return "bg-red-50 text-red-700 border border-red-200";
-      case "Resolved":
-        return "bg-green-50 text-green-700 border border-green-200";
-      case "Closed":
-        return "bg-gray-50 text-gray-700 border border-gray-200";
-      default:
-        return "bg-slate-50 text-slate-700 border border-slate-200";
-    }
-  };
+  switch (status) {
+    case "Submitted":
+      return "bg-cyan-100 text-cyan-800";
+
+    case "Preliminary Review":
+      return "bg-indigo-100 text-indigo-800";
+
+    case "Under Investigation":
+      return "bg-yellow-100 text-yellow-800";
+
+    case "Awaiting Evidence":
+      return "bg-orange-100 text-orange-800";
+
+    case "Escalated to CIABOC":
+      return "bg-red-100 text-red-800";
+
+    case "Resolved":
+      return "bg-emerald-100 text-emerald-800";
+
+    case "Closed":
+      return "bg-slate-100 text-slate-700";
+
+    default:
+      return "bg-slate-100 text-slate-700";
+  }
+};
 
   if (loading) {
     return (
@@ -140,7 +147,7 @@ const ComplaintList = () => {
           </p>
         </div>
 
-        <div className="bg-green-50 border border-green-100 px-5 py-3 rounded-2xl">
+        <div className="bg-gradient-to-r from-[#03217F]/10 to-[#006C6D]/10 border border-cyan-100 px-5 py-3 rounded-2xl shadow-sm">
           <p className="text-sm text-slate-500">Total Complaints</p>
           <p className="text-2xl font-bold text-slate-900">
             {data.pagination.totalItems}
@@ -166,7 +173,17 @@ const ComplaintList = () => {
               <button
                 type="button"
                 onClick={handleApplySearch}
-                className="px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium"
+                className="
+                    px-4 py-2.5
+                    bg-gradient-to-r from-[#03217F] to-[#006C6D]
+                    hover:opacity-90
+                    text-white
+                    rounded-xl
+                    text-sm
+                    font-medium
+                    shadow-md
+                    transition-all
+                    "
               >
                 Search
               </button>
@@ -195,7 +212,18 @@ const ComplaintList = () => {
             <button
               type="button"
               onClick={handleResetFilters}
-              className="px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg w-full text-sm font-medium"
+              className="
+                  px-4 py-2.5
+                  bg-gradient-to-r from-[#03217F] to-[#006C6D]
+                  hover:opacity-90
+                  text-white
+                  rounded-xl
+                  w-full
+                  text-sm
+                  font-medium
+                  shadow-md
+                  transition-all
+                  "
             >
               Reset
             </button>
@@ -223,7 +251,7 @@ const ComplaintList = () => {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[900px]">
             <thead>
-              <tr className="bg-slate-50 border-b">
+              <tr className="bg-gradient-to-r from-[#03217F]/5 to-[#006C6D]/5 border-b">
                 <th className="px-4 py-3 text-left">CRN</th>
                 <th className="px-4 py-3 text-left">Category</th>
                 <th className="px-4 py-3 text-left">Status</th>
@@ -287,7 +315,7 @@ const ComplaintList = () => {
                         onClick={() =>
                           navigate(`/admin/complaints/${item.id}`)
                         }
-                        className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs"
+                        className="px-3 py-1.5 bg-gradient-to-r from-[#03217F] to-[#006C6D] hover:opacity-90 text-white rounded-lg text-xs"
                       >
                         Open Details
                       </button>
@@ -317,7 +345,18 @@ const ComplaintList = () => {
             <button
               disabled={!data.pagination.hasPrevPage}
               onClick={() => setPage((p) => Math.max(p - 1, 1))}
-              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm disabled:opacity-50"
+              className="
+                  px-4 py-2
+                  bg-gradient-to-r from-[#03217F] to-[#006C6D]
+                  hover:opacity-90
+                  text-white
+                  rounded-xl
+                  text-sm
+                  font-medium
+                  shadow-md
+                  disabled:opacity-40
+                  transition-all
+                  "
             >
               Previous
             </button>
@@ -325,7 +364,18 @@ const ComplaintList = () => {
             <button
               disabled={!data.pagination.hasNextPage}
               onClick={() => setPage((p) => p + 1)}
-              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm disabled:opacity-50"
+              className="
+                px-4 py-2
+                bg-gradient-to-r from-[#03217F] to-[#006C6D]
+                hover:opacity-90
+                text-white
+                rounded-xl
+                text-sm
+                font-medium
+                shadow-md
+                disabled:opacity-40
+                transition-all
+                "
             >
               Next
             </button>

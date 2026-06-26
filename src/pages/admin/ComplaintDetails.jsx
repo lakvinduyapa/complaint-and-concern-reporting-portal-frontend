@@ -222,9 +222,9 @@ const ComplaintDetails = () => {
   }
 
   return (
-    <div className="space-y-6 overflow-x-hidden bg-white">
+    <div className="space-y-6 overflow-x-hidden bg-slate-50 min-h-screen">
       <div className="bg-white shadow-md rounded-2xl overflow-hidden border border-slate-200">
-        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-6 py-5">
+        <div className="bg-gradient-to-r from-[#03217F] to-[#006C6D] px-6 py-5">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <h1 className="text-xl lg:text-2xl font-bold text-white tracking-wide">
@@ -325,7 +325,7 @@ const ComplaintDetails = () => {
       )}
 
       {successMessage && (
-        <div className="bg-green-50 border border-green-200 p-4 rounded-md text-sm text-green-700">
+        <div className="bg-cyan-50 border border-cyan-200 p-4 rounded-xl text-sm text-cyan-700">
           {successMessage}
         </div>
       )}
@@ -339,7 +339,15 @@ const ComplaintDetails = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+              <div className="
+                bg-white
+                border border-slate-200
+                rounded-2xl
+                p-5
+                shadow-sm
+                hover:shadow-md
+                transition-all
+                ">
                 <p className="text-xs uppercase text-slate-500 font-medium mb-2">
                   Incident Date
                 </p>
@@ -442,7 +450,18 @@ const ComplaintDetails = () => {
                       href={getEvidenceUrl(evidence.file_path)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-medium transition"
+                      className="
+                        flex items-center justify-center gap-2
+                        px-4 py-2
+                        bg-gradient-to-r from-[#03217F] to-[#006C6D]
+                        hover:opacity-90
+                        text-white
+                        rounded-xl
+                        text-sm
+                        font-medium
+                        shadow-md
+                        transition-all
+                        "
                     >
                       <FiEye size={16} />
                       View Evidence
@@ -462,8 +481,16 @@ const ComplaintDetails = () => {
 
         <div className="space-y-5 xl:sticky xl:top-6 self-start">
           {canUpdateInvestigation && (
-            <div className="panel-surface overflow-hidden">
-              <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-5 py-4 border-b border-cyan-500/20">
+            <div
+              className="
+              bg-white
+              rounded-3xl
+              overflow-hidden
+              border border-slate-200
+              shadow-xl
+              "
+              >
+              <div className="bg-gradient-to-r from-[#03217F] to-[#006C6D] px-5 py-4 border-b border-cyan-500/20">
                 <div className="flex items-center gap-2 text-white">
                   <FiShield />
                   <h2 className="font-semibold text-white">
@@ -481,7 +508,7 @@ const ComplaintDetails = () => {
                   <select
                     value={selectedStatus}
                     onChange={(e) => setSelectedStatus(e.target.value)}
-                    className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#03217F]"
                   >
                     {statusOptions.map((status) => {
                       if (status === "Closed") {
@@ -507,14 +534,25 @@ const ComplaintDetails = () => {
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
                     placeholder="Enter status update note"
-                    className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#03217F]"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={updating}
-                  className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition disabled:opacity-50"
+                  className="
+                      w-full py-3
+                      bg-gradient-to-r from-[#03217F] to-[#006C6D]
+                      hover:opacity-90
+                      text-white
+                      rounded-xl
+                      text-sm
+                      font-medium
+                      shadow-md
+                      transition-all
+                      disabled:opacity-50
+                      "
                 >
                   {updating ? "Updating Status..." : "Update Status"}
                 </button>
@@ -523,8 +561,14 @@ const ComplaintDetails = () => {
           )}
 
 
-          <div className="panel-surface overflow-hidden">
-            <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-5 py-4 border-b border-cyan-500/20">
+          <div className="
+              bg-white
+              rounded-3xl
+              overflow-hidden
+              border border-slate-200
+              shadow-xl
+              ">
+            <div className="bg-gradient-to-r from-[#03217F] to-[#006C6D] px-5 py-4 border-b border-cyan-500/20">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
@@ -547,8 +591,8 @@ const ComplaintDetails = () => {
                 <span
                   className={`shrink-0 inline-flex items-center rounded-full px-3 py-1 text-xs font-medium border ${
                     complaint.isAnonymous
-                      ? "bg-amber-50 text-amber-700 border-amber-200"
-                      : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                      ? "bg-cyan-50 text-cyan-700 border-cyan-200"
+                      : "bg-cyan-50 text-cyan-700 border-cyan-200"
                   }`}
                 >
                   {complaint.isAnonymous ? "Anonymous" : "Named Reporter"}
@@ -559,36 +603,36 @@ const ComplaintDetails = () => {
             <div className="p-5">
               {complaint.isAnonymous ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all">
                     <p className="text-slate-500 mb-1">Submission Type</p>
                     <p className="font-medium text-slate-800">
                       {complaint?.reporter?.submissionType || "Anonymous"}
                     </p>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all">
                     <p className="text-slate-500 mb-1">Visibility</p>
                     <p className="font-medium text-slate-800">Hidden</p>
                   </div>
 
-                  <div className="sm:col-span-2 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <div className="sm:col-span-2 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all">
                     <p className="text-slate-500 mb-1">Full Name</p>
                     <p className="font-medium text-slate-800">Anonymous</p>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all">
                     <p className="text-slate-500 mb-1">Email</p>
                     <p className="font-medium text-slate-800">Hidden</p>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all">
                     <p className="text-slate-500 mb-1">Phone</p>
                     <p className="font-medium text-slate-800">Hidden</p>
                   </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 text-sm">
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all">
                     <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
                       Reporter Category
                     </p>
@@ -599,7 +643,7 @@ const ComplaintDetails = () => {
                     </p>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:col-span-2 xl:col-span-1">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all sm:col-span-2 xl:col-span-1">
                     <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
                       Full Name
                     </p>
@@ -608,7 +652,7 @@ const ComplaintDetails = () => {
                     </p>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all">
                     <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
                       Staff ID
                     </p>
@@ -617,7 +661,7 @@ const ComplaintDetails = () => {
                     </p>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all">
                     <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
                       Department
                     </p>
@@ -626,7 +670,7 @@ const ComplaintDetails = () => {
                     </p>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all">
                     <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
                       Designation
                     </p>
@@ -638,7 +682,7 @@ const ComplaintDetails = () => {
                     </p>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:col-span-2 xl:col-span-1">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all sm:col-span-2 xl:col-span-1">
                     <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
                       Contact Method
                     </p>
@@ -650,7 +694,7 @@ const ComplaintDetails = () => {
                     </p>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:col-span-2">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all sm:col-span-2">
                     <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
                       Email
                     </p>
@@ -659,7 +703,7 @@ const ComplaintDetails = () => {
                     </p>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:col-span-2">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all sm:col-span-2">
                     <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1">
                       Phone Number
                     </p>
@@ -672,7 +716,7 @@ const ComplaintDetails = () => {
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-5 text-white shadow-sm">
+          <div className="bg-gradient-to-r from-[#03217F] to-[#006C6D] rounded-2xl p-5 text-white shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <FiLock />
               <h2 className="font-semibold text-white">
@@ -686,7 +730,11 @@ const ComplaintDetails = () => {
             </p>
           </div>
 
-          <div className="panel-surface p-5">
+          <div className="bg-white
+            rounded-3xl
+            border border-slate-200
+            shadow-xl
+            p-6">
             <div className="flex items-center gap-2 mb-5">
               <FiMessageSquare className="text-slate-700" />
               <h2 className="font-semibold text-slate-900">
