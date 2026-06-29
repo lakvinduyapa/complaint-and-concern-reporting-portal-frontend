@@ -2132,3 +2132,117 @@ main,
   }
 }
 
+/* =========================================
+   AUDIT LOGS RESPONSIVE FILTER FIX
+========================================= */
+
+/* Keep Audit Logs filter clean on MacBook / Safari widths */
+.audit-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+  align-items: end;
+}
+
+.audit-filter-grid > * {
+  min-width: 0;
+}
+
+/* Row 1: Action | User | Complaint | Search | Reset */
+.audit-filter-grid > :nth-child(1) {
+  order: 1;
+}
+
+.audit-filter-grid > :nth-child(2) {
+  order: 2;
+}
+
+.audit-filter-grid > :nth-child(3) {
+  order: 3;
+}
+
+.audit-filter-grid > :nth-child(6) {
+  order: 4;
+}
+
+.audit-filter-grid > :nth-child(7) {
+  order: 5;
+}
+
+/* Row 2: From Date | To Date */
+.audit-filter-grid > :nth-child(4) {
+  order: 6;
+  grid-column: 1 / 2;
+}
+
+.audit-filter-grid > :nth-child(5) {
+  order: 7;
+  grid-column: 2 / 3;
+}
+
+.audit-input,
+.audit-button-primary,
+.audit-button-secondary {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Medium laptop width */
+@media (max-width: 1180px) {
+  .audit-filter-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .audit-filter-grid > :nth-child(1) {
+    order: 1;
+  }
+
+  .audit-filter-grid > :nth-child(2) {
+    order: 2;
+  }
+
+  .audit-filter-grid > :nth-child(3) {
+    order: 3;
+  }
+
+  .audit-filter-grid > :nth-child(6) {
+    order: 4;
+  }
+
+  .audit-filter-grid > :nth-child(7) {
+    order: 5;
+  }
+
+  .audit-filter-grid > :nth-child(4) {
+    order: 6;
+    grid-column: auto;
+  }
+
+  .audit-filter-grid > :nth-child(5) {
+    order: 7;
+    grid-column: auto;
+  }
+}
+
+/* Smaller screens */
+@media (max-width: 900px) {
+  .audit-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .audit-filter-grid > :nth-child(4),
+  .audit-filter-grid > :nth-child(5) {
+    grid-column: auto;
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .audit-filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .audit-filter-grid > * {
+    grid-column: auto !important;
+  }
+}
