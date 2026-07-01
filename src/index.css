@@ -2314,3 +2314,24 @@ main,
     grid-column: auto !important;
   }
 }
+
+
+/* =========================================
+   ADMIN HEADER + SIDEBAR RESPONSIVE ALIGNMENT
+========================================= */
+
+/* Desktop/tablet admin header height = 80px */
+@media (min-width: 768px) {
+  aside.fixed.left-0 {
+    top: 5rem !important;
+    height: calc(100vh - 5rem) !important;
+  }
+}
+
+/* XL admin header height = 96px */
+@media (min-width: 1280px) {
+  aside.fixed.left-0 {
+    top: 6rem !important;
+    height: calc(100vh - 6rem) !important;
+  }
+}
