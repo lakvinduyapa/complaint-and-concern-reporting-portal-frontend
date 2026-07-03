@@ -44,7 +44,9 @@ const Reports = () => {
       const startDate = "2000-01-01";
       const endDate = new Date().toISOString().split("T")[0];
 
-      const url = `${import.meta.env.VITE_API_URL}/admin/reports?startDate=${startDate}&endDate=${endDate}`;
+      const url = `${
+        import.meta.env.VITE_API_URL
+      }/admin/reports?startDate=${startDate}&endDate=${endDate}`;
 
       const response = await fetch(url, {
         headers: {
@@ -140,7 +142,11 @@ const Reports = () => {
     ).length;
 
     const active =
-      submitted + preliminary + underInvestigation + awaitingEvidence + escalated;
+      submitted +
+      preliminary +
+      underInvestigation +
+      awaitingEvidence +
+      escalated;
 
     return {
       total,
@@ -180,25 +186,44 @@ const Reports = () => {
 
   const getDateRangeLabel = () => {
     if (!filterFrom && !filterTo) return "All Complaints";
+
     return `${filterFrom || "Any date"} to ${filterTo || "Any date"}`;
+  };
+
+  const getAssignedOfficerName = (complaint) => {
+    return (
+      complaint?.assigned_officer_name ||
+      complaint?.assignedOfficerName ||
+      complaint?.assigned_to_name ||
+      complaint?.assigned_to ||
+      complaint?.officer_name ||
+      "Unassigned"
+    );
   };
 
   const getStatusClassName = (status) => {
     switch (status) {
       case "Submitted":
         return "reports-status-pill reports-status-submitted";
+
       case "Preliminary Review":
         return "reports-status-pill reports-status-review";
+
       case "Under Investigation":
         return "reports-status-pill reports-status-investigation";
+
       case "Awaiting Evidence":
         return "reports-status-pill reports-status-evidence";
+
       case "Escalated to CIABOC":
         return "reports-status-pill reports-status-escalated";
+
       case "Resolved":
         return "reports-status-pill reports-status-resolved";
+
       case "Closed":
         return "reports-status-pill reports-status-closed";
+
       default:
         return "reports-status-pill reports-status-default";
     }
@@ -238,196 +263,196 @@ const Reports = () => {
     setCurrentPage(1);
   };
 
-  const viewPDF = async () => {
-    if (!report) return;
+const viewPDF = async () => {
+  if (!report) return;
 
-    const doc = new jsPDF({
-      orientation: "portrait",
-      unit: "mm",
-      format: "a4",
-    });
+  const doc = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "a4",
+  });
 
-    doc.addImage(pdflogo, "JPEG", -1, -10, 60, 60);
+  doc.addImage(pdflogo, "JPEG", -1, -10, 60, 60);
 
-    doc.setFontSize(18);
-    doc.setFont("helvetica", "bold");
-    doc.text("SLTMobitel Internal Audit Unit (IAU)", 60, 20);
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("SLTMobitel Internal Audit Unit (IAU)", 60, 20);
 
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "normal");
-    doc.text("Complaint Management Portal - Operational Report", 60, 28);
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "normal");
+  doc.text("Complaint Management Portal - Operational Report", 60, 28);
 
-    doc.setDrawColor(0, 102, 179);
-    doc.setLineWidth(0.5);
-    doc.line(14, 38, 196, 38);
+  doc.setDrawColor(0, 102, 179);
+  doc.setLineWidth(0.5);
+  doc.line(14, 38, 196, 38);
 
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const today = new Date().toLocaleDateString();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const today = new Date().toLocaleDateString();
 
-    doc.setFontSize(10);
-    doc.text(`Generated Date: ${today}`, 14, 48);
-    doc.text(`Date Filter: ${getDateRangeLabel()}`, pageWidth - 14, 48, {
-      align: "right",
-    });
+  doc.setFontSize(10);
+  doc.text(`Generated Date: ${today}`, 14, 48);
+  doc.text(`Date Filter: ${getDateRangeLabel()}`, pageWidth - 14, 48, {
+    align: "right",
+  });
 
-    doc.setFontSize(14);
-    doc.setFont("helvetica", "bold");
-    doc.text("Executive Summary", 14, 65);
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("Executive Summary", 14, 65);
 
-    const leftTableData = [
-      ["Metric", "Value"],
-      ["Total Complaints", reportStats.total],
-      ["Active Complaints", reportStats.active],
-      ["Preliminary Review", reportStats.preliminary],
-      ["Under Investigation", reportStats.underInvestigation],
-      ["Awaiting Evidence", reportStats.awaitingEvidence],
-      ["Escalated to CIABOC", reportStats.escalated],
-    ];
+  const leftTableData = [
+    ["Metric", "Value"],
+    ["Total Complaints", reportStats.total],
+    ["Active Complaints", reportStats.active],
+    ["Preliminary Review", reportStats.preliminary],
+    ["Under Investigation", reportStats.underInvestigation],
+    ["Awaiting Evidence", reportStats.awaitingEvidence],
+    ["Escalated to CIABOC", reportStats.escalated],
+  ];
 
-    const rightTableData = [
-      ["Metric", "Value"],
-      ["Submitted", reportStats.submitted],
-      ["Resolved", reportStats.resolved],
-      ["Closed", reportStats.closed],
-      ["Anonymous Complaints", reportStats.anonymous],
-      ["Named Complaints", reportStats.named],
-      ["Evidence Files", reportStats.evidenceFiles],
-    ];
+  const rightTableData = [
+    ["Metric", "Value"],
+    ["Submitted", reportStats.submitted],
+    ["Resolved", reportStats.resolved],
+    ["Closed", reportStats.closed],
+    ["Anonymous Complaints", reportStats.anonymous],
+    ["Named Complaints", reportStats.named],
+    ["Evidence Files", reportStats.evidenceFiles],
+  ];
 
-    autoTable(doc, {
-      startY: 70,
-      head: [leftTableData[0]],
-      body: leftTableData.slice(1),
-      theme: "grid",
-      styles: {
-        fontSize: 9,
-        cellPadding: 4,
-      },
-      headStyles: {
-        fillColor: [0, 102, 179],
-        textColor: 255,
-        fontStyle: "bold",
-        halign: "center",
-      },
-      columnStyles: {
-        0: {
-          cellWidth: 52,
-          halign: "left",
-        },
-        1: {
-          cellWidth: 22,
-          halign: "center",
-        },
-      },
-      margin: {
-        left: 14,
-      },
-      tableWidth: 85,
-    });
-
-    const leftEndY = doc.lastAutoTable.finalY;
-
-    autoTable(doc, {
-      startY: 70,
-      head: [rightTableData[0]],
-      body: rightTableData.slice(1),
-      theme: "grid",
-      styles: {
-        fontSize: 9,
-        cellPadding: 4,
-      },
-      headStyles: {
-        fillColor: [0, 102, 179],
-        textColor: 255,
-        fontStyle: "bold",
-        halign: "center",
-      },
-      columnStyles: {
-        0: {
-          cellWidth: 52,
-          halign: "left",
-        },
-        1: {
-          cellWidth: 22,
-          halign: "center",
-        },
-      },
-      margin: {
-        left: 110,
-      },
-      tableWidth: 85,
-    });
-
-    const rightEndY = doc.lastAutoTable.finalY;
-    const summaryEndY = Math.max(leftEndY, rightEndY);
-
-    doc.setFontSize(13);
-    doc.setFont("helvetica", "bold");
-    doc.text("Complaints List", 14, summaryEndY + 12);
-
-    autoTable(doc, {
-      startY: summaryEndY + 18,
-      head: [["CRN", "Category", "Status", "Submitted Date"]],
-      body: filteredComplaints.map((item) => [
-        item.crn,
-        item.category || "Unspecified",
-        item.current_status || "N/A",
-        item.created_at ? new Date(item.created_at).toLocaleDateString() : "N/A",
-      ]),
-      theme: "striped",
-      headStyles: {
-        fillColor: [0, 102, 179],
-        textColor: 255,
-        fontStyle: "bold",
+  autoTable(doc, {
+    startY: 70,
+    head: [leftTableData[0]],
+    body: leftTableData.slice(1),
+    theme: "grid",
+    styles: {
+      fontSize: 9,
+      cellPadding: 4,
+    },
+    headStyles: {
+      fillColor: [0, 102, 179],
+      textColor: 255,
+      fontStyle: "bold",
+      halign: "center",
+    },
+    columnStyles: {
+      0: {
+        cellWidth: 52,
         halign: "left",
       },
-      bodyStyles: {
-        textColor: [31, 41, 55],
+      1: {
+        cellWidth: 22,
+        halign: "center",
       },
-      alternateRowStyles: {
-        fillColor: [240, 248, 255],
+    },
+    margin: {
+      left: 14,
+    },
+    tableWidth: 85,
+  });
+
+  const leftEndY = doc.lastAutoTable.finalY;
+
+  autoTable(doc, {
+    startY: 70,
+    head: [rightTableData[0]],
+    body: rightTableData.slice(1),
+    theme: "grid",
+    styles: {
+      fontSize: 9,
+      cellPadding: 4,
+    },
+    headStyles: {
+      fillColor: [0, 102, 179],
+      textColor: 255,
+      fontStyle: "bold",
+      halign: "center",
+    },
+    columnStyles: {
+      0: {
+        cellWidth: 52,
+        halign: "left",
       },
-      columnStyles: {
-        0: {
-          cellWidth: 38,
-        },
-        1: {
-          cellWidth: 48,
-        },
-        2: {
-          cellWidth: 50,
-        },
-        3: {
-          cellWidth: 40,
-        },
+      1: {
+        cellWidth: 22,
+        halign: "center",
       },
-      margin: {
-        left: 14,
-        right: 14,
+    },
+    margin: {
+      left: 110,
+    },
+    tableWidth: 85,
+  });
+
+  const rightEndY = doc.lastAutoTable.finalY;
+  const summaryEndY = Math.max(leftEndY, rightEndY);
+
+  doc.setFontSize(13);
+  doc.setFont("helvetica", "bold");
+  doc.text("Complaints List", 14, summaryEndY + 12);
+
+  autoTable(doc, {
+    startY: summaryEndY + 18,
+    head: [["CRN", "Category", "Status", "Submitted Date"]],
+    body: filteredComplaints.map((item) => [
+      item.crn,
+      item.category || "Unspecified",
+      item.current_status || "N/A",
+      item.created_at ? new Date(item.created_at).toLocaleDateString() : "N/A",
+    ]),
+    theme: "striped",
+    headStyles: {
+      fillColor: [0, 102, 179],
+      textColor: 255,
+      fontStyle: "bold",
+      halign: "left",
+    },
+    bodyStyles: {
+      textColor: [31, 41, 55],
+    },
+    alternateRowStyles: {
+      fillColor: [240, 248, 255],
+    },
+    columnStyles: {
+      0: {
+        cellWidth: 38,
       },
-      styles: {
-        fontSize: 9,
-        cellPadding: 5,
-        valign: "middle",
-        lineColor: [0, 102, 179],
-        lineWidth: 0.1,
+      1: {
+        cellWidth: 48,
       },
-    });
+      2: {
+        cellWidth: 50,
+      },
+      3: {
+        cellWidth: 40,
+      },
+    },
+    margin: {
+      left: 14,
+      right: 14,
+    },
+    styles: {
+      fontSize: 9,
+      cellPadding: 5,
+      valign: "middle",
+      lineColor: [0, 102, 179],
+      lineWidth: 0.1,
+    },
+  });
 
-    const finalY = doc.lastAutoTable.finalY + 12;
+  const finalY = doc.lastAutoTable.finalY + 12;
 
-    doc.setFontSize(8);
-    doc.setTextColor(128, 128, 128);
-    doc.text("Generated by IAU Complaint Portal", 14, finalY);
-    doc.text("Confidential - Internal Use Only", 14, finalY + 6);
+  doc.setFontSize(8);
+  doc.setTextColor(128, 128, 128);
+  doc.text("Generated by IAU Complaint Portal", 14, finalY);
+  doc.text("Confidential - Internal Use Only", 14, finalY + 6);
 
-    const blob = doc.output("blob");
-    const url = URL.createObjectURL(blob);
+  const blob = doc.output("blob");
+  const url = URL.createObjectURL(blob);
 
-    window.open(url, "_blank");
+  window.open(url, "_blank");
 
-    setTimeout(() => URL.revokeObjectURL(url), 100);
-  };
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+};
 
   const downloadExcel = () => {
     if (!report) return;
@@ -437,6 +462,7 @@ const Reports = () => {
       Category: complaint.category || "Unspecified",
       Status: complaint.current_status || "N/A",
       "Report Type": complaint.is_anonymous ? "Anonymous" : "Named",
+      "Assigned To": getAssignedOfficerName(complaint),
       "Submitted Date": complaint.created_at
         ? new Date(complaint.created_at).toLocaleDateString()
         : "N/A",
@@ -487,8 +513,6 @@ const Reports = () => {
               operational statistics from one modern reporting workspace.
             </p>
           </div>
-
-          
         </div>
       </section>
 
@@ -499,7 +523,6 @@ const Reports = () => {
         </div>
       )}
 
-      
       <section className="reports-control-card">
         <div className="reports-section-heading">
           <div>
@@ -591,6 +614,7 @@ const Reports = () => {
                     <th>Category</th>
                     <th>Status</th>
                     <th>Report Type</th>
+                    <th>Assigned To</th>
                     <th>Submitted</th>
                   </tr>
                 </thead>
@@ -624,10 +648,14 @@ const Reports = () => {
                             Anonymous
                           </span>
                         ) : (
-                          <span className="reports-type-pill named">
-                            Named
-                          </span>
+                          <span className="reports-type-pill named">Named</span>
                         )}
+                      </td>
+
+                      <td>
+                        <span className="reports-category">
+                          {getAssignedOfficerName(complaint)}
+                        </span>
                       </td>
 
                       <td>{formatDate(complaint.created_at)}</td>
