@@ -142,21 +142,34 @@ blur-[130px]
           
           
 
-            <div className="mt-6">
+             
     <img
         src="/slt-logo.png"
         alt="SLTMobitel"
-        className="w-44"
+        className="w-72 object-contain"
     />
-</div>
+ 
+
+<div
+className="
+absolute
+top-12
+left-10
+w-66
+h-56
+rounded-full
+bg-cyan-300/10
+blur-[120px]
+"
+/>
 
 <div className="mt-12 mb-6">
     <div className="w-20 h-1 rounded-full bg-cyan-300"></div>
 </div>
 
 <h1 className="text-3xl
-lg:text-4xl
-xl:text-5xl font-bold leading-tight">
+lg:text-3xl
+xl:text-4xl font-bold leading-tight">
     Internal Affairs Unit (IAU)
 </h1>
 
