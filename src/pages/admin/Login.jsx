@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+
 import { adminLogin } from "../../services/adminAuthService";
 import { useAdminAuth } from "../../hooks/useAdminAuth";
-import { FaEnvelope, FaLock } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { FaUserShield } from "react-icons/fa6"; 
+
 
 const COLORS = {
   navy: "#0B2E73",
@@ -22,6 +24,7 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -105,8 +108,8 @@ className="
 relative
 z-10
 w-full
-max-w-5xl
-min-h-[620px]
+max-w-[1000px]
+min-h-[580px] lg:min-h-[620px]
 bg-white/90
 backdrop-blur-xl
 border
@@ -120,7 +123,7 @@ lg:grid-cols-[1fr_0.95fr]
 "
 >
         {/* Left Side */}
-        <div className="hidden xl:flex relative overflow-hidden p-10 bg-[linear-gradient(135deg,#0B2E73_0%,#145D93_55%,#0F6E72_100%)]">
+        <div className="hidden lg:flex relative overflow-hidden p-6 md:p-8 lg:p-10 bg-[linear-gradient(135deg,#0B2E73_0%,#145D93_55%,#0F6E72_100%)]">
 
           {/* Shapes */}
           <div className="absolute top-[-120px] right-[-80px] w-[350px] h-[350px] rounded-full bg-white/10"></div>
@@ -138,16 +141,59 @@ rounded-full
 bg-cyan-400/10
 blur-[130px]
 "/>
-          <div className="relative z-10 flex flex-col h-full">
+          <div
+className="
+relative
+z-10
+flex
+flex-col
+justify-between
+h-full
+"
+>
           
           
 
              
-    <img
-        src="/slt-logo.png"
-        alt="SLTMobitel"
-        className="w-72 object-contain"
-    />
+    <div className="space-y-8">
+
+    {/* Top */}
+<div>
+  <img
+    src="/slt-logo.png"
+    alt="SLTMobitel"
+    className="w-45 md:w-55 lg:w-52 object-contain mb-10"
+  />
+
+  <div className="w-20 h-1 rounded-full bg-cyan-300 mb-10"></div>
+
+  <h1 className="text-3xl md:text-4xl font-bold text-white leading-tight mb-5">
+    Internal Affairs Unit (IAU)
+  </h1>
+
+  <p className="text-2xl text-white/90">
+    Complaint & Concern Reporting System
+  </p>
+</div>
+
+{/* Bottom */}
+<div className="flex items-center gap-5">
+  <div className="w-20 h-20 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
+    <FaUserShield className="text-4xl text-cyan-200" />
+  </div>
+
+  <div>
+    <h3 className="text-2xl font-semibold text-white">
+      Secure. Confidential.
+    </h3>
+
+    <p className="text-xl text-white/80">
+      Responsible.
+    </p>
+  </div>
+</div>
+
+</div>
  
 
 <div
@@ -163,23 +209,7 @@ blur-[120px]
 "
 />
 
-<div className="mt-12 mb-6">
-    <div className="w-20 h-1 rounded-full bg-cyan-300"></div>
-</div>
-
-<h1 className="text-3xl
-lg:text-3xl
-xl:text-4xl font-bold leading-tight">
-    Internal Affairs Unit (IAU)
-</h1>
-
-<p className="text-2xl mt-5 text-white/90">
-    Complaint & Concern Reporting System
-</p>
-
-<p className="mt-10 text-lg leading-8 text-white/80 max-w-sm">
-    A secure platform to report, track and resolve complaints efficiently and confidentially.
-</p>
+ 
           </div>
         </div>
 
@@ -262,35 +292,27 @@ mb-2
                   <FaEnvelope className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" />
 
                   <input
-                    type="email"
-                    value={email}
-                    onChange={(e) =>
-                      setEmail(e.target.value)
-                    }
-                    placeholder="Enter your email"
-                    disabled={loading}
                     className="
 w-full
-h-14
-md:h-16
+h-16
 rounded-2xl
-bg-white
+bg-slate-50
 border
 border-slate-200
 shadow-lg
 shadow-blue-100/40
 pl-14
-pr-5
+pr-14
 text-base
-placeholder:text-slate-400
 transition-all
 duration-300
-focus:border-[#1F5EA8]
-focus:ring-4
+outline-none
+focus:outline-none
+focus:border-[#145D93]
+focus:ring-2
 focus:ring-blue-100
 hover:border-blue-300
-"
-                  />
+"/>
                 </div>
               </div>
 
@@ -304,17 +326,60 @@ hover:border-blue-300
                   <FaLock className="absolute left-5 top-1/2 -translate-y-1/2 text-[#1F5EA8]" />
 
                   <input
-                    type="password"
-                    value={password}
-                    onChange={(e) =>
-                      setPassword(e.target.value)
-                    }
-                    placeholder="Enter your password"
-                    disabled={loading}
-                    className="w-full h-16 rounded-2xl border border-slate-200 bg-slate-50 pl-14 pr-5 text-base focus:outline-none focus:ring-4 focus:ring-[#1F5EA8]"
-                  />
+  type={showPassword ? "text" : "password"}
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+  placeholder="Enter your password"
+  disabled={loading}
+  autoComplete="current-password"
+  className="
+    w-full
+    h-16
+    rounded-2xl
+    bg-slate-50
+    border
+    border-slate-200
+    shadow-lg
+    shadow-blue-100/40
+    pl-14
+    pr-14
+    text-base
+    transition-all
+    duration-300
+    outline-none
+    focus:outline-none
+    focus:ring-0
+    focus:border-[#145D93]
+    hover:border-blue-300
+  "
+/>
+
+                  <button
+  type="button"
+  onClick={() => setShowPassword(!showPassword)}
+  className="
+    absolute
+    right-4
+p-1
+    top-1/2
+    -translate-y-1/2
+    text-slate-400
+    hover:text-[#145D93]
+    transition-colors
+  "
+>
+  {showPassword ? (
+    <FaEyeSlash className="text-xl" />
+  ) : (
+    <FaEye className="text-xl" />
+  )}
+</button>
                 </div>
+
+                
               </div>
+
+              
 
               <button
                 type="submit"
@@ -324,7 +389,7 @@ md:text-xl font-bold shadow-[0_18px_45px_rgba(31,94,168,.30)] bg-gradient-to-r
 from-[#0B2E73]
 via-[#145D93]
 to-[#0D6B68] hover:scale-[1.03]
-hover:brightness-110
+hover:shadow-[0_22px_50px_rgba(20,93,147,.35)]
 active:scale-[0.98]
 transition-all
 duration-300 transition-all duration-300 disabled:opacity-50"

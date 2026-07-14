@@ -492,3 +492,83 @@ body {
   animation: fadeUp 0.6s ease-out forwards;
   opacity: 0;
 }
+
+
+
+
+
+/* ==========================================================
+   PREMIUM UI ANIMATIONS
+========================================================== */
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-18px);
+  }
+}
+
+.float-animation {
+  animation: float 8s ease-in-out infinite;
+}
+
+.float-animation-delay {
+  animation: float 10s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(31, 94, 168, 0);
+  }
+
+  50% {
+    box-shadow: 0 12px 40px rgba(31, 94, 168, 0.25);
+  }
+}
+
+.glow-animation {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+@keyframes gradientMove {
+
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-animation {
+  background-size: 200% 200%;
+  animation: gradientMove 8s ease infinite;
+}
+
+.hover-lift {
+  transition: all .3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-3px);
+}
+
+.hover-scale {
+  transition: all .3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.03);
+}
