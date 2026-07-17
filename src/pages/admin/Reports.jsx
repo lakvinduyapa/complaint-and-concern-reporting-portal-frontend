@@ -27,6 +27,14 @@ const Reports = () => {
   const [filterFrom, setFilterFrom] = useState("");
   const [filterTo, setFilterTo] = useState("");
 
+  // ------------------- DATE VALIDATION -------------------
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  const todayStr = `${year}-${month}-${day}`;
+  // ------------------------------------------------------
+
   const fetchAllComplaints = useCallback(async () => {
     try {
       setLoading(true);
@@ -227,15 +235,27 @@ const Reports = () => {
     }
   };
 
+  // ------------------- UPDATED HANDLERS WITH VALIDATION -------------------
   const handleFilterFromChange = (event) => {
-    setFilterFrom(event.target.value);
+    const newFrom = event.target.value;
+    setFilterFrom(newFrom);
+    // If To date is set and becomes earlier than the new From, adjust it
+    if (filterTo && newFrom && filterTo < newFrom) {
+      setFilterTo(newFrom);
+    }
     setCurrentPage(1);
   };
 
   const handleFilterToChange = (event) => {
-    setFilterTo(event.target.value);
+    const newTo = event.target.value;
+    setFilterTo(newTo);
+    // If From date is set and the new To is before it, adjust to From
+    if (filterFrom && newTo && newTo < filterFrom) {
+      setFilterTo(filterFrom);
+    }
     setCurrentPage(1);
   };
+  // -----------------------------------------------------------------------
 
   const handleClearFilters = () => {
     setFilterFrom("");
@@ -626,6 +646,7 @@ const Reports = () => {
               type="date"
               value={filterFrom}
               onChange={handleFilterFromChange}
+              max={todayStr}          // ← Prevents future dates
             />
           </div>
 
@@ -635,6 +656,8 @@ const Reports = () => {
               type="date"
               value={filterTo}
               onChange={handleFilterToChange}
+              min={filterFrom || ""}  // ← Cannot be before From date
+              max={todayStr}          // ← Prevents future dates
             />
           </div>
 
