@@ -16,6 +16,121 @@ import {
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import pdflogo from "../../assets/pdflogo1.jpeg";
 
+let preparedPdfLogoPromise;
+
+const preparePdfLogo = () => {
+  if (preparedPdfLogoPromise) return preparedPdfLogoPromise;
+
+  preparedPdfLogoPromise = new Promise((resolve, reject) => {
+    const image = new Image();
+
+    image.onload = () => {
+      try {
+        const sourceCanvas = document.createElement("canvas");
+        const sourceContext = sourceCanvas.getContext("2d", {
+          willReadFrequently: true,
+        });
+
+        if (!sourceContext) {
+          reject(new Error("Unable to prepare the PDF logo."));
+          return;
+        }
+
+        sourceCanvas.width = image.naturalWidth;
+        sourceCanvas.height = image.naturalHeight;
+        sourceContext.drawImage(image, 0, 0);
+
+        const { data, width, height } = sourceContext.getImageData(
+          0,
+          0,
+          sourceCanvas.width,
+          sourceCanvas.height,
+        );
+
+        let minX = width;
+        let minY = height;
+        let maxX = -1;
+        let maxY = -1;
+
+        for (let y = 0; y < height; y += 1) {
+          for (let x = 0; x < width; x += 1) {
+            const index = (y * width + x) * 4;
+            const red = data[index];
+            const green = data[index + 1];
+            const blue = data[index + 2];
+            const alpha = data[index + 3];
+
+            const isVisibleLogoPixel =
+              alpha > 20 && (red < 245 || green < 245 || blue < 245);
+
+            if (isVisibleLogoPixel) {
+              minX = Math.min(minX, x);
+              minY = Math.min(minY, y);
+              maxX = Math.max(maxX, x);
+              maxY = Math.max(maxY, y);
+            }
+          }
+        }
+
+        if (maxX < minX || maxY < minY) {
+          reject(new Error("No visible logo pixels were found."));
+          return;
+        }
+
+        const cropPadding = Math.max(
+          2,
+          Math.round(Math.min(width, height) * 0.015),
+        );
+        const cropX = Math.max(0, minX - cropPadding);
+        const cropY = Math.max(0, minY - cropPadding);
+        const cropWidth = Math.min(
+          width - cropX,
+          maxX - minX + 1 + cropPadding * 2,
+        );
+        const cropHeight = Math.min(
+          height - cropY,
+          maxY - minY + 1 + cropPadding * 2,
+        );
+
+        const outputCanvas = document.createElement("canvas");
+        const outputContext = outputCanvas.getContext("2d");
+
+        if (!outputContext) {
+          reject(new Error("Unable to crop the PDF logo."));
+          return;
+        }
+
+        outputCanvas.width = cropWidth;
+        outputCanvas.height = cropHeight;
+        outputContext.drawImage(
+          sourceCanvas,
+          cropX,
+          cropY,
+          cropWidth,
+          cropHeight,
+          0,
+          0,
+          cropWidth,
+          cropHeight,
+        );
+
+        resolve({
+          dataUrl: outputCanvas.toDataURL("image/png"),
+          width: cropWidth,
+          height: cropHeight,
+        });
+      } catch (logoError) {
+        reject(logoError);
+      }
+    };
+
+    image.onerror = () => reject(new Error("Unable to load the PDF logo."));
+    image.src = pdflogo;
+  });
+
+  return preparedPdfLogoPromise;
+};
+
 const Reports = () => {
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -106,39 +221,39 @@ const Reports = () => {
     const total = filteredComplaints.length;
 
     const submitted = filteredComplaints.filter(
-      (item) => item.current_status === "Submitted"
+      (item) => item.current_status === "Submitted",
     ).length;
 
     const preliminary = filteredComplaints.filter(
-      (item) => item.current_status === "Preliminary Review"
+      (item) => item.current_status === "Preliminary Review",
     ).length;
 
     const underInvestigation = filteredComplaints.filter(
-      (item) => item.current_status === "Under Investigation"
+      (item) => item.current_status === "Under Investigation",
     ).length;
 
     const awaitingEvidence = filteredComplaints.filter(
-      (item) => item.current_status === "Awaiting Evidence"
+      (item) => item.current_status === "Awaiting Evidence",
     ).length;
 
     const escalated = filteredComplaints.filter(
-      (item) => item.current_status === "Escalated to CIABOC"
+      (item) => item.current_status === "Escalated to CIABOC",
     ).length;
 
     const resolved = filteredComplaints.filter(
-      (item) => item.current_status === "Resolved"
+      (item) => item.current_status === "Resolved",
     ).length;
 
     const closed = filteredComplaints.filter(
-      (item) => item.current_status === "Closed"
+      (item) => item.current_status === "Closed",
     ).length;
 
     const anonymous = filteredComplaints.filter(
-      (item) => item.is_anonymous
+      (item) => item.is_anonymous,
     ).length;
 
     const named = filteredComplaints.filter(
-      (item) => !item.is_anonymous
+      (item) => !item.is_anonymous,
     ).length;
 
     const active =
@@ -166,12 +281,12 @@ const Reports = () => {
 
   const totalPages = Math.max(
     1,
-    Math.ceil(filteredComplaints.length / itemsPerPage)
+    Math.ceil(filteredComplaints.length / itemsPerPage),
   );
 
   const paginatedComplaints = filteredComplaints.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const formatDate = (dateValue) => {
@@ -266,6 +381,14 @@ const Reports = () => {
   const viewPDF = async () => {
     if (!report) return;
 
+    let preparedLogo = null;
+
+    try {
+      preparedLogo = await preparePdfLogo();
+    } catch (logoError) {
+      console.warn("PDF logo preparation failed:", logoError);
+    }
+
     const doc = new jsPDF({
       orientation: "portrait",
       unit: "mm",
@@ -299,7 +422,7 @@ const Reports = () => {
         doc.line(14, pageHeight - 16, pageWidth - 14, pageHeight - 16);
 
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(8);
+        doc.setFontSize(7);
         doc.setTextColor(100, 116, 139);
 
         doc.text("Generated by IAU Complaint Portal", 14, pageHeight - 10);
@@ -310,7 +433,7 @@ const Reports = () => {
           pageHeight - 10,
           {
             align: "center",
-          }
+          },
         );
 
         doc.text(`Page ${i} of ${pageCount}`, pageWidth - 14, pageHeight - 10, {
@@ -340,45 +463,68 @@ const Reports = () => {
     // Logo card
     doc.setFillColor(255, 255, 255);
     doc.roundedRect(14, 13, 40, 18, 2, 2, "F");
-    doc.addImage(pdflogo, "JPEG", 20, 18, 28, 7);
+
+    if (preparedLogo) {
+      const logoMaxWidth = 34;
+      const logoMaxHeight = 12;
+      const logoScale = Math.min(
+        logoMaxWidth / preparedLogo.width,
+        logoMaxHeight / preparedLogo.height,
+      );
+      const logoWidth = preparedLogo.width * logoScale;
+      const logoHeight = preparedLogo.height * logoScale;
+      const logoX = 14 + (40 - logoWidth) / 2;
+      const logoY = 13 + (18 - logoHeight) / 2;
+
+      doc.addImage(
+        preparedLogo.dataUrl,
+        "PNG",
+        logoX,
+        logoY,
+        logoWidth,
+        logoHeight,
+      );
+    } else {
+      doc.addImage(pdflogo, "JPEG", 18, 17, 32, 9);
+    }
 
     // Header text
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(15);
+    doc.setFontSize(13);
     doc.text("Complaint Management Report", 62, 20);
 
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
+    doc.setFontSize(7.5);
     doc.text("SLTMobitel Internal Audit Unit", 62, 27);
     doc.text("Operational complaint summary and activity report", 62, 33);
 
     // Report details block
     doc.setFillColor(...lightBlue);
-    doc.roundedRect(14, 50, pageWidth - 28, 24, 4, 4, "F");
+    doc.roundedRect(14, 49, pageWidth - 28, 21, 4, 4, "F");
 
     doc.setTextColor(...slate);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(8);
-    doc.text("GENERATED DATE", 20, 59);
-    doc.text("DATE FILTER", 82, 59);
-    doc.text("TOTAL RECORDS", 154, 59);
+    doc.setFontSize(7);
+    doc.text("GENERATED DATE", 20, 56);
+    doc.text("DATE FILTER", 82, 56);
+    doc.text("TOTAL RECORDS", 154, 56);
 
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
+    doc.setFontSize(8.5);
     doc.setTextColor(15, 23, 42);
-    doc.text(generatedDate, 20, 67);
-    doc.text(getDateRangeLabel(), 82, 67);
-    doc.text(String(reportStats.total), 154, 67);
+    doc.text(generatedDate, 20, 64);
+    doc.text(getDateRangeLabel(), 82, 64);
+    doc.text(String(reportStats.total), 154, 64);
 
     // Summary heading
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
+    doc.setFontSize(12);
     doc.setTextColor(15, 23, 42);
-    doc.text("Executive Summary", 14, 88);
+    doc.text("Executive Summary", 14, 81);
 
     autoTable(doc, {
-      startY: 96,
+      startY: 87,
       head: [["Metric", "Value", "Metric", "Value"]],
       body: [
         [
@@ -420,8 +566,8 @@ const Reports = () => {
       ],
       theme: "grid",
       styles: {
-        fontSize: 9,
-        cellPadding: 4,
+        fontSize: 7.5,
+        cellPadding: 2.2,
         lineColor: [226, 232, 240],
         lineWidth: 0.2,
         textColor: [51, 65, 85],
@@ -432,6 +578,7 @@ const Reports = () => {
         textColor: 255,
         fontStyle: "bold",
         halign: "left",
+        fontSize: 7.5,
       },
       alternateRowStyles: {
         fillColor: [248, 251, 255],
@@ -464,23 +611,23 @@ const Reports = () => {
 
     // Complaints list heading
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
+    doc.setFontSize(12);
     doc.setTextColor(15, 23, 42);
-    doc.text("Complaints List", 14, summaryEndY + 14);
+    doc.text("Complaints List", 14, summaryEndY + 10);
 
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
+    doc.setFontSize(7.5);
     doc.setTextColor(100, 116, 139);
     doc.text(
       `Showing ${filteredComplaints.length} complaint record${
         filteredComplaints.length === 1 ? "" : "s"
       }`,
       14,
-      summaryEndY + 20
+      summaryEndY + 15,
     );
 
     autoTable(doc, {
-      startY: summaryEndY + 26,
+      startY: summaryEndY + 20,
       head: [["CRN", "Category", "Status", "Assigned To", "Submitted Date"]],
       body: filteredComplaints.map((item) => [
         item.crn || "N/A",
@@ -497,17 +644,17 @@ const Reports = () => {
         textColor: 255,
         fontStyle: "bold",
         halign: "left",
-        fontSize: 8.5,
+        fontSize: 7.3,
       },
       bodyStyles: {
         textColor: [31, 41, 55],
-        fontSize: 8.5,
+        fontSize: 7.3,
       },
       alternateRowStyles: {
         fillColor: [240, 248, 255],
       },
       styles: {
-        cellPadding: 4,
+        cellPadding: 2.3,
         valign: "middle",
         lineColor: [203, 213, 225],
         lineWidth: 0.15,
@@ -540,7 +687,7 @@ const Reports = () => {
       didDrawPage: () => {
         if (doc.internal.getCurrentPageInfo().pageNumber > 1) {
           doc.setFont("helvetica", "bold");
-          doc.setFontSize(10);
+          doc.setFontSize(9);
           doc.setTextColor(...navy);
           doc.text("Complaint Management Report", 14, 12);
 
@@ -590,7 +737,7 @@ const Reports = () => {
 
     saveAs(
       fileData,
-      `Complaint_Report_${new Date().toISOString().slice(0, 19)}.xlsx`
+      `Complaint_Report_${new Date().toISOString().slice(0, 19)}.xlsx`,
     );
   };
 
@@ -633,7 +780,9 @@ const Reports = () => {
         <div className="reports-section-heading">
           <div>
             <h2>Report Controls</h2>
-            <p>Filter by submitted date and export the selected report range.</p>
+            <p>
+              Filter by submitted date and export the selected report range.
+            </p>
           </div>
 
           <FiCalendar className="reports-section-icon" />
@@ -646,7 +795,7 @@ const Reports = () => {
               type="date"
               value={filterFrom}
               onChange={handleFilterFromChange}
-              max={todayStr}          // ← Prevents future dates
+              max={todayStr}
             />
           </div>
 
@@ -656,8 +805,8 @@ const Reports = () => {
               type="date"
               value={filterTo}
               onChange={handleFilterToChange}
-              min={filterFrom || ""}  // ← Cannot be before From date
-              max={todayStr}          // ← Prevents future dates
+              min={filterFrom || ""}
+              max={todayStr}
             />
           </div>
 
@@ -741,7 +890,7 @@ const Reports = () => {
                       <td>
                         <span
                           className={getStatusClassName(
-                            complaint.current_status
+                            complaint.current_status,
                           )}
                         >
                           {complaint.current_status || "N/A"}
