@@ -66,13 +66,13 @@ const AdminHeader = () => {
   const getDashboardTitle = () => {
     switch (currentUser?.role) {
       case "admin":
-        return "Admin Dashboard";
+        return "IAU Admin Dashboard";
 
       case "senior_investigator":
-        return "Senior Investigator Dashboard";
+        return "IAU Senior Investigator Dashboard";
 
       case "officer":
-        return "Investigation Officer Dashboard";
+        return "IAU Investigation Officer Dashboard";
 
       default:
         return "Dashboard";
@@ -82,13 +82,13 @@ const AdminHeader = () => {
   const getRoleLabel = () => {
     switch (currentUser?.role) {
       case "admin":
-        return "System Administrator";
+        return "IAU System Administrator";
 
       case "senior_investigator":
-        return "Senior Investigator";
+        return "IAU Senior Investigator";
 
       case "officer":
-        return "Investigation Officer";
+        return "IAU Investigation Officer";
 
       default:
         return "Admin";
